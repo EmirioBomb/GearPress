@@ -1,0 +1,128 @@
+{
+    "branches": [
+        "main"
+    ],
+    "tagFormat": "v${version}",
+    "plugins": [
+        [
+            "@semantic-release/commit-analyzer",
+            {
+                "preset": "conventionalcommits",
+                "releaseRules": [
+                    {
+                        "type": "feat",
+                        "release": "minor"
+                    },
+                    {
+                        "type": "fix",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "perf",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "docs",
+                        "scope": "docs",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "chore",
+                        "release": false
+                    },
+                    {
+                        "type": "refactor",
+                        "release": false
+                    },
+                    {
+                        "type": "ci",
+                        "release": false
+                    },
+                    {
+                        "type": "test",
+                        "release": false
+                    },
+                    {
+                        "breaking": true,
+                        "release": "major"
+                    }
+                ]
+            }
+        ],
+        [
+            "@semantic-release/release-notes-generator",
+            {
+                "preset": "conventionalcommits",
+                "writerOpts": {
+                    "headerPartial": "## 🔖 Release {{version}} ({{date}})\n"
+                },
+                "presetConfig": {
+                    "types": [
+                        {
+                            "type": "feat",
+                            "section": "✨ Features"
+                        },
+                        {
+                            "type": "fix",
+                            "section": "🐛 Bug Fixes"
+                        },
+                        {
+                            "type": "perf",
+                            "section": "🚀 Performance Improvements",
+                            "hidden": false
+                        },
+                        {
+                            "type": "docs",
+                            "section": "📝 Documentation",
+                            "hidden": false
+                        },
+                        {
+                            "type": "chore",
+                            "section": "🔧 Chores",
+                            "hidden": false
+                        },
+                        {
+                            "type": "refactor",
+                            "section": "♻️ Code Refactoring",
+                            "hidden": false
+                        },
+                        {
+                            "type": "test",
+                            "section": "✅ Tests",
+                            "hidden": false
+                        },
+                        {
+                            "type": "ci",
+                            "section": "🛠️ CI/CD",
+                            "hidden": false
+                        }
+                    ]
+                }
+            }
+        ],
+        [
+            "@semantic-release/changelog",
+            {
+                "changelogFile": "CHANGELOG.md"
+            }
+        ],
+        [
+            "@semantic-release/exec",
+            {
+                "prepareCmd": "sed -i 's/v[0-9]*\\.[0-9]*\\.[0-9]*/v${nextRelease.version}/g' README.md && sed -i 's/\"version\": \"[0-9]*\\.[0-9]*\\.[0-9]*\"/\"version\": \"${nextRelease.version}\"/' package.json"
+            }
+        ],
+        [
+            "@semantic-release/git",
+            {
+                "assets": [
+                    "package.json",
+                    "README.md",
+                    "CHANGELOG.md"
+                ],
+                "message": "🔖 chore(release): v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+            }
+        ],
+        "@semantic-release/github"
+    ]
+}

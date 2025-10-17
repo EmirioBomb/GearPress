@@ -1,0 +1,35 @@
+name: release
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install Dependencies
+        # - conventional-changelog-conventionalcommits
+        #     • 用于 semantic-release 插件：
+        #         - commit-analyzer
+        #         - release-notes-generator
+        #     • 提供自定义 changelog 类型（如 docs、chore 等）
+        # - @semantic-release/exec
+        #     • 用于执行自定义命令（如更新 README 中的版本号）
+        run: pnpm install conventional-changelog-conventionalcommits @semantic-release/exec -D
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
