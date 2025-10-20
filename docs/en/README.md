@@ -5,7 +5,7 @@ config:
   -
     type: hero
     full: true
-    background: tint-plate
+    backgroundImage: bg.svg
     hero:
       name: Gear Press
       tagline: Insights & Reflections
