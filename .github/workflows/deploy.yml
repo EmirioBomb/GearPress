@@ -11,7 +11,7 @@ on:
 
 jobs:
   docs:
-    if: false # 暂时禁用此工作流以避免意外部署
+    # if: false # 暂时禁用此工作流以避免意外部署
     runs-on: ubuntu-latest
 
     steps:
