@@ -1,3 +1,9 @@
+## 🔖 Release 1.0.3 (2025-10-20)
+
+### 🐛 Bug Fixes
+
+* **changelog:** :bug: fix english version ([951442c](https://github.com/EmirioBomb/GearPress/commit/951442c7f845275f8285015230b7f51362f15049))
+
 ## 🔖 Release 1.0.2 (2025-10-20)
 
 ### 🐛 Bug Fixes

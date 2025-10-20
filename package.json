@@ -1,7 +1,7 @@
 {
   "name": "gear-press",
   "type": "module",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "⚙️ GearPress - 墨痕游走如溪流不息，心绪翩跹似云卷云舒。",
   "packageManager": "pnpm@8.10.0",
   "author": "EmirioBomb <wjhlfamily@gmail.com>",
