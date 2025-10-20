@@ -1,3 +1,9 @@
+## 🔖 Release 1.0.4 (2025-10-20)
+
+### 🐛 Bug Fixes
+
+* **changelog:** :ambulance: update link path ([c85fe41](https://github.com/EmirioBomb/GearPress/commit/c85fe414baa92428d631deb4d1f23511cd5be3d9))
+
 ## 🔖 Release 1.0.3 (2025-10-20)
 
 ### 🐛 Bug Fixes
