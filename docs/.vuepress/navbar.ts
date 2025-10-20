@@ -36,7 +36,7 @@ export const enNavbar = defineNavbarConfig([
     text: `Changelog`,
     icon: 'codicon:versions',
     badge: 'New',
-    link: 'CHANGELOG.md'
+    link: '/en/CHANGELOG.md'
   },
 ])
 
