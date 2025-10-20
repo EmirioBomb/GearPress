@@ -1,3 +1,9 @@
+## 🔖 Release 1.0.2 (2025-10-20)
+
+### 🐛 Bug Fixes
+
+* **changelog:** :bug: fix display issues ([1b879fe](https://github.com/EmirioBomb/GearPress/commit/1b879fe17f88e485a51290ac5a5184629f90f60b))
+
 ## 🔖 Release 1.0.1 (2025-10-20)
 
 ### 🐛 Bug Fixes
