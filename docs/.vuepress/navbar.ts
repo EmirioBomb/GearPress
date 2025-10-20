@@ -7,10 +7,10 @@
 import { defineNavbarConfig } from 'vuepress-theme-plume'
 
 export const zhNavbar = defineNavbarConfig([
-  { text: '首页', link: '/' },
-  { text: '博客', link: '/blog/' },
-  { text: '标签', link: '/blog/tags/' },
-  { text: '归档', link: '/blog/archives/' },
+  { text: '首页', icon: 'codicon:home', link: '/' },
+  { text: '博客', icon: 'codicon:book', link: '/blog/' },
+  // { text: '标签', link: '/blog/tags/' },
+  // { text: '归档', link: '/blog/archives/' },
   {
     text: '笔记',
     items: [{ text: '示例', link: '/demo/README.md' }]
@@ -24,10 +24,10 @@ export const zhNavbar = defineNavbarConfig([
 ])
 
 export const enNavbar = defineNavbarConfig([
-  { text: 'Home', link: '/en/' },
-  { text: 'Blog', link: '/en/blog/' },
-  { text: 'Tags', link: '/en/blog/tags/' },
-  { text: 'Archives', link: '/en/blog/archives/' },
+  { text: 'Home', icon: 'codicon:home', link: '/en/' },
+  { text: 'Blog', icon: 'codicon:book', link: '/en/blog/' },
+  // { text: 'Tags', link: '/en/blog/tags/' },
+  // { text: 'Archives', link: '/en/blog/archives/' },
   {
     text: 'Notes',
     items: [{ text: 'Demo', link: '/en/demo/README.md' }]
