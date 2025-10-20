@@ -20,12 +20,12 @@ export default defineUserConfig({
     '/': {
       title: 'GearPress',
       lang: 'zh-CN',
-      description: '⚙️ GearPress - 墨痕游走如溪流不息，心绪翩跹似云卷云舒。',
+      description: '文在动，思不休',
     },
     '/en/': {
       title: 'GearPress',
       lang: 'en-US',
-      description: '⚙️ GearPress - 墨痕游走如溪流不息，心绪翩跹似云卷云舒。',
+      description: 'Insights & Reflections',
     },
   },
 
@@ -62,11 +62,11 @@ export default defineUserConfig({
      * 为 markdown 文件自动添加 frontmatter 配置
      * @see https://theme-plume.vuejs.press/config/basic/#autofrontmatter
      */
-    // autoFrontmatter: {
-    //   permalink: true,  // 是否生成永久链接
-    //   createTime: true, // 是否生成创建时间
-    //   title: true,      // 是否生成标题
-    // },
+    autoFrontmatter: {
+      permalink: false,  // 是否生成永久链接
+      createTime: false, // 是否生成创建时间
+      title: false,      // 是否生成标题
+    },
 
     /* 本地搜索, 默认启用 */
     search: { provider: 'local' },

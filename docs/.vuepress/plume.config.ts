@@ -23,7 +23,7 @@ export default defineThemeConfig({
   appearance: true,  // 配置 深色模式
 
   social: [
-    { icon: 'github', link: '/' },
+    { icon: 'github', link: 'https://github.com/EmirioBomb/GearPress' },
   ],
   // navbarSocialInclude: ['github'], // 允许显示在导航栏的 social 社交链接
   // aside: true, // 页内侧边栏， 默认显示在右侧
@@ -60,7 +60,7 @@ export default defineThemeConfig({
       profile: {
         avatar: 'https://raw.githubusercontent.com/EmirioBomb/media-collections/82fad5e305d2ead7eaf6d2fe09ce330d0f12427b/GearPress/logo/logo.svg',
         name: 'GearPress',
-        description: '⚙️ GearPress - 墨痕游走如溪流不息，心绪翩跹似云卷云舒。',
+        description: '文在动，思不休',
         // circle: true,
         // location: '',
         // organization: '',
@@ -87,7 +87,7 @@ export default defineThemeConfig({
       profile: {
         avatar: 'https://raw.githubusercontent.com/EmirioBomb/media-collections/82fad5e305d2ead7eaf6d2fe09ce330d0f12427b/GearPress/logo/logo.svg',
         name: 'GearPress',
-        description: '⚙️ GearPress - 墨痕游走如溪流不息，心绪翩跹似云卷云舒。',
+        description: 'Insights & Reflections',
         // circle: true,
         // location: '',
         // organization: '',
