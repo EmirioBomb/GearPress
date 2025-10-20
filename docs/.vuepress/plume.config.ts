@@ -18,7 +18,7 @@ import { enNavbar, zhNavbar } from './navbar'
  * @see https://theme-plume.vuejs.press/config/basic/
  */
 export default defineThemeConfig({
-  logo: 'https://theme-plume.vuejs.press/plume.png',
+  logo: 'https://raw.githubusercontent.com/EmirioBomb/media-collections/82fad5e305d2ead7eaf6d2fe09ce330d0f12427b/GearPress/logo/logo.svg',
 
   appearance: true,  // 配置 深色模式
 
@@ -58,7 +58,7 @@ export default defineThemeConfig({
        * @see https://theme-plume.vuejs.press/config/basic/#profile
        */
       profile: {
-        avatar: 'https://theme-plume.vuejs.press/plume.png',
+        avatar: 'https://raw.githubusercontent.com/EmirioBomb/media-collections/82fad5e305d2ead7eaf6d2fe09ce330d0f12427b/GearPress/logo/logo.svg',
         name: 'GearPress',
         description: '⚙️ GearPress - 墨痕游走如溪流不息，心绪翩跹似云卷云舒。',
         // circle: true,
@@ -85,7 +85,7 @@ export default defineThemeConfig({
        * @see https://theme-plume.vuejs.press/config/basic/#profile
        */
       profile: {
-        avatar: 'https://theme-plume.vuejs.press/plume.png',
+        avatar: 'https://raw.githubusercontent.com/EmirioBomb/media-collections/82fad5e305d2ead7eaf6d2fe09ce330d0f12427b/GearPress/logo/logo.svg',
         name: 'GearPress',
         description: '⚙️ GearPress - 墨痕游走如溪流不息，心绪翩跹似云卷云舒。',
         // circle: true,
