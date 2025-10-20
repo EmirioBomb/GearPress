@@ -62,8 +62,8 @@ export default defineThemeConfig({
         name: 'GearPress',
         description: '文在动，思不休',
         // circle: true,
-        // location: '',
-        // organization: '',
+        location: 'GearPress',
+        organization: 'GearLab',
       },
 
       navbar: zhNavbar,
@@ -89,8 +89,8 @@ export default defineThemeConfig({
         name: 'GearPress',
         description: 'Insights & Reflections',
         // circle: true,
-        // location: '',
-        // organization: '',
+        location: 'GearPress',
+        organization: 'GearLab',
       },
 
       navbar: enNavbar,
