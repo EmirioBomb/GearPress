@@ -8,7 +8,7 @@
     <a href="https://github.com/EmirioBomb">
         <img src="https://img.shields.io/badge/author-Emirio_Baan-1B3C4A?labelColor=1B3C4A&color=5086a1" alt="author" />
     </a>
-    <img alt="version" src="https://img.shields.io/badge/version-1.0.1-1B3C4A?labelColor=1B3C4A&color=5086a1">
+    <img alt="version" src="https://img.shields.io/badge/version-v1.0.1-1B3C4A?labelColor=1B3C4A&color=5086a1">
     <img alt="licence" src="https://img.shields.io/badge/licence-MIT-1B3C4A?labelColor=1B3C4A&color=5086a1">
     <img alt="build" src="https://img.shields.io/badge/build-2025.10.20-1B3C4A?labelColor=1B3C4A&color=5086a1">
 </p>
