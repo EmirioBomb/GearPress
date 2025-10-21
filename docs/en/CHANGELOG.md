@@ -1,3 +1,9 @@
+## 🔖 Release 1.0.5 (2025-10-21)
+
+### 🐛 Bug Fixes
+
+* :bug: automatically update version number ([9a628d8](https://github.com/EmirioBomb/GearPress/commit/9a628d820ac2a444181bb3768f9441b77181aeb5))
+
 ## 🔖 Release 1.0.4 (2025-10-20)
 
 ### 🐛 Bug Fixes
