@@ -54,7 +54,7 @@
             {
                 "preset": "conventionalcommits",
                 "writerOpts": {
-                    "headerPartial": "## 🔖 Release {{version}} ({{date}})\n"
+                    "headerPartial": "## 🔖 Release v{{version}} ({{date}})\n"
                 },
                 "presetConfig": {
                     "types": [
