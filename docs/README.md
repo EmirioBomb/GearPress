@@ -3,13 +3,14 @@ pageLayout: home
 externalLinkIcon: false
 config:
   -
-    type: hero
+    type: doc-hero
     full: true
-    backgroundImage: bg.svg
+    # backgroundImage: bg.svg
     hero:
       name: Gear Press
       tagline: 文在动，思不休
       text: 墨痕游走如溪流不息，心绪翩跹似云卷云舒
+      image: logo.svg
       actions:
         -
           theme: brand

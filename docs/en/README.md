@@ -3,13 +3,14 @@ pageLayout: home
 externalLinkIcon: false
 config:
   -
-    type: hero
+    type: doc-hero
     full: true
-    backgroundImage: bg.svg
+    # backgroundImage: bg.svg
     hero:
       name: Gear Press
       tagline: Insights & Reflections
       text: Records keep turning, thoughts keep flowing
+      image: logo.svg
       actions:
         -
           theme: brand
