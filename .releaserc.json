@@ -28,7 +28,13 @@
                     },
                     {
                         "type": "chore",
-                        "release": false
+                        "scope": "deps",
+                        "release": "patch"
+                    },
+                    {
+                        "type": "style",
+                        "scope": "css",
+                        "release": "patch"
                     },
                     {
                         "type": "refactor",
@@ -94,6 +100,11 @@
                         {
                             "type": "ci",
                             "section": "🛠️ CI/CD",
+                            "hidden": false
+                        },
+                        {
+                            "type": "style",
+                            "section": "🎨 CSS",
                             "hidden": false
                         }
                     ]
