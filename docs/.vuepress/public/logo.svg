@@ -101,9 +101,9 @@
           100%   { fill: #00a98e; }
         }
 
-        g[filter="url(#glow)"] path {
+        <!-- g[filter="url(#glow)"] path {
           animation: rainbow 10s linear infinite;
-        }
+        } -->
       </style>
 
       <g data-uid="o-260893cd57fa4403a951ba0aa844e36c" filter="url(#glow)">

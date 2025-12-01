@@ -85,7 +85,7 @@ export default defineThemeConfig({
        * @see https://theme-plume.vuejs.press/config/basic/#profile
        */
       profile: {
-        avatar: 'https://raw.githubusercontent.com/EmirioBomb/media-collections/82fad5e305d2ead7eaf6d2fe09ce330d0f12427b/GearPress/logo/logo.svg',
+        avatar: 'logo.svg',
         name: 'GearPress',
         description: 'Insights & Reflections',
         // circle: true,
