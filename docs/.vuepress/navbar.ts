@@ -15,12 +15,7 @@ export const zhNavbar = defineNavbarConfig([
   //   text: '笔记',
   //   items: [{ text: '示例', link: '/demo/README.md' }]
   // },
-  {
-    text: `更新日志`,
-    icon: 'codicon:versions',
-    badge: '新',
-    link: 'CHANGELOG.md'
-  },
+  { text: `更新日志`, icon: 'codicon:versions', badge: '新', link: 'CHANGELOG.md' },
 ])
 
 export const enNavbar = defineNavbarConfig([
@@ -32,11 +27,6 @@ export const enNavbar = defineNavbarConfig([
   //   text: 'Notes',
   //   items: [{ text: 'Demo', link: '/en/demo/README.md' }]
   // },
-  {
-    text: `Changelog`,
-    icon: 'codicon:versions',
-    badge: 'New',
-    link: '/en/CHANGELOG.md'
-  },
+  { text: `Changelog`, icon: 'codicon:versions', badge: 'New', link: '/en/CHANGELOG.md' },
 ])
 

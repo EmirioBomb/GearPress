@@ -63,9 +63,9 @@ export default defineUserConfig({
      * @see https://theme-plume.vuejs.press/config/basic/#autofrontmatter
      */
     autoFrontmatter: {
-      permalink: false,  // 是否生成永久链接
-      createTime: false, // 是否生成创建时间
-      title: false,      // 是否生成标题
+      permalink: true,  // 是否生成永久链接
+      createTime: true, // 是否生成创建时间
+      title: true,      // 是否生成标题
     },
 
     /* 本地搜索, 默认启用 */
