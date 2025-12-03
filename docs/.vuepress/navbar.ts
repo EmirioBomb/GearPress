@@ -5,17 +5,25 @@
  */
 
 import { defineNavbarConfig } from 'vuepress-theme-plume'
+import { version } from '../../package.json'
 
 export const zhNavbar = defineNavbarConfig([
   { text: '首页', icon: 'codicon:home', link: '/' },
   { text: '博客', icon: 'codicon:book', link: '/blog/' },
-  // { text: '标签', link: '/blog/tags/' },
+  // { text: '开发笔记', icon: 'codicon:note', link: '/notes/' },
   // { text: '归档', link: '/blog/archives/' },
-  // {
-  //   text: '笔记',
-  //   items: [{ text: '示例', link: '/demo/README.md' }]
-  // },
-  { text: `更新日志`, icon: 'codicon:versions', badge: '新', link: 'CHANGELOG.md' },
+  { 
+    text: `v${version}`, 
+    icon: 'codicon:versions', 
+    badge: '新', 
+    items: [
+      { 
+        text: '更新日志',
+        icon: 'codicon:versions', 
+        link: 'CHANGELOG.md'
+      }
+    ]
+  },
 ])
 
 export const enNavbar = defineNavbarConfig([
@@ -23,10 +31,17 @@ export const enNavbar = defineNavbarConfig([
   { text: 'Blog', icon: 'codicon:book', link: '/en/blog/' },
   // { text: 'Tags', link: '/en/blog/tags/' },
   // { text: 'Archives', link: '/en/blog/archives/' },
-  // {
-  //   text: 'Notes',
-  //   items: [{ text: 'Demo', link: '/en/demo/README.md' }]
-  // },
-  { text: `Changelog`, icon: 'codicon:versions', badge: 'New', link: '/en/CHANGELOG.md' },
+  { 
+    text: `v${version}`, 
+    icon: 'codicon:versions', 
+    badge: 'New', 
+    items: [
+      { 
+        text: 'Changelog',
+        icon: 'codicon:versions', 
+        link: '/en/CHANGELOG.md'
+      }
+    ]
+  },
 ])
 
