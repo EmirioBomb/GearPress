@@ -70,7 +70,6 @@ const zhDemoDoc = defineCollection({
  */
 export const zhCollections = defineCollections([
   zhBlog,
-  zhDemoDoc,
 ])
 
 /* =================== locale: en-US ======================= */
@@ -117,6 +116,5 @@ const enDemoDoc = defineCollection({
  */
 export const enCollections = defineCollections([
   enBlog,
-  enDemoDoc,
 ])
 
