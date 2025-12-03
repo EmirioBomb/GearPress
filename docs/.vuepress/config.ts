@@ -31,7 +31,7 @@ export default defineUserConfig({
 
   head: [
     // 配置站点图标
-    ['link', { rel: 'icon', type: 'image/png', href: 'https://raw.githubusercontent.com/EmirioBomb/media-collections/refs/heads/main/GearPress/icon/favicon-32x32.png' }],
+    ['link', { rel: 'icon', type: 'image/png', href: 'https://raw.githubusercontent.com/EmirioBomb/media-collections/refs/heads/main/GearPress/icon/favicon-32x32-old.png' }],
   ],
 
   bundler: viteBundler(),
