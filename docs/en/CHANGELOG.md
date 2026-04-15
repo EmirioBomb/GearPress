@@ -1,3 +1,30 @@
+## 🔖 Release v1.0.6 (2026-04-15)
+
+### 🐛 Bug Fixes
+
+* **config:** :sparkles: enable permanent link ([15f92ab](https://github.com/EmirioBomb/GearPress/commit/15f92abc761ef8f0968df12d851b35e39ee08f00))
+* **navbar:** :adhesive_bandage: reorganize changelog navigation items in navbar ([ca74733](https://github.com/EmirioBomb/GearPress/commit/ca74733860c280252ab3751a4b6a8a0faf011487))
+
+### 📝 Documentation
+
+* **changelog:** :memo: update prefix ([9e12881](https://github.com/EmirioBomb/GearPress/commit/9e12881e510c05bfdb8ebb455c0276b7fe293099))
+
+### 🔧 Chores
+
+* **config:** :bento: update some text ([850a600](https://github.com/EmirioBomb/GearPress/commit/850a60061e8451668de6fd8015db8913bd22bca8))
+* **demo:** :fire: remove demo sample module ([d0e913f](https://github.com/EmirioBomb/GearPress/commit/d0e913ff91cdde0abf9b85871e2ea7a4d79781f4))
+* **deps:** :arrow_up: upgrade dependencies ([0afa248](https://github.com/EmirioBomb/GearPress/commit/0afa248f4bfde1c455c3c24b60eaf68bce0edb59))
+* **deps:** :green_heart: update release types ([b61b7d1](https://github.com/EmirioBomb/GearPress/commit/b61b7d1ba8854731ed9df370a40aa1b3054ff463))
+* **deps:** :wrench: enable SEO ([7414006](https://github.com/EmirioBomb/GearPress/commit/74140065645bb12972f65380c9e2618127f0475c))
+* **favicon:** :bento: update favicon ([0a87dba](https://github.com/EmirioBomb/GearPress/commit/0a87dba4e17b4d365a027da7a93ef52c42deb927))
+* **logo:** :bento: update logo ([b4157d0](https://github.com/EmirioBomb/GearPress/commit/b4157d0de63212d79a66e82f03b4ce31c240bfc1))
+* **release:** :wrench: update style section ([bbb4bf1](https://github.com/EmirioBomb/GearPress/commit/bbb4bf1745120734098965379d4bf43967b2a350))
+
+### 🎨 Style
+
+* **avator:** :bento: change avator ([c75bf98](https://github.com/EmirioBomb/GearPress/commit/c75bf98ef08a773494868d3e41ad637c1bd77bd0))
+* **home:** :lipstick: change layout type ([156063c](https://github.com/EmirioBomb/GearPress/commit/156063c2e7be84e363a761b6dc9b9fb39a82706e))
+
 ## 🔖 Release 1.0.5 (2025-10-21)
 
 ### 🐛 Bug Fixes
