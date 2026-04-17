@@ -7,18 +7,24 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
+      # 安装 pnpm 以便后续安装依赖和构建项目
+      # 该设置一定要放在 setup-node 之前，否则会导致无法找到 pnpm 的错误
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v5
 
+      # 安装并设置 Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          # 选择要使用的 node 版本
+          node-version: 24
+
+      # 安装依赖
+      # Install dependencies
       - name: Install Dependencies
         # - conventional-changelog-conventionalcommits
         #     • 用于 semantic-release 插件：
@@ -29,7 +35,9 @@ jobs:
         #     • 用于执行自定义命令（如更新 README 中的版本号）
         run: pnpm install conventional-changelog-conventionalcommits @semantic-release/exec -D
 
+      # 运行 semantic-release 来自动发布新版本
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
