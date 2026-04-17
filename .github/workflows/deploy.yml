@@ -1,13 +1,12 @@
 name: deploy
 
 on:
-  # 每当 push 到 main 分支时触发部署
-  # Deployment is triggered whenever a push is made to the main branch.
-  push:
-    branches: [main]
-  # 手动触发部署
-  # Manually trigger deployment
-  workflow_dispatch:
+  # 监听 release 工作流完成事件，以便在发布新版本后自动部署文档
+  workflow_run:
+    # 监听 release 工作流完成事件
+    workflows: ["release"]
+    types:
+      - completed
 
 jobs:
   docs:
