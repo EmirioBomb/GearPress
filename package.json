@@ -15,13 +15,13 @@
   },
   "devDependencies": {
     "@semantic-release/exec": "^7.1.0",
-    "@vuepress/bundler-vite": "2.0.0-rc.26",
-    "conventional-changelog-conventionalcommits": "^9.1.0",
+    "@vuepress/bundler-vite": "2.0.0-rc.28",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "http-server": "^14.1.1",
     "typescript": "^5.9.3",
-    "vue": "^3.5.25",
-    "vuepress": "2.0.0-rc.26",
-    "vuepress-theme-plume": "1.0.0-rc.180"
+    "vue": "^3.5.32",
+    "vuepress": "2.0.0-rc.28",
+    "vuepress-theme-plume": "1.0.0-rc.194"
   },
   "engines": {
     "node": "^20.6.0 || >=22.0.0"
