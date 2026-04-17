@@ -1,3 +1,18 @@
+## 🔖 Release v2.0.0 (2026-04-17)
+
+### ⚠ BREAKING CHANGES
+
+* **deps:** - require Node.js >= 24 for build and dev
+
+### 🔧 Chores
+
+* **deps:** :arrow_up: bump dependencies to latest versions ([b7509e7](https://github.com/EmirioBomb/GearPress/commit/b7509e7e27e98b1309bbedb35d5a6bc6b4b68e3a))
+
+### 🛠️ CI/CD
+
+* **deploy:** :green_heart: trigger deploy after release completes ([bc1b9fb](https://github.com/EmirioBomb/GearPress/commit/bc1b9fb8380b5caeafed8fb9f239c75648cdc3e5))
+* **deploy:** :green_heart: upgrade node version to 24 ([adeec13](https://github.com/EmirioBomb/GearPress/commit/adeec13c588564c8413ba6dad302456d7377ed3d))
+
 ## 🔖 Release v1.0.6 (2026-04-15)
 
 ### 🐛 Bug Fixes
