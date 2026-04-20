@@ -7,7 +7,7 @@ config:
     full: true
     hero:
       name: Gear Press
-      # tagline: 日积月累，终见其深
+      tagline: 日积月累，终见其深
       text: 知识唯一的来源是经验
       image: logo.svg
       actions:
@@ -22,6 +22,8 @@ config:
 
   - type: custom
 ---
+
+<SectionTitle title="常用仓库" />
 
 <CardGrid>
   <RepoCard repo="EmirioBomb/media-collections" />

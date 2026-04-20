@@ -22,6 +22,8 @@ config:
   - type: custom
 ---
 
+<SectionTitle title="Repository" />
+
 <CardGrid>
   <RepoCard repo="EmirioBomb/media-collections" />
   <RepoCard repo="EmirioBomb/shell-collections" />
