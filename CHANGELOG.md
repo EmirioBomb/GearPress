@@ -1,3 +1,9 @@
+## 🔖 Release v2.1.1 (2026-04-20)
+
+### 🐛 Bug Fixes
+
+* **home:** :truck: fix background image path ([c89852a](https://github.com/EmirioBomb/GearPress/commit/c89852a58e66540fdc096e571f6a8365da3f259d))
+
 ## 🔖 Release v2.1.0 (2026-04-20)
 
 ### ✨ Features
