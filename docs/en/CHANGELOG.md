@@ -1,3 +1,13 @@
+## 🔖 Release v2.1.0 (2026-04-20)
+
+### ✨ Features
+
+* **home:** :sparkles: add SectionTitle component ([79a4f6b](https://github.com/EmirioBomb/GearPress/commit/79a4f6b4c43d01b28d8818246bc900fcabcbe700))
+
+### 🐛 Bug Fixes
+
+* **home:** :lipstick: update home style and some text ([df0ed0f](https://github.com/EmirioBomb/GearPress/commit/df0ed0f617bf20cf3af33de56c31d057cd3d746a))
+
 ## 🔖 Release v2.0.0 (2026-04-17)
 
 ### ⚠ BREAKING CHANGES
