@@ -20,7 +20,7 @@ export default defineUserConfig({
     '/': {
       title: 'GearPress',
       lang: 'zh-CN',
-      description: '文在动，思不休',
+      description: '日积月累，终见其深',
     },
     '/en/': {
       title: 'GearPress',

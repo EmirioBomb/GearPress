@@ -1,15 +1,14 @@
 ---
+home: true
 pageLayout: home
 externalLinkIcon: false
 config:
-  -
-    type: doc-hero
+  - type: doc-hero
     full: true
-    # backgroundImage: bg.svg
     hero:
       name: Gear Press
-      tagline: 文在动，思不休
-      text: 墨痕游走如溪流不息，心绪翩跹似云卷云舒
+      # tagline: 日积月累，终见其深
+      text: 知识唯一的来源是经验
       image: logo.svg
       actions:
         -
@@ -20,4 +19,15 @@ config:
           theme: alt
           text: Github →
           link: https://github.com/EmirioBomb/GearPress
+
+  - type: custom
 ---
+
+<CardGrid>
+  <RepoCard repo="EmirioBomb/media-collections" />
+  <RepoCard repo="EmirioBomb/shell-collections" />
+  <RepoCard repo="EmirioBomb/python-collections" />
+  <RepoCard repo="EmirioBomb/Versionater" />
+  <RepoCard repo="EmirioBomb/LightBoard" />
+  <RepoCard repo="EmirioBomb/zgc-ems" />
+</CardGrid>

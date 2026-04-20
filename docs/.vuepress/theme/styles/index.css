@@ -1,0 +1,23 @@
+/* 主页添加背景图 */
+.vp-home {
+    background-image: url("bg.svg");
+}
+
+/*  导航栏标题 与 主页 Hero 标题使用相同渐变样式，但因 CSS 变量作用域与样式覆盖差异，需分别定义 */
+/* 导航栏标题添加渐变色 */
+.name.clip {
+    background: var(--vp-bg-home-hero-name, linear-gradient(315deg, var(--vp-c-purple-1) 15%, var(--vp-c-brand-2) 65%, var(--vp-c-brand-2) 100%));
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+}
+
+/* 主页 Hero 标题添加渐变色 */
+.vp-link.link.no-icon.title {
+    background: var(--vp-bg-home-hero-name, linear-gradient(315deg, var(--vp-c-purple-1) 15%, var(--vp-c-brand-2) 65%, var(--vp-c-brand-2) 100%));
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+}

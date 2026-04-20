@@ -60,7 +60,7 @@ export default defineThemeConfig({
       profile: {
         avatar: 'logo.svg',
         name: 'GearPress',
-        description: '文在动，思不休',
+        description: '日积月累，终见其深',
         // circle: true,
         location: 'GearPress',
         organization: 'GearLab',
@@ -87,7 +87,7 @@ export default defineThemeConfig({
       profile: {
         avatar: 'logo.svg',
         name: 'GearPress',
-        description: 'Insights & Reflections',
+        description: 'Notes & Blog',
         // circle: true,
         location: 'GearPress',
         organization: 'GearLab',

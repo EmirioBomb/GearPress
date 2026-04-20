@@ -5,11 +5,10 @@ config:
   -
     type: doc-hero
     full: true
-    # backgroundImage: bg.svg
     hero:
       name: Gear Press
-      tagline: Insights & Reflections
-      text: Records keep turning, thoughts keep flowing
+      tagline: Write it down Remember it forever
+      text: Knowledge is power
       image: logo.svg
       actions:
         -
@@ -20,4 +19,14 @@ config:
           theme: alt
           text: Github →
           link: https://github.com/EmirioBomb/GearPress
+  - type: custom
 ---
+
+<CardGrid>
+  <RepoCard repo="EmirioBomb/media-collections" />
+  <RepoCard repo="EmirioBomb/shell-collections" />
+  <RepoCard repo="EmirioBomb/python-collections" />
+  <RepoCard repo="EmirioBomb/Versionater" />
+  <RepoCard repo="EmirioBomb/LightBoard" />
+  <RepoCard repo="EmirioBomb/zgc-ems" />
+</CardGrid>
