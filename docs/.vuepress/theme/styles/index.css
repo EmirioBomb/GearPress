@@ -1,6 +1,6 @@
 /* 主页添加背景图 */
 .vp-home {
-    background-image: url("bg.svg");
+    background-image: url("/bg.svg");
 }
 
 /*  导航栏标题 与 主页 Hero 标题使用相同渐变样式，但因 CSS 变量作用域与样式覆盖差异，需分别定义 */
