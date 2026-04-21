@@ -23,7 +23,7 @@ config:
   - type: custom
 ---
 
-<SectionTitle title="常用仓库" />
+<SectionTitle title="常用仓库" icon="codicon:repo" />
 
 <CardGrid>
   <RepoCard repo="EmirioBomb/media-collections" />
