@@ -50,7 +50,12 @@ export default defineUserConfig({
     // editLink: true,
     // lastUpdated: true,
     // contributors: true,
-    // changelog: false,
+
+    // 启用文章变更历史
+    changelog: {
+      maxCount: 20, // 显示最近 20 条更新记录
+      repoUrl: 'https://github.com/EmirioBomb/GearPress', // 仓库地址
+    },
 
     /**
      * 编译缓存，加快编译速度
@@ -139,6 +144,8 @@ export default defineUserConfig({
       },
       // include: true,      // 在 Markdown 文件中导入其他 markdown 文件内容
       imageSize: 'local', // 启用 自动填充 图片宽高属性，避免页面抖动
+      codeTree: true,        // 启用代码树容器  ::: code-tree
+      field: true,           // 启用字段容器  ::: field
     },
 
     /**
