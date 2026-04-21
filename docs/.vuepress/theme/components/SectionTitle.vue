@@ -27,7 +27,7 @@ defineProps(['title', 'icon'])
   );
 
   background-size: 200% 100%;
-  animation: gradient-flow 2s linear infinite; /* 动画 */
+  animation: gradient-flow 2s linear infinite;
 
   -webkit-background-clip: text;
   background-clip: text;
