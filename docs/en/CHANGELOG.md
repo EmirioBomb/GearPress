@@ -1,3 +1,31 @@
+## 🔖 Release v2.1.2 (2026-04-22)
+
+### 🐛 Bug Fixes
+
+* **config:** :wrench: enable enhanced markdown features ([d00fbfd](https://github.com/EmirioBomb/GearPress/commit/d00fbfdd0c011ab8e22157c36623a30c5427cd6e))
+
+### 📝 Documentation
+
+* **blog:** :sparkles: add SectionTitle component ([b54abb5](https://github.com/EmirioBomb/GearPress/commit/b54abb50cd970d333d15f2c193a5c991cac912b8))
+* **blog:** :sparkles: add SectionTitle component blog ([1a0bb2d](https://github.com/EmirioBomb/GearPress/commit/1a0bb2d494450a16878c211cf41d50a20e514fd0))
+* **section-title:** :memo: remove useless comment ([842bfa9](https://github.com/EmirioBomb/GearPress/commit/842bfa989582d7be064c7c6aa7ce3252c9f00376))
+
+### 🔧 Chores
+
+* **config:** :wrench: enable git changelog feature ([b49ffc2](https://github.com/EmirioBomb/GearPress/commit/b49ffc287803ae1e8c9ce2d690f5b44f4f793839))
+* **config:** :wrench: enable lazy marker animation ([46970f9](https://github.com/EmirioBomb/GearPress/commit/46970f90eb6f830b4859232090e31bd3534f3734))
+* **plume-config:** :wrench: enable copyright and transition feature ([702ad1b](https://github.com/EmirioBomb/GearPress/commit/702ad1b1cb80579f7135a4c79e00e691b8a56b39))
+
+### ♻️ Code Refactoring
+
+* **custom-component:** :fire: remove CustomComponent usage and references ([354cc5b](https://github.com/EmirioBomb/GearPress/commit/354cc5b4185c5fb4b229fd3c0ca80d1b320b04c9))
+* **preview:** :fire: rename blog subdirectory from preview to reserved ([9c587ae](https://github.com/EmirioBomb/GearPress/commit/9c587aee486e2f98dfd2ae62a4ddbd4b7cd31310))
+
+### 🎨 Style
+
+* **section-title:** :lipstick: add gradient text animation and divider line effect ([d73e863](https://github.com/EmirioBomb/GearPress/commit/d73e863e40de71baa46a31ca0818a16e6d142d44))
+* **section-title:** :lipstick: add typed props definition ([7e9ccf1](https://github.com/EmirioBomb/GearPress/commit/7e9ccf104128e5813bb01545bea02f6bf961b57c))
+
 ## 🔖 Release v2.1.1 (2026-04-20)
 
 ### 🐛 Bug Fixes
