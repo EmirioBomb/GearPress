@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 
-defineProps(['title', 'icon'])
+defineProps({
+  title: String,
+  icon: String
+})
 </script>
 
 <template>
