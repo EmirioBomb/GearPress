@@ -144,8 +144,9 @@ export default defineUserConfig({
       },
       // include: true,      // 在 Markdown 文件中导入其他 markdown 文件内容
       imageSize: 'local', // 启用 自动填充 图片宽高属性，避免页面抖动
-      codeTree: true,        // 启用代码树容器  ::: code-tree
-      field: true,           // 启用字段容器  ::: field
+      codeTree: true,     // 启用代码树容器  ::: code-tree
+      field: true,        // 启用字段容器  ::: field
+      mark: 'lazy',       // 滚动到可视区域后再播放马克笔动画
     },
 
     /**
