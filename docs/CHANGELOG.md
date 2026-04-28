@@ -1,3 +1,18 @@
+## 🔖 Release v2.1.3 (2026-04-28)
+
+### 🐛 Bug Fixes
+
+* **section-title:** :sparkles: show divider when title and icon are empty ([e1310b0](https://github.com/EmirioBomb/GearPress/commit/e1310b0bafd6fd551514c82fe69cba96073372f5))
+
+### 📝 Documentation
+
+* **section-title:** :memo: refine docs layout and update descriptions ([ec1bd69](https://github.com/EmirioBomb/GearPress/commit/ec1bd691c7af35a416812f2bf7a4622ceddbe2bb))
+
+### 🔧 Chores
+
+* **config:** :wrench: enable markdown collapse feature ([b889647](https://github.com/EmirioBomb/GearPress/commit/b88964763c64946df841e26abae66ab69539fd3b))
+* **social:** :wrench: add social link for X ([8e01306](https://github.com/EmirioBomb/GearPress/commit/8e013069b8f1fa7491d949f2fb82d5879c965e97))
+
 ## 🔖 Release v2.1.2 (2026-04-22)
 
 ### 🐛 Bug Fixes
