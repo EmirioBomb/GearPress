@@ -147,6 +147,7 @@ export default defineUserConfig({
       codeTree: true,     // 启用代码树容器  ::: code-tree
       field: true,        // 启用字段容器  ::: field
       mark: 'lazy',       // 滚动到可视区域后再播放马克笔动画
+      collapse: true,     // 启用折叠容器  ::: collapse
     },
 
     /**
