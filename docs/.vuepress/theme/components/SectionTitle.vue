@@ -8,50 +8,64 @@ defineProps({
 </script>
 
 <template>
-  <div class="section-title">
-    <Icon v-if="icon" :icon="icon" />
-    <span>{{ title }}</span>
+  <div class="section-title" :class="{ empty: !icon && !title }">
+    <template v-if="icon || title">
+      <Icon v-if="icon" :icon="icon" />
+      <span v-if="title">{{ title }}</span>
+    </template>
+
+    <div v-else class="divider-line"></div>
   </div>
 </template>
 
 <style scoped>
 .section-title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  text-align: center;
-
-  background: linear-gradient(
+  --gradient: linear-gradient(
     270deg,
     var(--vp-c-purple-1),
     var(--vp-c-brand-2),
     var(--vp-c-purple-1)
   );
 
+  --anim: gradient-flow 2s linear infinite;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.section-title:not(.empty) {
+  background: var(--gradient);
   background-size: 200% 100%;
-  animation: gradient-flow 2s linear infinite;
+  animation: var(--anim);
 
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.section-title::before,
-.section-title::after {
+.section-title:not(.empty)::before,
+.section-title:not(.empty)::after {
   content: "";
   flex: 1;
   height: 2px;
 
-  background: linear-gradient(
-    270deg,
-    var(--vp-c-purple-1),
-    var(--vp-c-brand-2),
-    var(--vp-c-purple-1)
-  );
-
+  background: var(--gradient);
   background-size: 200% 100%;
-  animation: gradient-flow 2s linear infinite;
+  animation: var(--anim);
+
+  border-radius: 2px;
+}
+
+.divider-line {
+  width: 100%;
+  height: 2px;
+
+  background: var(--gradient);
+  background-size: 200% 100%;
+  animation: var(--anim);
 
   border-radius: 2px;
 }
