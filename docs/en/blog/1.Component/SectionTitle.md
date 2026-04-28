@@ -33,92 +33,21 @@ permalink: /en/blog/6e1h43ek/
 
 :::
 
-## ✨ Preview
-
-<CardGrid>
-    <SectionTitle title="Repository" icon="codicon:repo" />
-    <SectionTitle title="Version" icon="codicon:versions" />
-</CardGrid>
-
 ## ✍️ Implementation
 
 :::: steps
 
 1. ==How to create==
 
-  ::: info Add a `SectionTitle.vue` component under `.vuepress/theme/components`
-  :::
+    ::: details Create `.vuepress/theme/components/SectionTitle.vue` and define the component as follows:
 
-   ```vue :collapsed-lines title=".vuepress/theme/components/SectionTitle.vue"
-    <script setup lang="ts">
-    import { Icon } from '@iconify/vue'
+      @[code vue](../../../.vuepress/theme/components/SectionTitle.vue)
 
-    defineProps(['title', 'icon'])
-    </script>
+    :::
 
-    <template>
-      <div class="section-title">
-        <Icon v-if="icon" :icon="icon" />
-        <span>{{ title }}</span>
-      </div>
-    </template>
+2. ==How to register==
 
-    <style scoped>
-    .section-title {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      text-align: center;
-
-      background: linear-gradient(
-        270deg,
-        var(--vp-c-purple-1),
-        var(--vp-c-brand-2),
-        var(--vp-c-purple-1)
-      );
-
-      background-size: 200% 100%;
-      animation: gradient-flow 2s linear infinite;
-
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .section-title::before,
-    .section-title::after {
-      content: "";
-      flex: 1;
-      height: 2px;
-
-      background: linear-gradient(
-        270deg,
-        var(--vp-c-purple-1),
-        var(--vp-c-brand-2),
-        var(--vp-c-purple-1)
-      );
-
-      background-size: 200% 100%;
-      animation: gradient-flow 2s linear infinite;
-
-      border-radius: 2px;
-    }
-
-    @keyframes gradient-flow {
-      0% {
-        background-position: 0% 50%;
-      }
-      100% {
-        background-position: 200% 50%;
-      }
-    }
-    </style>  
-   ```
-
-1. ==How to register==
-
-    ::: info Update `.vuepress/theme/client.ts` as follows:
+    ::: note Update `.vuepress/theme/client.ts` as follows:
     :::
 
    ```ts :collapsed-lines title=".vuepress/theme/client.ts"
@@ -132,9 +61,9 @@ permalink: /en/blog/6e1h43ek/
     })
    ```
 
-2. ==How to use==
+3. ==How to use==
 
-    ::: info You can use this component anywhere, such as in posts or blogs.
+    ::: note You can use this component anywhere, such as in posts or blogs.
     :::
 
     ```ts :collapsed-lines title="docs/README.md"
@@ -158,11 +87,43 @@ permalink: /en/blog/6e1h43ek/
 
     :::
 
-3. ==Final Result==
+4. ==Final Result==
 
     <SectionTitle title="Repository" icon="codicon:repo" />
 
 ::::
+
+## 📖 Props
+
+:::: field-group
+
+::: field name="title" type="string" optional
+Section title
+:::
+
+::: field name="icon" type="string" optional
+Iconify icon name, like `mdi:home` or `codicon:repo`
+:::
+
+::::
+
+## 🚀 Usage
+
+| title| icon | status | sample |
+| -- | -- | -- | -- |
+| ✔ | ✔ | icon + title | `<SectionTitle title="Repository" icon="codicon:repo" />`|
+| ✔ | ✖ | title only | `<SectionTitle title="Repository" />` |
+| ✖ | ✔ | icon only | `<SectionTitle icon="codicon:repo" />` |
+| ✖ | ✖ | divider | `<SectionTitle />` |
+
+## ✨ Preview
+
+<CardGrid cols=4>
+  <SectionTitle title="Repository" icon="codicon:repo" />
+  <SectionTitle title="Repository" />
+  <SectionTitle icon="codicon:repo" />
+  <SectionTitle />
+</CardGrid>
 
 ## 🔖 Summary
 

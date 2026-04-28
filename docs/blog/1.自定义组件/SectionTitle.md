@@ -1,5 +1,5 @@
 ---
-title: 模块标题组件-SectionTitle
+title: 区块标题组件-SectionTitle
 sticky: true
 tags:
   - 组件
@@ -10,7 +10,7 @@ createTime: 2026/04/22 16:07:43
 permalink: /blog/6e1h43ek/
 ---
 
-::: important 首个自定义组件，支持图标与标题的 `模块标题组件` 实现记录
+::: important 首个自定义组件，支持图标与标题的 `区块标题组件` 实现记录
 :::
 
 <!-- more -->
@@ -20,25 +20,18 @@ permalink: /blog/6e1h43ek/
 ::: info 为什么要做这个组件？
 
 * 熟悉组件的用法
-* 统一模块标题样式
+* 统一区块标题样式
 
 :::
 
 ## 🎯 设计目标
 
-::: info 用一个组件统一所有 “模块标题样式”
+::: info 用一个组件统一所有 “区块标题样式”
 
 * ✅ 支持标题传参
 * ✅ 支持图标（Iconify）
 
 :::
-
-## ✨ 效果预览
-
-<CardGrid>
-    <SectionTitle title="常用仓库" icon="codicon:repo" />
-    <SectionTitle title="版本号" icon="codicon:versions" />
-</CardGrid>
 
 ## ✍️ 实现步骤
 
@@ -46,74 +39,16 @@ permalink: /blog/6e1h43ek/
 
 1. ==编写组件==
 
-   ```vue :collapsed-lines title=".vuepress/theme/components/SectionTitle.vue"
-    <script setup lang="ts">
-    import { Icon } from '@iconify/vue'
+    ::: details 新建组件文件，路径为: `.vuepress/theme/components/SectionTitle.vue`，并实现如下内容
 
-    defineProps(['title', 'icon'])
-    </script>
+    @[code vue](../../.vuepress/theme/components/SectionTitle.vue)
 
-    <template>
-      <div class="section-title">
-        <Icon v-if="icon" :icon="icon" />
-        <span>{{ title }}</span>
-      </div>
-    </template>
-
-    <style scoped>
-    .section-title {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      text-align: center;
-
-      background: linear-gradient(
-        270deg,
-        var(--vp-c-purple-1),
-        var(--vp-c-brand-2),
-        var(--vp-c-purple-1)
-      );
-
-      background-size: 200% 100%;
-      animation: gradient-flow 2s linear infinite;
-
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .section-title::before,
-    .section-title::after {
-      content: "";
-      flex: 1;
-      height: 2px;
-
-      background: linear-gradient(
-        270deg,
-        var(--vp-c-purple-1),
-        var(--vp-c-brand-2),
-        var(--vp-c-purple-1)
-      );
-
-      background-size: 200% 100%;
-      animation: gradient-flow 2s linear infinite;
-
-      border-radius: 2px;
-    }
-
-    @keyframes gradient-flow {
-      0% {
-        background-position: 0% 50%;
-      }
-      100% {
-        background-position: 200% 50%;
-      }
-    }
-    </style>  
-   ```
+    :::
 
 2. ==注册组件==
+
+    ::: note 修改如下文件: `.vuepress/theme/client.ts`
+    :::
 
    ```ts :collapsed-lines title=".vuepress/theme/client.ts"
     import { defineClientConfig } from 'vuepress/client'
@@ -127,6 +62,9 @@ permalink: /blog/6e1h43ek/
    ```
 
 3. ==使用组件==
+
+    ::: note 该组件可在任意位置使用，例如文章或博客中
+    :::
 
     ```ts :collapsed-lines title="docs/README.md"
     <SectionTitle title="常用仓库" icon="codicon:repo" />
@@ -154,6 +92,38 @@ permalink: /blog/6e1h43ek/
     <SectionTitle title="常用仓库" icon="codicon:repo" />
 
 ::::
+
+## 📖 属性定义
+
+:::: field-group
+
+::: field name="title" type="string" optional
+区块标题名称
+:::
+
+::: field name="icon" type="string" optional
+Iconify 图标名称，例如 `mdi:home`、`codicon:repo`
+:::
+
+::::
+
+## 🚀 用法用例
+
+| 标题 | 图标 | 状态说明 | 样例 |
+| -- | -- | -- | -- |
+| ✔ | ✔ | 图标 + 标题 | `<SectionTitle title="常用仓库" icon="codicon:repo" />`|
+| ✔ | ✖ | 仅标题 | `<SectionTitle title="常用仓库" />` |
+| ✖ | ✔ | 仅图标 | `<SectionTitle icon="codicon:repo" />` |
+| ✖ | ✖ | 仅分割线 | `<SectionTitle />` |
+
+## ✨ 效果预览
+
+<CardGrid cols=4>
+  <SectionTitle title="常用仓库" icon="codicon:repo" />
+  <SectionTitle title="常用仓库" />
+  <SectionTitle icon="codicon:repo" />
+  <SectionTitle />
+</CardGrid>
 
 ## 🔖 总结
 
