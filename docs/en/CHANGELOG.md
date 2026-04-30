@@ -1,3 +1,17 @@
+## 🔖 Release v2.1.4 (2026-04-30)
+
+### 📝 Documentation
+
+* **js-delivr:** :memo: add jsDelivr documentation ([8ec746e](https://github.com/EmirioBomb/GearPress/commit/8ec746e22be1468720bee5837489da1f7b138439))
+* **section-title:** :memo: update permalink to file path format ([8470315](https://github.com/EmirioBomb/GearPress/commit/8470315fd347c4bd4bdd656ca590eede6301fe34))
+
+### 🔧 Chores
+
+* **config:** :wrench: generate permalink based on file path ([43c37a4](https://github.com/EmirioBomb/GearPress/commit/43c37a4bfd396f9b4b4492409c8eddb461fdcea8))
+* **navbar:** :wrench: add notes navbar and sidebar ([0ed5833](https://github.com/EmirioBomb/GearPress/commit/0ed58338795de42af02e1ef5c2d2b7d7194df8a6))
+* **plume-config:** :wrench: update outline level to h6 ([7781957](https://github.com/EmirioBomb/GearPress/commit/77819572d6f294914c64690aced0c8f7be488562))
+* **release-rc:** :wrench: docs commits trigger a patch release ([82e336d](https://github.com/EmirioBomb/GearPress/commit/82e336d3928dda916b8e007e4125713ff0e3657b))
+
 ## 🔖 Release v2.1.3 (2026-04-28)
 
 ### 🐛 Bug Fixes
