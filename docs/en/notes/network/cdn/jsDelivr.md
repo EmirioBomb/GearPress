@@ -146,7 +146,7 @@ https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/js
 https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@1.0.13/GearPress/notes/jsdelivr-tool-github.png
 ```
 
-#### 2️⃣ Purge Cache（Official Tools）
+#### 2️⃣ Purge Cache Tool
 
 ::: warning
 
@@ -157,7 +157,7 @@ https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@1.0.13/GearPress/notes/
 
 <ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/jsdelivr-purge-github.png" />
 
-#### 3️⃣ Purge Cache（purge link）
+#### 3️⃣ Purge Cache Link
 
 ::: info info Root endpoint: `https://purge.jsdelivr.net`
 :::
