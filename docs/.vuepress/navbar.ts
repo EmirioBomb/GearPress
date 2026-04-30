@@ -10,8 +10,23 @@ import { version } from '../../package.json'
 export const zhNavbar = defineNavbarConfig([
   { text: '首页', icon: 'codicon:home', link: '/' },
   { text: '博客', icon: 'codicon:book', link: '/blog/' },
-  // { text: '开发笔记', icon: 'codicon:note', link: '/notes/' },
-  // { text: '归档', link: '/blog/archives/' },
+  { 
+    text: '随记', 
+    icon: 'codicon:notebook', 
+    items: [
+      { 
+        text: '网络',
+        icon: 'mdi:network-outline', 
+        items: [
+          {
+            text: 'CDN 服务',
+            icon: 'mdi:cloud-outline',
+            link: '/notes/network/cdn/js-delivr/'
+          },
+        ]
+      },
+    ]
+  },
   { 
     text: `v${version}`, 
     icon: 'codicon:versions', 
@@ -29,8 +44,23 @@ export const zhNavbar = defineNavbarConfig([
 export const enNavbar = defineNavbarConfig([
   { text: 'Home', icon: 'codicon:home', link: '/en/' },
   { text: 'Blog', icon: 'codicon:book', link: '/en/blog/' },
-  // { text: 'Tags', link: '/en/blog/tags/' },
-  // { text: 'Archives', link: '/en/blog/archives/' },
+  { 
+    text: 'Notes', 
+    icon: 'codicon:notebook', 
+    items: [
+      { 
+        text: 'Network',
+        icon: 'mdi:network-outline', 
+        items: [
+          {
+            text: 'CDN',
+            icon: 'mdi:cloud-outline',
+            link: '/en/notes/network/cdn/js-delivr/'
+          },
+        ]
+      },
+    ]
+  },
   { 
     text: `v${version}`, 
     icon: 'codicon:versions', 

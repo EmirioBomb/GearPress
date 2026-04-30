@@ -46,30 +46,46 @@ const zhBlog = defineCollection({
   //   pagination: 15, // 每页显示文章数量
 })
 
-const zhDemoDoc = defineCollection({
+const zhDoc = defineCollection({
   // doc 类型，该类型带有侧边栏
   type: 'doc',
   // 文档集合所在目录，相对于 `docs/`
-  dir: 'demo',
+  dir: 'notes',
   // `dir` 所指向的目录中的所有 markdown 文件，其 permalink 需要以 `linkPrefix` 配置作为前缀
   // 如果 前缀不一致，则无法生成侧边栏。
   // 所以请确保  markdown 文件的 permalink 都以 `/` + `linkPrefix` 开头
-  linkPrefix: '/demo',
+  linkPrefix: '/notes/',
   // 文档标题，它将用于在页面的面包屑导航中显示
-  title: 'Demo',
+  title: '随记',
   // 手动配置侧边栏结构
-  sidebar: ['', 'foo', 'bar'],
-  // 根据文件结构自动生成侧边栏
-  // sidebar: 'auto',
+  sidebar: [
+    {
+      text: '网络服务',
+      collapsed: false,
+      icon: 'mdi:network-outline',
+      prefix: 'network',
+      items: [
+        {
+          text: 'CDN 服务',
+          icon: 'mdi:cloud-outline',
+          prefix: 'cdn',
+          items: [
+            'jsDelivr',
+          ]
+        },
+      ]
+    },
+  ],
 })
 
 /**
  * 导出所有的 collections
  *  (zhBlog 为博客示例，如果不需要博客功能，请删除)
- *  (zhDemoDoc 为参考示例，如果不需要它，请删除)
+ *  (zhDoc 为参考示例，如果不需要它，请删除)
  */
 export const zhCollections = defineCollections([
   zhBlog,
+  zhDoc
 ])
 
 /* =================== locale: en-US ======================= */
@@ -92,29 +108,45 @@ const enBlog = defineCollection({
   //   pagination: 15, // 每页显示文章数量
 })
 
-const enDemoDoc = defineCollection({
+const enDoc = defineCollection({
   // doc 类型，该类型带有侧边栏
   type: 'doc',
   // 文档集合所在目录，相对于 `docs/en/`
-  dir: 'demo',
+  dir: 'notes',
   // `dir` 所指向的目录中的所有 markdown 文件，其 permalink 需要以 `linkPrefix` 配置作为前缀
   // 如果 前缀不一致，则无法生成侧边栏。
   // 所以请确保  markdown 文件的 permalink 都以 `/en/` + `linkPrefix` 开头
-  linkPrefix: '/demo',
+  linkPrefix: '/notes/',
   // 文档标题，它将用于在页面的面包屑导航中显示
-  title: 'Demo',
+  title: 'Notes',
   // 手动配置侧边栏结构
-  sidebar: ['', 'foo', 'bar'],
-  // 根据文件结构自动生成侧边栏
-  // sidebar: 'auto',
+  sidebar: [
+    {
+      text: 'Network',
+      collapsed: false,
+      icon: 'mdi:network-outline',
+      prefix: 'network',
+      items: [
+        {
+          text: 'CDN',
+          icon: 'mdi:cloud-outline',
+          prefix: 'cdn',
+          items: [
+            'jsDelivr',
+          ]
+        },
+      ]
+    },
+  ],
 })
 
 /**
  * 导出所有的 collections
  *  (enBlog 为博客示例，如果不需要博客功能，请删除)
- *  (enDemoDoc 为参考示例，如果不需要它，请删除)
+ *  (enDoc 为参考示例，如果不需要它，请删除)
  */
 export const enCollections = defineCollections([
   enBlog,
+  enDoc
 ])
 
