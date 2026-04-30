@@ -7,7 +7,7 @@ tags:
   - SectionTitle
   - 图标
 createTime: 2026/04/22 16:07:43
-permalink: /blog/6e1h43ek/
+permalink: /blog/section-title/
 ---
 
 ::: important 首个自定义组件，支持图标与标题的 `区块标题组件` 实现记录

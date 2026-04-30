@@ -7,7 +7,7 @@ tags:
   - SectionTitle
   - icon
 createTime: 2026/04/22 15:59:30
-permalink: /en/blog/6e1h43ek/
+permalink: /en/blog/section-title/
 ---
 
 ::: important My First Custom Component: Building a `SectionTitle` with Icon Support
