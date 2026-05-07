@@ -1,5 +1,9 @@
 ---
 title: jsDelivr
+tags:
+  - CDN
+  - jsDelivr
+  - 内容分发网络
 createTime: 2026/04/28 15:22:17
 permalink: /notes/network/cdn/js-delivr/
 ---

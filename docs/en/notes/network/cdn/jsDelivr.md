@@ -1,5 +1,8 @@
 ---
 title: jsDelivr
+tags:
+  - CDN
+  - jsDelivr
 createTime: 2026/04/29 10:35:06
 permalink: /en/notes/network/cdn/js-delivr/
 ---
