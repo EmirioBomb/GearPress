@@ -1,3 +1,14 @@
+## 🔖 Release v2.1.5 (2026-05-07)
+
+### 📝 Documentation
+
+* **git:** :memo: add Git Cheat Sheet ([9606cdc](https://github.com/EmirioBomb/GearPress/commit/9606cdccc5efbf1a3ac22b76db1989cc7a475397))
+* **gitignore:** :memo: add gitignore notes ([f251ae0](https://github.com/EmirioBomb/GearPress/commit/f251ae0732b7ff95c7e651c96be5fd216e835f03))
+* **gitignore:** :memo: add tags and fix some text ([e92945c](https://github.com/EmirioBomb/GearPress/commit/e92945c5c6e7d0edf24000fd15d152da089b05b9))
+* **js-delivr:** :memo: add some tags ([fb3a10c](https://github.com/EmirioBomb/GearPress/commit/fb3a10c9b9a23235abeeec9503c0bdc724d3f895))
+* **js-delivr:** :memo: fix some text ([e2d6d84](https://github.com/EmirioBomb/GearPress/commit/e2d6d84eed6ad3ec4d6c88689faff89e9712a5dc))
+* **js-delivr:** :memo: update title text ([d1d390a](https://github.com/EmirioBomb/GearPress/commit/d1d390aed838181c977d8ef3139370bf46479a54))
+
 ## 🔖 Release v2.1.4 (2026-04-30)
 
 ### 📝 Documentation
