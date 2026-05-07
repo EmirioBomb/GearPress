@@ -75,6 +75,22 @@ const zhDoc = defineCollection({
         },
       ]
     },
+    {
+      text: '版本控制',
+      collapsed: false,
+      icon: 'mdi:source-branch',
+      prefix: 'vcs',
+      items: [
+        {
+          text: 'Git',
+          icon: 'mdi:git',
+          prefix: 'git',
+          items: [
+            'gitignore',
+          ]
+        },
+      ]
+    },
   ],
 })
 
@@ -133,6 +149,22 @@ const enDoc = defineCollection({
           prefix: 'cdn',
           items: [
             'jsDelivr',
+          ]
+        },
+      ]
+    },
+    {
+      text: 'VCS',
+      collapsed: false,
+      icon: 'mdi:source-branch',
+      prefix: 'vcs',
+      items: [
+        {
+          text: 'Git',
+          icon: 'mdi:git',
+          prefix: 'git',
+          items: [
+            'gitignore',
           ]
         },
       ]

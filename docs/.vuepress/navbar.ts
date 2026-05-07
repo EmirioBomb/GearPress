@@ -25,6 +25,17 @@ export const zhNavbar = defineNavbarConfig([
           },
         ]
       },
+      { 
+        text: '版本控制',
+        icon: 'mdi:source-branch', 
+        items: [
+          {
+            text: 'Git',
+            icon: 'mdi:git',
+            link: '/notes/vcs/git/gitignore/'
+          },
+        ]
+      },
     ]
   },
   { 
@@ -56,6 +67,17 @@ export const enNavbar = defineNavbarConfig([
             text: 'CDN',
             icon: 'mdi:cloud-outline',
             link: '/en/notes/network/cdn/js-delivr/'
+          },
+        ]
+      },
+      { 
+        text: 'VCS',
+        icon: 'mdi:source-branch', 
+        items: [
+          {
+            text: 'Git',
+            icon: 'mdi:git',
+            link: '/en/notes/vcs/git/gitignore/'
           },
         ]
       },
