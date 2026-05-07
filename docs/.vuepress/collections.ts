@@ -86,6 +86,7 @@ const zhDoc = defineCollection({
           icon: 'mdi:git',
           prefix: 'git',
           items: [
+            'git',
             'gitignore',
           ]
         },
@@ -164,6 +165,7 @@ const enDoc = defineCollection({
           icon: 'mdi:git',
           prefix: 'git',
           items: [
+            'git',
             'gitignore',
           ]
         },

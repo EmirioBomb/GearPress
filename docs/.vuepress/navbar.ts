@@ -32,7 +32,7 @@ export const zhNavbar = defineNavbarConfig([
           {
             text: 'Git',
             icon: 'mdi:git',
-            link: '/notes/vcs/git/gitignore/'
+            link: '/notes/vcs/git/git/'
           },
         ]
       },
@@ -77,7 +77,7 @@ export const enNavbar = defineNavbarConfig([
           {
             text: 'Git',
             icon: 'mdi:git',
-            link: '/en/notes/vcs/git/gitignore/'
+            link: '/en/notes/vcs/git/git/'
           },
         ]
       },
