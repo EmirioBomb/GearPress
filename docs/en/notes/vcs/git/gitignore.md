@@ -1,5 +1,9 @@
 ---
 title: gitignore
+tags:
+    - Git
+    - VCS
+    - gitignore
 createTime: 2026/05/06 10:10:46
 permalink: /en/notes/vcs/git/gitignore/
 ---

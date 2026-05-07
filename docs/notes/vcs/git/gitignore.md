@@ -1,5 +1,10 @@
 ---
 title: gitignore
+tags:
+    - Git
+    - VCS
+    - gitignore
+    - 版本控制
 createTime: 2026/05/06 10:10:46
 permalink: /notes/vcs/git/gitignore/
 ---
@@ -177,7 +182,7 @@ al
 
 :::
 
-## 📎 其他
+## 📚 笔记
 
 ### 1️⃣ 提交被忽略的文件
 
