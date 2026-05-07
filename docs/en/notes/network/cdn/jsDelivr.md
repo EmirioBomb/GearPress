@@ -11,11 +11,9 @@ permalink: /en/notes/network/cdn/js-delivr/
 
 ::: note
 
-**`jsDelivr`** is ==`a free CDN (Content Delivery Network)`== for open source files. It is tightly integrated with ==GitHub== and ==NPM==, making it easy to use as a reliable CDN for almost any open source projects.
+[`jsDelivr`](https://www.jsdelivr.com/) is ==`a free CDN (Content Delivery Network)`== for open source files. It is tightly integrated with ==GitHub== and ==NPM==, making it easy to use as a reliable CDN for almost any open source projects.
 
 :::
-
-<LinkCard icon="mdi:web" title="jsDelivr Official Site" href="https://www.jsdelivr.com/" />
 
 ## ✨ Features
 
@@ -27,9 +25,9 @@ permalink: /en/notes/network/cdn/js-delivr/
 * 🌍 Powered by a global CDN network
 * 📦 Supports GitHub / npm
 
-## 🚀 How to Make GitHub Assets Load Faster with jsDelivr
+## 🚀 GitHub + jsDelivr
 
-::: note I’ll use my repository `EmirioBomb/media-collections` as an example.
+::: note Example repository: `EmirioBomb/media-collections`
 :::
 
 ### 1️⃣ CDN link
@@ -69,13 +67,13 @@ https://cdn.jsdelivr.net/gh/user/demo@1.0.0/app.js
 https://github.com/EmirioBomb/media-collections/blob/main/GearPress/notes/jsdelivr-tool-github.png
 ```
 
-@tab ⚡ After（@branch）
+@tab ⚡ After `(@branch)`
 
 ```text:no-line-numbers
 https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/jsdelivr-tool-github.png
 ```
 
-@tab ⚡ After（@version）
+@tab ⚡ After `(@version)`
 
 ```text:no-line-numbers
 https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@1.0.3/GearPress/notes/jsdelivr-tool-github.png
@@ -94,7 +92,7 @@ https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@1.0.3/GearPress/notes/j
 
 ### 2️⃣ Official Tools
 
-::: info Paste Github link, and it will be easily converted to jsDelivr links
+::: info Paste ==Github link==, and it will be easily converted to ==jsDelivr links==
 :::
 
 <ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/jsdelivr-tool-github.png" />
@@ -115,12 +113,12 @@ https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/js
 
 :::
 
-## ⚠️ Why no immediate update
+## 💡 Why no immediate update
 
 ::: warning Why doesn’t my GitHub file update show up right away?
 :::
 
-### ❓ Why it happens
+### 💬 Why it happens
 
 ::: note
 
@@ -132,7 +130,7 @@ https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/js
 
 <LinkCard title="👉 Official reference for Caching logic" href="https://www.jsdelivr.com/documentation#id-caching" />
 
-### 🔧 How to fix it
+### 🛠️ How to fix it
 
 #### 1️⃣ @version
 
@@ -173,7 +171,7 @@ https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@1.0.13/GearPress/notes/
 https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/jsdelivr-tool-github.png
 ```
 
-@tab 🔄 purge cache link
+@tab 🔄 Purge cache link
 
 ```text:no-line-numbers
 # @branch
@@ -202,5 +200,11 @@ https://purge.jsdelivr.net/gh/EmirioBomb/media-collections@1.0.3/GearPress/notes
   }
 }
 ```
+
+:::
+
+::: warning
+
+If the latest content is still not visible after running `purge`, try `clearing your browser cache` or reopening the page in `incognito/private mode`.
 
 :::

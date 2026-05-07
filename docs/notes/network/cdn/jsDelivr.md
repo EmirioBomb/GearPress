@@ -12,11 +12,9 @@ permalink: /notes/network/cdn/js-delivr/
 
 ::: note
 
-`jsDelivr` 是一个为开源项目提供的 ==免费 CDN（内容分发网络）==。它与 ==GitHub== 和 ==npm== 深度集成，能够为绝大多数开源项目自动提供稳定可靠的加速服务
+[`jsDelivr`](https://www.jsdelivr.com/) 是一个为开源项目提供的 ==免费 CDN（内容分发网络）==。它与 ==GitHub== 和 ==npm== 深度集成，能够为绝大多数开源项目自动提供稳定可靠的加速服务
 
 :::
-
-<LinkCard icon="mdi:web" title="jsDelivr 官网地址" href="https://www.jsdelivr.com/" />
 
 ## ✨ 核心特点
 
@@ -33,7 +31,7 @@ permalink: /notes/network/cdn/js-delivr/
 ::: note 下面以我个人仓库 `EmirioBomb/media-collections` 为例
 :::
 
-### 1️⃣ 直接使用CDN链接
+### 1️⃣ 使用CDN链接
 
 ::: info 统一访问入口：`https://cdn.jsdelivr.net`
 :::
@@ -70,13 +68,13 @@ https://cdn.jsdelivr.net/gh/user/demo@1.0.0/app.js
 https://github.com/EmirioBomb/media-collections/blob/main/GearPress/notes/jsdelivr-tool-github.png
 ```
 
-@tab ⚡ 加速后（@分支）
+@tab ⚡ 加速后 `（@分支）`
 
 ```text:no-line-numbers
 https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/jsdelivr-tool-github.png
 ```
 
-@tab ⚡ 加速后（@版本号）
+@tab ⚡ 加速后 `（@版本号）`
 
 ```text:no-line-numbers
 https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@1.0.3/GearPress/notes/jsdelivr-tool-github.png
@@ -116,12 +114,12 @@ https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/js
 
 :::
 
-## ⚠️ 为什么更新文件后没有立即生效？
+## 💡 为什么更新文件后没有立即生效？
 
 ::: warning 当你在 GitHub 中更新`相同路径`的文件时，为什么改动不会立即生效？
 :::
 
-### ❓ 问题原因
+### 💬 问题原因
 
 ::: note
 
@@ -133,7 +131,7 @@ https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/js
 
 <LinkCard title="👉 参考官方缓存机制说明" href="https://www.jsdelivr.com/documentation#id-caching" />
 
-### 🔧 解决方案
+### 🛠️ 解决方案
 
 #### 1️⃣ 使用@版本号
 
@@ -203,5 +201,11 @@ https://purge.jsdelivr.net/gh/EmirioBomb/media-collections@1.0.3/GearPress/notes
   }
 }
 ```
+
+:::
+
+::: warning
+
+如果执行 `purge` 后仍未看到最新内容，请尝试 `清除浏览器缓存`，或使用 `无痕模式` 重新访问。
 
 :::
