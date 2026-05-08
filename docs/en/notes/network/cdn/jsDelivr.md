@@ -1,5 +1,6 @@
 ---
 title: jsDelivr
+icon: cib:jsdelivr
 tags:
   - CDN
   - jsDelivr

@@ -1,5 +1,6 @@
 ---
 title: Cheat Sheet
+icon: cil:spreadsheet
 tags:
     - Git
     - Cheat Sheet

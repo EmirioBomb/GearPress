@@ -1,5 +1,6 @@
 ---
 title: gitignore
+icon: simple-icons:toptal
 tags:
     - Git
     - VCS

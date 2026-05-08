@@ -1,5 +1,6 @@
 ---
 title: 命令速查
+icon: cil:spreadsheet
 tags:
     - Git
     - Cheat Sheet
