@@ -1,12 +1,3 @@
-<script setup lang="ts">
-import { Icon } from '@iconify/vue'
-
-defineProps({
-  title: String,
-  icon: String
-})
-</script>
-
 <template>
   <div class="section-title" :class="{ empty: !icon && !title }">
     <template v-if="icon || title">
@@ -17,6 +8,15 @@ defineProps({
     <div v-else class="divider-line"></div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Icon } from '@iconify/vue'
+
+defineProps({
+  title: String,
+  icon: String
+})
+</script>
 
 <style scoped>
 .section-title {
