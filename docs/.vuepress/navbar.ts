@@ -39,6 +39,17 @@ export const zhNavbar = defineNavbarConfig([
     ]
   },
   { 
+    text: '更多', 
+    icon: 'mdi:information-outline', 
+    items: [
+      { 
+        text: '关于我',
+        icon: 'cib:about-me', 
+        link: '/notes/about-me/'
+      },
+    ]
+  },
+  { 
     text: `v${version}`, 
     icon: 'codicon:versions', 
     badge: '新', 
@@ -49,7 +60,7 @@ export const zhNavbar = defineNavbarConfig([
         link: 'CHANGELOG.md'
       }
     ]
-  },
+  }
 ])
 
 export const enNavbar = defineNavbarConfig([
@@ -80,6 +91,17 @@ export const enNavbar = defineNavbarConfig([
             link: '/en/notes/vcs/git/git/'
           },
         ]
+      },
+    ]
+  },
+  { 
+    text: 'More', 
+    icon: 'mdi:information-outline', 
+    items: [
+      { 
+        text: 'About Me',
+        icon: 'cib:about-me', 
+        link: '/en/notes/about-me/'
       },
     ]
   },

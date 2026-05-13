@@ -5,8 +5,8 @@ import RepoCard from 'vuepress-theme-plume/features/RepoCard.vue'
 // import Swiper from 'vuepress-theme-plume/features/Swiper.vue'
 
 import SectionTitle from './theme/components/SectionTitle.vue'
+import AboutMe from './theme/components/about/AboutMe.vue'
 
-// import './theme/styles/custom.css'
 import './theme/styles/index.css'
 
 export default defineClientConfig({
@@ -19,5 +19,6 @@ export default defineClientConfig({
 
     // your custom components
     app.component('SectionTitle', SectionTitle)
+    app.component('AboutMe', AboutMe)
   },
 })
