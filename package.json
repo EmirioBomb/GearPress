@@ -27,6 +27,7 @@
     "node": "^20.6.0 || >=22.0.0"
   },
   "dependencies": {
+    "@iconify/vue": "^5.0.1",
     "swiper": "^12.1.4"
   }
 }
