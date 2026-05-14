@@ -9,7 +9,7 @@ config:
       name: Gear Press
       tagline: Write it down Remember it forever
       text: Knowledge is power
-      image: logo.svg
+      image: logo.png
       actions:
         -
           theme: brand

@@ -9,7 +9,7 @@ config:
       name: Gear Press
       tagline: 日积月累，终见其深
       text: 知识唯一的来源是经验
-      image: logo.svg
+      image: logo.png
       actions:
         -
           theme: brand

@@ -18,7 +18,7 @@ import { enNavbar, zhNavbar } from './navbar'
  * @see https://theme-plume.vuejs.press/config/basic/
  */
 export default defineThemeConfig({
-  logo: 'logo.svg',
+  logo: 'logo.png',
 
   appearance: true,  // 配置 深色模式
 
@@ -59,7 +59,7 @@ export default defineThemeConfig({
        * @see https://theme-plume.vuejs.press/config/basic/#profile
        */
       profile: {
-        avatar: 'logo.svg',
+        avatar: 'logo.png',
         name: 'GearPress',
         description: '日积月累，终见其深',
         // circle: true,
@@ -86,7 +86,7 @@ export default defineThemeConfig({
        * @see https://theme-plume.vuejs.press/config/basic/#profile
        */
       profile: {
-        avatar: 'logo.svg',
+        avatar: 'logo.png',
         name: 'GearPress',
         description: 'Notes & Blog',
         // circle: true,
