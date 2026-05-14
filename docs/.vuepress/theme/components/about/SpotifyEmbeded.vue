@@ -34,10 +34,10 @@ const isCompact = computed(() => {
   return screenWidth.value <= (props.breakpoint ?? 768)
 })
 
-/** Spotify embed 地址 */
+/** Spotify embed 地址（固定深色主题） */
 const src = computed(() => {
-  const base = `https://open.spotify.com/embed/playlist/${props.playlistId}?utm_source=generator`
-  return isCompact.value ? base : `${base}&theme=0`
+  const base = `https://open.spotify.com/embed/playlist/${props.playlistId}?utm_source=generator&theme=0`
+  return base
 })
 
 const computedHeight = computed(() => {
