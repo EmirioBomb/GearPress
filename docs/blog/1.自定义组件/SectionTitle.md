@@ -3,8 +3,6 @@ title: 区块标题组件-SectionTitle
 sticky: true
 tags:
   - 组件
-  - 自定义组件
-  - SectionTitle
   - 图标
 createTime: 2026/04/22 16:07:43
 permalink: /blog/section-title/

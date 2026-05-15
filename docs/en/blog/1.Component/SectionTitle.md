@@ -2,9 +2,7 @@
 title: Custom Component-SectionTitle
 sticky: true
 tags:
-  - component
-  - custom-component
-  - SectionTitle
+  - Component
   - icon
 createTime: 2026/04/22 15:59:30
 permalink: /en/blog/section-title/
