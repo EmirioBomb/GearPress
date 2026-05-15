@@ -109,12 +109,16 @@ Iconify 图标名称，例如 `mdi:home`、`codicon:repo`
 
 ## 🚀 用法用例
 
+::: table full-width max-content
+
 | 标题 | 图标 | 状态说明 | 样例 |
 | -- | -- | -- | -- |
-| ✔ | ✔ | 图标 + 标题 | `<SectionTitle title="常用仓库" icon="codicon:repo" />`|
+| ✔ | ✔ | 图标 + 标题 | `<SectionTitle title="常用仓库" icon="codicon:repo" />` |
 | ✔ | ✖ | 仅标题 | `<SectionTitle title="常用仓库" />` |
 | ✖ | ✔ | 仅图标 | `<SectionTitle icon="codicon:repo" />` |
 | ✖ | ✖ | 仅分割线 | `<SectionTitle />` |
+
+:::
 
 ## ✨ 效果预览
 

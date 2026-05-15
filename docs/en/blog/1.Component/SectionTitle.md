@@ -109,12 +109,16 @@ Iconify icon name, like `mdi:home` or `codicon:repo`
 
 ## 🚀 Usage
 
-| title| icon | status | sample |
+::: table full-width max-content
+
+| title | icon | status | sample |
 | -- | -- | -- | -- |
-| ✔ | ✔ | icon + title | `<SectionTitle title="Repository" icon="codicon:repo" />`|
+| ✔ | ✔ | icon + title | `<SectionTitle title="Repository" icon="codicon:repo" />` |
 | ✔ | ✖ | title only | `<SectionTitle title="Repository" />` |
 | ✖ | ✔ | icon only | `<SectionTitle icon="codicon:repo" />` |
 | ✖ | ✖ | divider | `<SectionTitle />` |
+
+:::
 
 ## ✨ Preview
 
