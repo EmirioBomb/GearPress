@@ -18,7 +18,7 @@ permalink: /en/blog/profile-card/
 
 ::: info Why I built this?
 
-Consistent signature style with improved visual presence
+Consistent profile style with improved visual presence
 
 :::
 
@@ -37,7 +37,7 @@ Consistent signature style with improved visual presence
 
 1. ==How to create==
 
-    ::: details Create `.vuepress/theme/components/about/ProfileCard.vue` and define the component as follows:
+    ::: details Create `.vuepress/theme/components/about/ProfileCard.vue`
 
     @[code vue](../../../.vuepress/theme/components/about/ProfileCard.vue)
 
@@ -45,7 +45,7 @@ Consistent signature style with improved visual presence
 
 2. ==How to register==
 
-    ::: note Update `.vuepress/theme/client.ts` as follows:
+    ::: note Update `.vuepress/theme/client.ts`
     :::
 
    ```ts :collapsed-lines title=".vuepress/theme/client.ts"
