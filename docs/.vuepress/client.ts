@@ -6,6 +6,7 @@ import RepoCard from 'vuepress-theme-plume/features/RepoCard.vue'
 
 import SectionTitle from './theme/components/SectionTitle.vue'
 import SpotifyEmbeded from './theme/components/about/SpotifyEmbeded.vue'
+import ProfileCard from './theme/components/about/ProfileCard.vue'
 import AboutMe from './theme/components/about/AboutMe.vue'
 
 import './theme/styles/index.css'
@@ -21,6 +22,7 @@ export default defineClientConfig({
     // your custom components
     app.component('SectionTitle', SectionTitle)
     app.component('SpotifyEmbeded', SpotifyEmbeded)
+    app.component('ProfileCard', ProfileCard)
     app.component('AboutMe', AboutMe)
   },
 })
