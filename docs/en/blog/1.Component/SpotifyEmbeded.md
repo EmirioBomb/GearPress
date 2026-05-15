@@ -86,7 +86,7 @@ permalink: /en/blog/spotify-embeded/
 
     ::: details Create `.vuepress/theme/components/about/SpotifyEmbeded.vue` and define the component as follows:
 
-    @[code vue](../../.vuepress/theme/components/about/SpotifyEmbeded.vue)
+    @[code vue](../../../.vuepress/theme/components/about/SpotifyEmbeded.vue)
 
     :::
 
