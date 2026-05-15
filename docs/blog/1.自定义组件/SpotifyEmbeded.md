@@ -1,10 +1,9 @@
 ---
 title: Spotify网页播放器-SpotifyEmbeded
 tags:
+    - 组件
     - Spotify
-    - 音乐
-    - 歌单
-    - 音乐播放器
+    - 网页播放器
 cover: https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/post-cover/spotify.png
 createTime: 2026/05/14 09:35:00
 permalink: /blog/spotify-embeded/

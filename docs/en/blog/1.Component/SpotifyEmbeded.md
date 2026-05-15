@@ -1,10 +1,9 @@
 ---
 title: Spotify Embeded Player-SpotifyEmbeded
 tags:
+    - Component
     - Spotify
-    - Music
-    - Playlist
-    - MusicPlayer
+    - Web Player
 cover: https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/post-cover/spotify.png
 createTime: 2026/05/14 09:35:00
 permalink: /en/blog/spotify-embeded/
