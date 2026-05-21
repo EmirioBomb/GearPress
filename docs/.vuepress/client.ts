@@ -5,7 +5,7 @@ import RepoCard from 'vuepress-theme-plume/features/RepoCard.vue'
 // import Swiper from 'vuepress-theme-plume/features/Swiper.vue'
 
 import SectionTitle from './theme/components/SectionTitle.vue'
-import SpotifyEmbeded from './theme/components/about/SpotifyEmbeded.vue'
+import SpotifyEmbedded from './theme/components/about/SpotifyEmbedded.vue'
 import ProfileCard from './theme/components/about/ProfileCard.vue'
 import AboutMe from './theme/components/about/AboutMe.vue'
 
@@ -21,7 +21,7 @@ export default defineClientConfig({
 
     // your custom components
     app.component('SectionTitle', SectionTitle)
-    app.component('SpotifyEmbeded', SpotifyEmbeded)
+    app.component('SpotifyEmbedded', SpotifyEmbedded)
     app.component('ProfileCard', ProfileCard)
     app.component('AboutMe', AboutMe)
   },

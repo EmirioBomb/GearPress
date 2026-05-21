@@ -3,7 +3,7 @@
     <ProfileCard align="center" boxMode="banner" />
 
     <section class="media-grid">
-      <SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" />
+      <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" />
       <GameCoverSwiper :items="gamesData" />
     </section>
 
@@ -20,7 +20,7 @@ import { gamesData } from "./data/game-cover.data"
 
 import ProfileCard from "./ProfileCard.vue"
 import IconMarquee from "./IconMarquee.vue"
-import SpotifyEmbeded from "./SpotifyEmbeded.vue"
+import SpotifyEmbedded from "./SpotifyEmbedded.vue"
 import GameCoverSwiper from "./GameCoverSwiper.vue"
 import SectionTitle from "../SectionTitle.vue"
 </script>

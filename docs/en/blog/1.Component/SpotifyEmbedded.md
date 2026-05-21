@@ -1,12 +1,12 @@
 ---
-title: Spotify Embeded Player-SpotifyEmbeded
+title: Spotify Embedded Player-SpotifyEmbedded
 tags:
     - Component
     - Spotify
     - Web Player
 cover: https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/post-cover/spotify.png
 createTime: 2026/05/14 09:35:00
-permalink: /en/blog/spotify-embeded/
+permalink: /en/blog/spotify-embedded/
 ---
 
 ::: tip A web player component based on `Spotify Embed playlist`
@@ -29,12 +29,11 @@ permalink: /en/blog/spotify-embeded/
 ::: info Configurable Props
 
 * ✅ Supports playlist switching
-* ✅ Supports display mode control (normal mode / compact mode)
-* ✅ Supports responsive adaptation (automatic switching based on breakpoints)
+* ✅ Supports display mode control (normal mode / compact mode / full mode)
 
 :::
 
-## 🎧 Get Embeded playlist
+## 🎧 Get Embedded playlist
 
 <LinkCard icon="mdi:web" title="Spotify Embed Player documentation" href="https://developer.spotify.com/documentation/embeds" />
 
@@ -84,9 +83,9 @@ permalink: /en/blog/spotify-embeded/
 
 1. ==How to create==
 
-    ::: details Create `.vuepress/theme/components/about/SpotifyEmbeded.vue` and define the component as follows:
+    ::: details Create `.vuepress/theme/components/about/SpotifyEmbedded.vue` and define the component as follows:
 
-    @[code vue](../../../.vuepress/theme/components/about/SpotifyEmbeded.vue)
+    @[code vue](../../../.vuepress/theme/components/about/SpotifyEmbedded.vue)
 
     :::
 
@@ -97,11 +96,11 @@ permalink: /en/blog/spotify-embeded/
 
    ```ts :collapsed-lines title=".vuepress/theme/client.ts"
     import { defineClientConfig } from 'vuepress/client'
-    import SpotifyEmbeded from './theme/components/about/SpotifyEmbeded.vue' // [!code ++] 
+    import SpotifyEmbedded from './theme/components/about/SpotifyEmbedded.vue' // [!code ++] 
 
     export default defineClientConfig({
       enhance({ app }) {
-          app.component('SpotifyEmbeded', SpotifyEmbeded) // [!code ++] 
+          app.component('SpotifyEmbedded', SpotifyEmbedded) // [!code ++] 
       },
     })
    ```
@@ -112,7 +111,7 @@ permalink: /en/blog/spotify-embeded/
     :::
 
     ```ts :collapsed-lines title="docs/README.md"
-    <SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" />
+    <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" />
     ```
 
     ::: warning Warning
@@ -136,7 +135,7 @@ permalink: /en/blog/spotify-embeded/
 
 4. ==Final Result==
 
-    <SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" />
+    <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" />
 
 ::::
 
@@ -148,32 +147,31 @@ permalink: /en/blog/spotify-embeded/
 Spotify playlist ID
 :::
 
-::: field name="mode" type="'compact' | 'normal'" default="normal" optional
+::: field name="mode" type="'normal' | 'compact' | 'full'" default="normal" optional
 Display mode (forced)
 
 * `normal`: standard mode, default height `352px`
 * `compact`: compact mode, default height `152px`
+* `full`: Adaptive layout mode; height inherits the parent container's size
 :::
 
-::: field name="breakpoint" type="number" default="768" optional
-Responsive breakpoint
-
-* `normal mode`: > 768px
-* `compact mode`: <= 768px
+::: field name="height" type="number" optional
+Component height, overrides the `mode` when set
 :::
 
 ::::
 
 ## 🚀 Usage
 
-::: table full-width title="Display Mode(forced)" max-content
+::: table full-width title="Display Mode" max-content
 
 | Mode | Description | Examples |
 | -- | -- | -- |
-| default | Default: responsive mode <br> <ul><li>`compact`: <= 768px</li><li>`normal`: > 768px</li></ul> | `<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" />` |
-| normal | Height is fixed at `352px` and does not change with window size | `<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="normal" />` |
-| compact | Height is fixed at `152px` and does not change with window size. | `<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="compact" />` |
-| responsive | <ul><li>`compact`: <= breakpoint</li><li>`normal`: > breakpoint</li></ul> | `<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" :breakpoint="900" />` |
+| default | Default: `normal mode` | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" />` |
+| normal | Height is fixed at `352px` | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="normal" />` |
+| compact | Height is fixed at `152px` | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="compact" />` |
+| full | Height inherits the parent container's size | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" />` |
+| custom height | Set custom height | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height=152 />` |
 
 :::
 
@@ -181,19 +179,26 @@ Responsive breakpoint
 
 ### 1️⃣ default
 
-<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" />
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" />
 
 ### 2️⃣ normal
 
-<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="normal" />
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="normal" />
 
 ### 3️⃣ compact
 
-<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="compact" />
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="compact" />
 
-### 4️⃣ responsive
+### 4️⃣ full
 
-<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" :breakpoint="900" />
+::: warning This `mode` is not recommended without a parent container, requires a manual `height`
+:::
+
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" :height=200 />
+
+### 5️⃣ custom height
+
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height=152 />
 
 ## 💭 Inspiration
 

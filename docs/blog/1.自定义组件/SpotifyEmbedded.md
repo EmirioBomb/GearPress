@@ -1,12 +1,12 @@
 ---
-title: Spotify网页播放器-SpotifyEmbeded
+title: Spotify网页播放器-SpotifyEmbedded
 tags:
     - 组件
     - Spotify
     - 网页播放器
 cover: https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/post-cover/spotify.png
 createTime: 2026/05/14 09:35:00
-permalink: /blog/spotify-embeded/
+permalink: /blog/spotify-embedded/
 ---
 
 ::: tip 基于 `Spotify Embed URL` 封装的 `网页播放器` 组件，支持样式与展示方式的可配置化扩展。
@@ -29,12 +29,11 @@ permalink: /blog/spotify-embeded/
 ::: info 可配置能力
 
 * ✅ 支持切换播放列表
-* ✅ 支持展示模式控制（常规模式 / 紧凑模式）
-* ✅ 支持响应式自适应（基于 breakpoint 自动切换）
+* ✅ 支持展示模式控制（常规模式 / 紧凑模式 / 自适应模式）
 
 :::
 
-## 🎧 获取 Embeded playlist
+## 🎧 获取 Embedded playlist
 
 <LinkCard icon="mdi:web" title="参考 Spotify 嵌入式播放器相关文档" href="https://developer.spotify.com/documentation/embeds" />
 
@@ -84,9 +83,9 @@ permalink: /blog/spotify-embeded/
 
 1. ==编写组件==
 
-    ::: details 新建组件文件，路径为: `.vuepress/theme/components/about/SpotifyEmbeded.vue`，并实现如下内容
+    ::: details 新建组件文件，路径为: `.vuepress/theme/components/about/SpotifyEmbedded.vue`，并实现如下内容
 
-    @[code vue](../../.vuepress/theme/components/about/SpotifyEmbeded.vue)
+    @[code vue](../../.vuepress/theme/components/about/SpotifyEmbedded.vue)
 
     :::
 
@@ -97,11 +96,11 @@ permalink: /blog/spotify-embeded/
 
    ```ts :collapsed-lines title=".vuepress/theme/client.ts"
     import { defineClientConfig } from 'vuepress/client'
-    import SpotifyEmbeded from './theme/components/about/SpotifyEmbeded.vue' // [!code ++] 
+    import SpotifyEmbedded from './theme/components/about/SpotifyEmbedded.vue' // [!code ++] 
 
     export default defineClientConfig({
       enhance({ app }) {
-          app.component('SpotifyEmbeded', SpotifyEmbeded) // [!code ++] 
+          app.component('SpotifyEmbedded', SpotifyEmbedded) // [!code ++] 
       },
     })
    ```
@@ -112,7 +111,7 @@ permalink: /blog/spotify-embeded/
     :::
 
     ```ts :collapsed-lines title="docs/README.md"
-    <SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" />
+    <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" />
     ```
 
     ::: warning 注意
@@ -136,7 +135,7 @@ permalink: /blog/spotify-embeded/
 
 4. ==组件效果==
 
-    <SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" />
+    <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height=352 />
 
 ::::
 
@@ -148,18 +147,16 @@ permalink: /blog/spotify-embeded/
 Spotify 播放列表 ID
 :::
 
-::: field name="mode" type="'compact' | 'normal'" default="normal" optional
+::: field name="mode" type="'normal' | 'compact' | 'full'" default="normal" optional
 强制显示模式
 
 * `normal`: 常规模式，默认高度 `352px`
 * `compact`: 紧凑模式，默认高度 `152px`
+* `full`: 自适应布局模式，高度 `继承` 父级容器的尺寸
 :::
 
-::: field name="breakpoint" type="number" default="768" optional
-响应式断点
-
-* 当窗口宽度 小于 768px 时，组件将自动切换为 紧凑模式（compact）
-* 当窗口宽度 大于或等于 768px 时，恢复为 常规模式（normal）
+::: field name="height" type="number" optional
+组件高度，设置高度后，忽略 `mode`
 :::
 
 ::::
@@ -170,10 +167,11 @@ Spotify 播放列表 ID
 
 | 模式 | 说明 | 样例 |
 | -- | -- | -- |
-| 默认 | 默认为自适应模式，根据窗口宽度自动切换：<br> 宽度 ≤ breakpoint 时为紧凑模式，否则为常规模式；<br> 默认 breakpoint = 768px | `<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" />` |
-| 强制常规 | 固定常规布局，不受窗口宽度影响，高度始终为 352px | `<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="normal" />` |
-| 强制紧凑 | 固定紧凑布局，不受窗口宽度影响，高度始终为 152px | `<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="compact" />` |
-| 响应模式 | 启用自动响应规则，可自定义断点；<br> 当窗口宽度 ≤ breakpoint 时切换为紧凑模式，否则为常规模式 | `<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" :breakpoint="900" />` |
+| 默认 | 默认: `常规模式` | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" />` |
+| 强制常规 | 高度始终为 352px | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="normal" />` |
+| 强制紧凑 | 高度始终为 152px | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="compact" />` |
+| 自适应模式 | 高度继承父级容器的尺寸 | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" />` |
+| 自定义高度 | 设置为指定高度 | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height="152" />` |
 
 :::
 
@@ -181,25 +179,32 @@ Spotify 播放列表 ID
 
 ### 1️⃣ 默认模式
 
-<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" />
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" />
 
 ### 2️⃣ 强制常规模式
 
-<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="normal" />
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="normal" />
 
 ### 3️⃣ 强制紧凑模式
 
-<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="compact" />
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="compact" />
 
-### 4️⃣ 响应模式
+### 4️⃣ 自适应模式
 
-<SpotifyEmbeded playlistId="50zTqYDKkup6TbU3TFpdN3" :breakpoint="900" />
+::: warning 若无父容器，不建议使用该 `模式`，使用时需手动指定 `height`
+:::
 
-## 💭 联想
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" :height=200 />
+
+### 5️⃣ 自定义高度
+
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height=152 />
+
+## 💭 启发
 
 ### 🎵 Apple Music Playlist
 
-::: note 同理，也可以适当封装 `Apple Music`
+::: note 同理，也可以尝试封装 `Apple Music`
 :::
 
 <LinkCard icon="mdi:web" title="参考 Apple Music Marketing Tools" href="https://toolbox.marketingtools.apple.com/en-us/apple-music/cn?q=" />
