@@ -1,3 +1,46 @@
+## 🔖 Release v2.2.0 (2026-05-25)
+
+### ✨ Features
+
+* **about-me:** :sparkles: add AboutMe component ([6ebdb0d](https://github.com/EmirioBomb/GearPress/commit/6ebdb0d052af325ef1eae31f3f8f1f037ee4a8c5))
+* **game-cover-swiper:** :sparkles: add GameCoverSwiper component ([6e01c51](https://github.com/EmirioBomb/GearPress/commit/6e01c51483c7f6968898e2f25ee7b776a639b3e0))
+* **icon-marquee:** :sparkles: add IconMarquee component ([69d002c](https://github.com/EmirioBomb/GearPress/commit/69d002c59ae771605a34bf43a38c0eb79335b4ff))
+* **profile-card:** :sparkles: add ProfileCard component ([fb08211](https://github.com/EmirioBomb/GearPress/commit/fb08211f88757a2d4fdaf107f8eef2f2f10f5ceb))
+* **spotify:** :sparkles: add SpotifyEmbeded component ([e1e9dcc](https://github.com/EmirioBomb/GearPress/commit/e1e9dcc7fd2235244a4a53835cb3715ca0965e99))
+
+### 🐛 Bug Fixes
+
+* **about-me:** :lipstick: fix grid height mismatch in Safari and Chrome ([8526f2e](https://github.com/EmirioBomb/GearPress/commit/8526f2e0b0d4f9b9783143d8729e71e78ba239bc))
+* **logo:** :bento: replace SVG logo with PNG for better Safari compatibility ([d8fe21e](https://github.com/EmirioBomb/GearPress/commit/d8fe21eef5c7a01e0c1977a8718930c7a0bd4ca3))
+
+### 📝 Documentation
+
+* **about-me:** :memo: add AboutMe navi ([4a2d90a](https://github.com/EmirioBomb/GearPress/commit/4a2d90a3193fa7071af19dd13664f6fc0099802a))
+* **profile-card:** :memo: add ProfileCard component blog ([9292f6b](https://github.com/EmirioBomb/GearPress/commit/9292f6b9bfb1880a6a98ef7d6f4c93c2a13e2d8f))
+* **section-title:** :memo: update table styles and fix some text ([7a98b6b](https://github.com/EmirioBomb/GearPress/commit/7a98b6b795523559a905b73ea06125306ef15f1e))
+* **section-title:** :speech_balloon: update tags ([eb93bbf](https://github.com/EmirioBomb/GearPress/commit/eb93bbf454d8a5c98dcef741a83420b4027dadcb))
+* **spotify:** :memo: add SpotifyEmbeded component blog ([f6c976a](https://github.com/EmirioBomb/GearPress/commit/f6c976a7b35a682e9190e4ca070cb7e14d227872))
+* **spotify:** :speech_balloon: update tags ([c7bdef8](https://github.com/EmirioBomb/GearPress/commit/c7bdef859f4343fb9f282734d73e7fb826daad06))
+* **spotify:** :truck: update source file path ([94626a2](https://github.com/EmirioBomb/GearPress/commit/94626a246b6c93fc826a9bbdd6086f21e7106cff))
+
+### 🔧 Chores
+
+* **deps:** :heavy_plus_sign: add @iconify/vue dependency ([94e498b](https://github.com/EmirioBomb/GearPress/commit/94e498bac8e2a642c34bab4866e2d14174933446))
+* **profile-card:** :speech_balloon: fix typos ([29ad42d](https://github.com/EmirioBomb/GearPress/commit/29ad42db64cdb347bf892264c41f80b4de2300b7))
+* **spotify:** :lipstick: add spotify embed dark theme support (theme=0) ([fd6f49d](https://github.com/EmirioBomb/GearPress/commit/fd6f49dedd4852603996f5aa9a12ed080f7bc837))
+* **tsconfig:** :wrench:  add css module declarations in d.ts ([61ed0e1](https://github.com/EmirioBomb/GearPress/commit/61ed0e1e62dff68ff596fd98e51fce3d30512262))
+
+### ♻️ Code Refactoring
+
+* **section-title:** reorganize component structure ([6103e1e](https://github.com/EmirioBomb/GearPress/commit/6103e1e27687e512383858abdb58e8613038200a))
+* **spotify:** :recycle: refactor SpotifyEmbedded component ([cc4add7](https://github.com/EmirioBomb/GearPress/commit/cc4add73a2df46337eb0bc69338934283c2737e5))
+* **spotify:** :recycle: refine Spotify props and tweak styles ([65b01dd](https://github.com/EmirioBomb/GearPress/commit/65b01ddc204d86454bea2f360ef916ea2cb7e218))
+
+### 🎨 Style
+
+* **docs:** :bento: add icons to multiple sidebar titles ([03396dd](https://github.com/EmirioBomb/GearPress/commit/03396dd10bf06073cda67e3ae6bc1364ecdeb021))
+* **game-cover-swiper:** :lipstick: add coverflow shell and responsive card sizing ([aabd721](https://github.com/EmirioBomb/GearPress/commit/aabd721a22d0de543cedeb74176e2cff86ccd034))
+
 ## 🔖 Release v2.1.5 (2026-05-07)
 
 ### 📝 Documentation
