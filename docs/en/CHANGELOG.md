@@ -1,3 +1,9 @@
+## 🔖 Release v2.2.1 (2026-05-29)
+
+### 🐛 Bug Fixes
+
+* **profile-card:** :ambulance: prevent document is not defined error in theme detection ([47437e9](https://github.com/EmirioBomb/GearPress/commit/47437e996e5a8ef465ae94e338d6fe40a6eb76b7))
+
 ## 🔖 Release v2.2.0 (2026-05-25)
 
 ### ✨ Features
