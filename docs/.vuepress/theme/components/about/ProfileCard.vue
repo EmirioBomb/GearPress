@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue"
+import { useDark } from "@vueuse/core"
 
 const props = withDefaults(
   defineProps<{
@@ -45,9 +45,7 @@ const props = withDefaults(
 )
 
 /** 自动检测主题，根据主题调整卡片底色及hover效果 */
-const isDark = computed(
-  () => document.documentElement.dataset.theme === "dark"
-)
+const isDark = useDark()
 </script>
 
 <style scoped>
