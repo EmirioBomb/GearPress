@@ -191,10 +191,15 @@ Component height, overrides the `mode` when set
 
 ### 4️⃣ full
 
-::: warning This `mode` is not recommended without a parent container, requires a manual `height`
+::: warning This `mode` is not recommended without a `parent container`, requires a manual `height: 152`
+
+```vue:no-line-numbers
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" :height=152 />
+```
+
 :::
 
-<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" :height=200 />
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" :height=152 />
 
 ### 5️⃣ custom height
 

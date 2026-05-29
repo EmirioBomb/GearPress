@@ -191,10 +191,15 @@ Spotify 播放列表 ID
 
 ### 4️⃣ 自适应模式
 
-::: warning 若无父容器，不建议使用该 `模式`，使用时需手动指定 `height`
+::: warning 若`无父容器`，不建议使用该 `模式`，使用时需手动指定 `height: 152`
+
+```vue:no-line-numbers
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" :height=152 />
+```
+
 :::
 
-<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" :height=200 />
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" :height=152 />
 
 ### 5️⃣ 自定义高度
 
