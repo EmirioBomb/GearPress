@@ -156,7 +156,7 @@ https://www.toptal.com/developers/gitignore/api/list?format=json
 | --- | ---- | --- |
 | fileName | String | 生成的 `.gitignore` 文件名 |
 | key | String | 模板标签 |
-| name | String |  模板名称 |
+| name | String | 模板名称 |
 | contents | String | 生成的 `.gitignore` 内容 |
 
 @tab 📄 Lines 格式

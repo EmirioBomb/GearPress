@@ -15,6 +15,17 @@ export const zhNavbar = defineNavbarConfig([
     icon: 'codicon:notebook', 
     items: [
       { 
+        text: 'macOS',
+        icon: 'wpf:macos', 
+        items: [
+          {
+            text: 'Homebrew',
+            icon: 'devicon:homebrew',
+            link: '/notes/macos/homebrew/'
+          },
+        ]
+      },
+      { 
         text: '网络',
         icon: 'mdi:network-outline', 
         items: [
@@ -70,6 +81,17 @@ export const enNavbar = defineNavbarConfig([
     text: 'Notes', 
     icon: 'codicon:notebook', 
     items: [
+      { 
+        text: 'macOS',
+        icon: 'wpf:macos', 
+        items: [
+          {
+            text: 'Homebrew',
+            icon: 'devicon:homebrew',
+            link: '/en/notes/macos/homebrew/'
+          },
+        ]
+      },
       { 
         text: 'Network',
         icon: 'mdi:network-outline', 

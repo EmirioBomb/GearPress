@@ -60,6 +60,19 @@ const zhDoc = defineCollection({
   // 手动配置侧边栏结构
   sidebar: [
     {
+      text: 'macOS',
+      collapsed: false,
+      icon: 'wpf:macos',
+      prefix: 'macos',
+      items: [
+        {
+          text: 'Homebrew',
+          icon: 'devicon:homebrew',
+          link: '/notes/macos/homebrew/'
+        },
+      ]
+    },
+    {
       text: '网络服务',
       collapsed: false,
       icon: 'mdi:network-outline',
@@ -138,6 +151,19 @@ const enDoc = defineCollection({
   title: 'Notes',
   // 手动配置侧边栏结构
   sidebar: [
+    {
+      text: 'macOS',
+      collapsed: false,
+      icon: 'wpf:macos',
+      prefix: 'macos',
+      items: [
+        {
+          text: 'Homebrew',
+          icon: 'devicon:homebrew',
+          link: '/en/notes/macos/homebrew/'
+        },
+      ]
+    },
     {
       text: 'Network',
       collapsed: false,
