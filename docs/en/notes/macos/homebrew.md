@@ -13,7 +13,7 @@ permalink: /en/notes/macos/homebrew/
 
 :::
 
-## 🚀 Install Homebrew
+## 🍺 Install Homebrew <Badge type="tip" text="Apple Silicon" />
 
 <LinkCard icon="gg:website" title="Homebrew" href="https://brew.sh/" />
 
@@ -32,9 +32,16 @@ $ brew doctor
 
 ```
 
-## ⚠️ Fix Homebrew
+## ⚠️ Fix Homebrew <Badge type="tip" text="Apple Silicon" />
 
-::: warning If `brew: command not found` appears, restore the Homebrew environment:
+::: warning If the terminal displays `brew: command not found`, it usually indicates that the `Homebrew` environment variables are not configured correctly or have been corrupted.
+You can verify whether the `Homebrew` path is included in your `PATH` by running:
+
+```bash:no-line-numbers
+$ echo $PATH | grep -E "/opt/homebrew/(bin|sbin)"
+```
+
+If no output is returned, it means the `Homebrew` path has not been added to `PATH`. You can configure it with the following commands:
 
 ```bash:no-line-numbers
 $ echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc

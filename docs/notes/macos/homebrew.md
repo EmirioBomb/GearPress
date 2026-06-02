@@ -12,7 +12,7 @@ permalink: /notes/macos/homebrew/
 
 :::
 
-## 🚀 安装 Homebrew
+## 🍺 安装 Homebrew <Badge type="tip" text="Apple Silicon" />
 
 <LinkCard icon="gg:website" title="Homebrew 官网" href="https://brew.sh/" />
 
@@ -31,10 +31,16 @@ $ brew doctor
 
 ```
 
-## ⚠️ 修复 Homebrew
+## ⚠️ 修复 Homebrew <Badge type="tip" text="Apple Silicon" />
 
-::: warning 当终端提示 `brew: command not found` 时，说明 `Homebrew` 的环境变量未正确配置或已被破坏。
-可通过以下方法重新设置 `Homebrew` 环境变量：
+::: warning 当终端提示 `brew: command not found` 时，说明 `Homebrew` 的环境变量可能未正确配置或已被破坏。
+可以通过下面的命令检查 `PATH` 中是否包含 `Homebrew` 的路径：
+
+```bash:no-line-numbers
+$ echo $PATH | grep -E "/opt/homebrew/(bin|sbin)"
+```
+
+如果没有输出，则说明 `Homebrew` 路径未加入 `PATH`，可如下配置：
 
 ```bash:no-line-numbers
 $ echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
