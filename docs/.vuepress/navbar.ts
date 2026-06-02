@@ -23,6 +23,11 @@ export const zhNavbar = defineNavbarConfig([
             icon: 'devicon:homebrew',
             link: '/notes/macos/homebrew/'
           },
+          {
+            text: 'iTerm2',
+            icon: 'simple-icons:iterm2',
+            link: '/notes/macos/iterm/'
+          }
         ]
       },
       { 
@@ -90,6 +95,11 @@ export const enNavbar = defineNavbarConfig([
             icon: 'devicon:homebrew',
             link: '/en/notes/macos/homebrew/'
           },
+          {
+            text: 'iTerm2',
+            icon: 'simple-icons:iterm2',
+            link: '/en/notes/macos/iterm/'
+          }
         ]
       },
       { 

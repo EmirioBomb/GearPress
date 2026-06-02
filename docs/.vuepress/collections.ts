@@ -70,6 +70,11 @@ const zhDoc = defineCollection({
           icon: 'devicon:homebrew',
           link: '/notes/macos/homebrew/'
         },
+        {
+          text: 'iTerm2',
+          icon: 'simple-icons:iterm2',
+          link: '/notes/macos/iterm/'
+        },
       ]
     },
     {
@@ -161,6 +166,11 @@ const enDoc = defineCollection({
           text: 'Homebrew',
           icon: 'devicon:homebrew',
           link: '/en/notes/macos/homebrew/'
+        },
+        {
+          text: 'iTerm2',
+          icon: 'simple-icons:iterm2',
+          link: '/en/notes/macos/iterm/'
         },
       ]
     },
