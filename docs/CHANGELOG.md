@@ -1,3 +1,16 @@
+## 🔖 Release v2.2.2 (2026-06-08)
+
+### 🐛 Bug Fixes
+
+* **homebrew:** :memo: handle missing PATH for Homebrew commands ([243e3db](https://github.com/EmirioBomb/GearPress/commit/243e3db5394d9f2f9afb81612d19922b8de45d01))
+
+### 📝 Documentation
+
+* **gpg:** :memo: add GPG doccumentation ([f864520](https://github.com/EmirioBomb/GearPress/commit/f864520d48a70c50e30e334a8f7aaa70910935b7))
+* **homebrew:** :memo: add homebrew notes ([00d0f43](https://github.com/EmirioBomb/GearPress/commit/00d0f4380263008feeaeff0dff4c249d3d50354b))
+* **iterm2:** :memo: add iTerm2 documentation ([cd7f521](https://github.com/EmirioBomb/GearPress/commit/cd7f521ca53c04ceba3446c246f34e9f5c80b71d))
+* **spotify:** :memo: clarify height requirement for full mode without parent container ([4012a8e](https://github.com/EmirioBomb/GearPress/commit/4012a8e33b52028abde45e3dc3e1c162ca1d5686))
+
 ## 🔖 Release v2.2.1 (2026-05-29)
 
 ### 🐛 Bug Fixes
