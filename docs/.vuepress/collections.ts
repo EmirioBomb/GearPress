@@ -106,6 +106,7 @@ const zhDoc = defineCollection({
           items: [
             'git',
             'gitignore',
+            'gpg',
           ]
         },
       ]
@@ -203,6 +204,7 @@ const enDoc = defineCollection({
           items: [
             'git',
             'gitignore',
+            'gpg',
           ]
         },
       ]
