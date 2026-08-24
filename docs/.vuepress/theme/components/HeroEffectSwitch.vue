@@ -16,6 +16,7 @@ interface EffectOption {
 }
 
 const STORAGE_KEY = 'gearpress-hero-effect'
+const DEFAULT_EFFECT: HeroEffect = 'dot-grid'
 const effects: readonly EffectOption[] = [
   {
     value: 'liquid-ether',
@@ -64,9 +65,12 @@ const effects: readonly EffectOption[] = [
 ]
 
 const { frontmatter, isDark, lang } = useData<'home'>()
-const selected = ref<HeroEffect>('liquid-ether')
+const selected = ref<HeroEffect>(DEFAULT_EFFECT)
 const isHome = computed(() => frontmatter.value.home === true || frontmatter.value.pageLayout === 'home')
-const current = computed(() => effects.find(option => option.value === selected.value) ?? effects[0])
+const current = computed(() =>
+  effects.find(option => option.value === selected.value)
+  ?? effects.find(option => option.value === DEFAULT_EFFECT)!,
+)
 const label = computed(() => lang.value.startsWith('zh') ? current.value.label.zh : current.value.label.en)
 const currentConfig = computed(() => {
   if (current.value.value === 'liquid-ether') {
@@ -190,27 +194,28 @@ onMounted(() => {
   padding: 0;
   margin-left: 2px;
   font: inherit;
-  color: var(--vp-c-text-2);
+  color: var(--vp-c-brand-1);
   cursor: pointer;
   background: transparent;
   border: 0;
   border-radius: 8px;
+  box-shadow: none;
   transition: color var(--vp-t-color), background-color var(--vp-t-color);
 }
 
 .hero-effect-switch:hover {
-  color: var(--vp-c-brand-1);
+  color: var(--vp-c-brand-2);
   background: var(--vp-c-default-soft);
 }
 
 .hero-effect-switch svg {
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
   fill: none;
   stroke: currentcolor;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 1.6;
+  stroke-width: 1.9;
 }
 
 .hero-effect-switch .dot-grid-icon circle {

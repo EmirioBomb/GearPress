@@ -20,7 +20,7 @@ import { enNavbar, zhNavbar } from './navbar'
 export default defineThemeConfig({
   logo: 'logo.png',
 
-  appearance: true,  // 配置 深色模式
+  appearance: 'force-dark', // 强制使用暗黑主题并隐藏主题切换按钮
 
   social: [
     { icon: 'github', link: 'https://github.com/EmirioBomb/GearPress' },
