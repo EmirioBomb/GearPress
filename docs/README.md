@@ -9,7 +9,7 @@ config:
       name: Gear Press
       tagline: 日积月累，终见其深
       text: 知识唯一的来源是经验
-      image: logo.png
+      image: logo.svg
       actions:
         -
           theme: brand
@@ -22,14 +22,3 @@ config:
 
   - type: custom
 ---
-
-<SectionTitle title="常用仓库" icon="codicon:repo" />
-
-<CardGrid>
-  <RepoCard repo="EmirioBomb/media-collections" />
-  <RepoCard repo="EmirioBomb/shell-collections" />
-  <RepoCard repo="EmirioBomb/python-collections" />
-  <RepoCard repo="EmirioBomb/Versionater" />
-  <RepoCard repo="EmirioBomb/LightBoard" />
-  <RepoCard repo="EmirioBomb/zgc-ems" />
-</CardGrid>
