@@ -26,8 +26,8 @@ config:
       autoRampDuration: 1
     hero:
       name: Gear Press
-      tagline: 边做，边学，边记录
-      text: 一些开发笔记、项目经验和工具分享
+      tagline: 做点东西，留点记录
+      text: 分享开发实践、工具使用和踩坑记录
       actions:
         -
           theme: brand

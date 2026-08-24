@@ -25,8 +25,8 @@ config:
       autoRampDuration: 1
     hero:
       name: Gear Press
-      tagline: Build. Learn. Write it down.
-      text: Development notes, project experience, and useful tools.
+      tagline: Code, notes, and lessons.
+      text: Things I build, tools I use, and problems I solve.
       actions:
         -
           theme: brand
