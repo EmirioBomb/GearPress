@@ -21,14 +21,3 @@ config:
           link: https://github.com/EmirioBomb/GearPress
   - type: custom
 ---
-
-<SectionTitle title="Repository" icon="codicon:repo" />
-
-<CardGrid>
-  <RepoCard repo="EmirioBomb/media-collections" />
-  <RepoCard repo="EmirioBomb/shell-collections" />
-  <RepoCard repo="EmirioBomb/python-collections" />
-  <RepoCard repo="EmirioBomb/Versionater" />
-  <RepoCard repo="EmirioBomb/LightBoard" />
-  <RepoCard repo="EmirioBomb/zgc-ems" />
-</CardGrid>

@@ -1,23 +1,87 @@
+@import './custom.css';
+
 /* 主页添加背景图 */
 .vp-home {
-    background-image: url("/bg.svg");
+  background-image: url("/bg.svg");
 }
 
-/*  导航栏标题 与 主页 Hero 标题使用相同渐变样式，但因 CSS 变量作用域与样式覆盖差异，需分别定义 */
-/* 导航栏标题添加渐变色 */
-.name.clip {
-    background: var(--vp-bg-home-hero-name, linear-gradient(315deg, var(--vp-c-purple-1) 15%, var(--vp-c-brand-2) 65%, var(--vp-c-brand-2) 100%));
-    -webkit-background-clip: text;
-    background-clip: text;
-
-    -webkit-text-fill-color: transparent;
+/* 导航栏站点名称与首页标题共用统一的 GearPress 渐变 */
+.vp-navbar-title .title > span,
+.vp-home-doc-hero .name,
+.vp-home-doc-hero .text,
+.vp-home-doc-hero .tagline {
+  color: transparent;
+  background: var(--gp-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* 主页 Hero 标题添加渐变色 */
-.vp-link.link.no-icon.title {
-    background: var(--vp-bg-home-hero-name, linear-gradient(315deg, var(--vp-c-purple-1) 15%, var(--vp-c-brand-2) 65%, var(--vp-c-brand-2) 100%));
-    -webkit-background-clip: text;
-    background-clip: text;
+/* 主操作按钮使用同一渐变，主题变量继续负责其他页面的品牌色 */
+.vp-button.brand {
+  background-color: transparent;
+  background-image: var(--gp-gradient);
+  border-color: transparent;
+  box-shadow: var(--gp-shadow);
+  transition: transform var(--vp-t-color), box-shadow var(--vp-t-color), filter var(--vp-t-color);
+}
 
-    -webkit-text-fill-color: transparent;
+.vp-button.brand:hover {
+  background-color: transparent;
+  background-image: var(--gp-gradient);
+  filter: brightness(1.08);
+  box-shadow: 0 12px 32px rgb(112 64 207 / 0.3);
+  transform: translateY(-1px);
+}
+
+.vp-button.brand:active {
+  background-color: transparent;
+  background-image: var(--gp-gradient);
+  filter: brightness(0.96);
+  box-shadow: 0 6px 18px rgb(112 64 207 / 0.2);
+  transform: translateY(0);
+}
+
+/* 次按钮沿用同一色系，避免出现无关的默认灰色 */
+.vp-home-doc-hero .vp-button.alt {
+  color: var(--vp-c-brand-1);
+  background: var(--gp-gradient-soft);
+  border-color: rgb(112 64 207 / 0.22);
+}
+
+.vp-home-doc-hero .vp-button.alt:hover {
+  color: var(--vp-c-brand-2);
+  background: var(--gp-gradient-soft);
+  border-color: var(--vp-c-brand-2);
+}
+
+/* 当前导航项增加渐变下划线，普通导航仍保持可读性 */
+.vp-navbar-menu .navbar-menu-link,
+.vp-navbar-menu .vp-flyout .text {
+  position: relative;
+}
+
+.vp-navbar-menu .navbar-menu-link.active::after {
+  position: absolute;
+  right: 10px;
+  bottom: 9px;
+  left: 10px;
+  height: 2px;
+  content: '';
+  background: var(--gp-gradient);
+  border-radius: 999px;
+}
+
+/* 键盘焦点、选中文本和加载进度也使用统一主题色 */
+:focus-visible {
+  outline-color: var(--vp-c-brand-1);
+}
+
+::selection {
+  color: var(--vp-c-text-1);
+  background: var(--vp-c-brand-soft);
+}
+
+#nprogress .bar {
+  background: var(--gp-gradient);
 }

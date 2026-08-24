@@ -1,50 +1,51 @@
 :root {
-  /** 主题颜色 */
+  /** GearPress 品牌色：所有主题组件统一从这里取色 */
+  --gp-cyan: #68aec1;
+  --gp-blue: #7096c2;
+  --gp-purple: #7040cf;
+  --gp-gradient: linear-gradient(100deg, var(--gp-cyan) 0%, var(--gp-blue) 48%, var(--gp-purple) 100%);
+  --gp-gradient-soft: linear-gradient(100deg, rgb(104 174 193 / 0.14), rgb(112 64 207 / 0.14));
+  --gp-shadow: 0 10px 28px rgb(112 64 207 / 0.22);
 
-  /*
-  --vp-c-brand-1: #5086a1;
-  --vp-c-brand-2: #6aa1b7;
-  --vp-c-brand-3: #8cccd5;
-  --vp-c-brand-soft: rgba(131, 208, 218, 0.314);
-  */
+  /** 覆盖 Plume 全局品牌变量，统一链接、导航、目录、标签与交互状态 */
+  --vp-c-brand-1: #6750c6;
+  --vp-c-brand-2: #765ed0;
+  --vp-c-brand-3: #5942b0;
+  --vp-c-brand-soft: rgb(103 80 198 / 0.14);
+  --vp-c-brand: var(--vp-c-brand-1);
 
-  /** 背景颜色 */
+  --vp-c-tip-1: var(--vp-c-brand-1);
+  --vp-c-tip-2: var(--vp-c-brand-2);
+  --vp-c-tip-3: var(--vp-c-brand-3);
+  --vp-c-tip-soft: var(--vp-c-brand-soft);
+  --vp-c-note-1: var(--vp-c-brand-1);
+  --vp-c-note-2: var(--vp-c-brand-2);
+  --vp-c-note-3: var(--vp-c-brand-3);
+  --vp-c-note-soft: var(--vp-c-brand-soft);
 
-  /*
-  --vp-c-bg: #fff;
-  --vp-c-bg-alt: #f6f6f7;
-  --vp-c-bg-elv: #fff;
-  --vp-c-bg-soft: #f6f6f7;
-  */
-
-  /** 文本颜色 */
-
-  /*
-  --vp-c-text-1: rgba(60, 60, 67);
-  --vp-c-text-2: rgba(60, 60, 67, 0.78);
-  --vp-c-text-3: rgba(60, 60, 67, 0.56);
-  */
+  /** 首页主视觉和主题按钮 */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: var(--gp-gradient);
+  --vp-button-brand-bg: var(--vp-c-brand-1);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
+  --vp-button-brand-active-bg: var(--vp-c-brand-3);
 }
 
-/** 深色模式 */
+/** 深色模式使用更明亮的同系品牌色，保持对比度 */
 [data-theme="dark"] {
-  /*
-  --vp-c-brand-1: #8cccd5;
-  --vp-c-brand-2: #6aa1b7;
-  --vp-c-brand-3: #5086a1;
-  --vp-c-brand-soft: rgba(131, 208, 218, 0.314);
-  */
+  --gp-cyan: #83c6d8;
+  --gp-blue: #8ba9d6;
+  --gp-purple: #a67bea;
+  --gp-gradient-soft: linear-gradient(100deg, rgb(131 198 216 / 0.16), rgb(166 123 234 / 0.16));
+  --gp-shadow: 0 10px 30px rgb(122 78 203 / 0.28);
 
-  /*
-  --vp-c-bg: #1b1b1f;
-  --vp-c-bg-alt: #161618;
-  --vp-c-bg-elv: #202127;
-  --vp-c-bg-soft: #202127;
-  */
+  --vp-c-brand-1: #a88be8;
+  --vp-c-brand-2: #b89cf0;
+  --vp-c-brand-3: #9274d4;
+  --vp-c-brand-soft: rgb(168 139 232 / 0.16);
+  --vp-c-brand: var(--vp-c-brand-1);
 
-  /*
-  --vp-c-text-1: rgba(255, 255, 245, 0.86);
-  --vp-c-text-2: rgba(235, 235, 245, 0.6);
-  --vp-c-text-3: rgba(235, 235, 245, 0.38);
-  */
+  --vp-button-brand-bg: var(--vp-c-brand-1);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
+  --vp-button-brand-active-bg: var(--vp-c-brand-3);
 }
