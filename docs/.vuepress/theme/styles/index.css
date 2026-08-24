@@ -1,15 +1,8 @@
 @import './custom.css';
 
-/* 主页添加背景图 */
-.vp-home {
-  background-image: url("/bg.svg");
-}
-
 /* 导航栏站点名称与首页标题共用统一的 GearPress 渐变 */
 .vp-navbar-title .title > span,
-.vp-home-doc-hero .name,
-.vp-home-doc-hero .text,
-.vp-home-doc-hero .tagline {
+.vp-home-hero .hero-name {
   color: transparent;
   background: var(--gp-gradient);
   background-clip: text;
@@ -43,7 +36,7 @@
 }
 
 /* 次按钮沿用同一色系，避免出现无关的默认灰色 */
-.vp-home-doc-hero .vp-button.alt {
+.vp-home-hero .vp-button.alt {
   color: var(--vp-c-brand-1);
   background: var(--gp-gradient-soft);
   border-color: rgb(112 64 207 / 0.22);
