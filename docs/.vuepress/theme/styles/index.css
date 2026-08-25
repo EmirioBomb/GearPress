@@ -48,21 +48,241 @@
   border-color: var(--vp-c-brand-2);
 }
 
-/* 当前导航项增加渐变下划线，普通导航仍保持可读性 */
+/* 交互文字统一使用暗黑主题高亮渐变；普通状态保持中性或可读蓝色。 */
 .vp-navbar-menu .navbar-menu-link,
-.vp-navbar-menu .vp-flyout .text {
+.vp-navbar-menu .vp-navbar-menu-group {
   position: relative;
 }
 
-.vp-navbar-menu .navbar-menu-link.active::after {
-  position: absolute;
-  right: 10px;
-  bottom: 9px;
-  left: 10px;
-  height: 2px;
-  content: '';
-  background: var(--gp-gradient);
-  border-radius: 999px;
+:root .vp-navbar-menu .navbar-menu-link:is(.active, :hover) > span:not(.vp-icon, .vp-menu-badge),
+:root .vp-navbar-menu .vp-navbar-menu-group:is(.active, :hover) > .button > .text > span:not(.vp-icon, .vp-menu-badge, .text-icon),
+:root .vp-nav-screen-menu-link:hover > span:not(.vp-icon, .vp-menu-badge),
+:root .vp-nav-screen-menu-group-link:hover > span:not(.vp-icon, .vp-menu-badge),
+:root .vp-menu-link > .vp-link:is(.active, :hover),
+:root .vp-post-item .post-item-content h3:hover > .vp-link,
+:root .vp-post-item .category-list .vp-link:hover,
+:root .vp-post-item .tag-list .vp-link:hover,
+:root .vp-posts-nav .nav-link:is(.active, :hover) .text,
+:root .vp-posts-extract .nav-link:hover > span:last-child,
+:root .vp-short-post-list li:hover .post-link,
+:root .vp-categories-item .post:hover .vp-link,
+:root .vp-category-group .folder:hover > span:last-child,
+:root .vp-tags .tag:is(.active, :hover) .tag-name,
+:root .vp-pagination .btn:is(.active, :hover):not([disabled], .more),
+:root .vp-sidebar-item.is-link > .item > .link:hover .text > span:first-child,
+:root .vp-sidebar-item.is-active > .item > .link .text > span:first-child,
+:root .outline-link:is(.active, :hover),
+:root .vp-breadcrumb .breadcrumb:not(.current):hover,
+:root .vp-doc-footer .edit-link-button:hover,
+:root .vp-doc-footer .pager-link:hover .title,
+:root .vp-doc a:not(.header-anchor, .footnote-backref, :has(img, svg)):hover,
+:root .vp-doc a:not(.header-anchor, .footnote-backref):hover > code {
+  color: transparent;
+  background-color: transparent;
+  background-image: var(--gp-gradient-readable);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 徽章始终使用自身语义色，父级标题的文字渐变不能裁切徽章内容。 */
+:root .vp-doc .header-anchor .vp-badge,
+:root .vp-doc .header-anchor:hover .vp-badge,
+:root .vp-navbar-menu .vp-menu-badge,
+:root .vp-nav-screen .vp-menu-badge,
+:root .vp-menu-link .vp-menu-badge {
+  color: var(--vp-badge-info-text);
+  background-color: var(--vp-badge-info-bg);
+  background-image: none;
+  border-color: var(--vp-badge-info-border);
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  -webkit-text-fill-color: currentcolor;
+}
+
+:root .vp-badge.info {
+  color: var(--vp-badge-info-text);
+  background-color: var(--vp-badge-info-bg);
+  background-image: none;
+  border-color: var(--vp-badge-info-border);
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  -webkit-text-fill-color: currentcolor;
+}
+
+:root .vp-badge.tip,
+:root .vp-doc .header-anchor .vp-badge.tip,
+:root .vp-doc .header-anchor:hover .vp-badge.tip,
+:root .vp-navbar-menu .vp-menu-badge.tip,
+:root .vp-nav-screen .vp-menu-badge.tip,
+:root .vp-menu-link .vp-menu-badge.tip {
+  color: var(--vp-badge-tip-text);
+  background-color: var(--vp-badge-tip-bg);
+  border-color: var(--vp-badge-tip-border);
+}
+
+:root .vp-badge.warning,
+:root .vp-doc .header-anchor .vp-badge.warning,
+:root .vp-doc .header-anchor:hover .vp-badge.warning,
+:root .vp-navbar-menu .vp-menu-badge.warning,
+:root .vp-nav-screen .vp-menu-badge.warning,
+:root .vp-menu-link .vp-menu-badge.warning {
+  color: var(--vp-badge-warning-text);
+  background-color: var(--vp-badge-warning-bg);
+}
+
+:root .vp-badge.danger,
+:root .vp-doc .header-anchor .vp-badge.danger,
+:root .vp-doc .header-anchor:hover .vp-badge.danger,
+:root .vp-navbar-menu .vp-menu-badge.danger,
+:root .vp-nav-screen .vp-menu-badge.danger,
+:root .vp-menu-link .vp-menu-badge.danger {
+  color: var(--vp-badge-danger-text);
+  background-color: var(--vp-badge-danger-bg);
+}
+
+/* 短标签按文字自身宽度绘制渐变，避免在整行宽度中只显示渐变起始色。 */
+:root .vp-posts-nav .nav-link .text {
+  flex: 0 1 auto;
+  width: fit-content;
+  max-width: 100%;
+}
+
+:root .vp-posts-nav .nav-link .total {
+  margin-left: auto;
+}
+
+:root .vp-posts-extract .nav-link > span:last-child,
+:root .vp-short-post-list .post-link,
+:root .vp-category-group .folder > span:last-child,
+:root .outline-link {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.vp-menu-link > .vp-link:is(.active, :hover) :is(.vp-icon, .vp-menu-badge),
+.vp-navbar-menu :is(.navbar-menu-link, .vp-navbar-menu-group):is(.active, :hover) .vp-icon,
+.vp-nav-screen :is(.vp-nav-screen-menu-link, .vp-nav-screen-menu-group-link):hover .vp-icon {
+  color: var(--gp-icon-highlight);
+  -webkit-text-fill-color: currentcolor;
+}
+
+/* 正文链接、外链和脚注使用同一默认色，并彻底取消下划线。 */
+:root .vp-doc a,
+:root .vp-doc a > code {
+  color: var(--gp-link-color);
+  text-decoration: none;
+  text-underline-offset: 0;
+}
+
+:root .vp-doc a.header-anchor {
+  color: currentcolor;
+}
+
+:root .vp-doc a.footnote-backref,
+:root .vp-doc a.footnote-backref:hover {
+  color: transparent;
+}
+
+:root .vp-doc a:hover {
+  text-decoration: none;
+  text-underline-offset: 0;
+}
+
+/* 退出悬停时立即恢复纯色，避免 background-clip 与 color 同步过渡产生闪白。 */
+:root .vp-doc a:not(.header-anchor, .footnote-backref) {
+  transition-property: opacity;
+}
+
+:root .vp-doc a:not(.header-anchor, .footnote-backref, :has(img, svg)):not(:hover),
+:root .vp-doc a:not(.header-anchor, .footnote-backref):not(:hover) > code {
+  background-image: none;
+  -webkit-text-fill-color: currentcolor;
+}
+
+.external-link-icon-enabled .vp-doc a:not(.no-icon, :has(img, svg)):hover::after,
+.vp-external-link-icon:hover::after {
+  color: var(--gp-icon-highlight);
+  -webkit-text-fill-color: currentcolor;
+}
+
+.vp-doc .footnote-backref::before {
+  top: -0.35em;
+  color: var(--gp-link-color);
+  content: '↩';
+  background: none;
+  -webkit-text-fill-color: currentcolor;
+}
+
+.vp-doc .footnote-backref:hover::before {
+  color: var(--gp-icon-highlight);
+  background: none;
+  -webkit-text-fill-color: currentcolor;
+}
+
+/* 标题锚点悬停时让标题文字本身使用同一高亮渐变。 */
+.vp-doc .header-anchor:hover {
+  color: transparent;
+  background: var(--gp-gradient-readable);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.vp-doc .header-anchor:hover::before {
+  color: var(--gp-icon-highlight);
+  background: none;
+  -webkit-text-fill-color: currentcolor;
+}
+
+/* 分类、标签和分页保留控件结构，只统一文字与边框反馈。 */
+.vp-tags .tag:is(.active, :hover) {
+  background: var(--gp-gradient-soft);
+  border-color: var(--gp-icon-highlight);
+}
+
+.vp-tags .tag:is(.active, :hover) .tag-count {
+  color: var(--gp-icon-highlight);
+  border-left-color: var(--gp-icon-highlight);
+}
+
+.vp-post-item .tag-list .tag:hover {
+  background-color: var(--gp-gradient-soft);
+}
+
+.vp-posts-nav .nav-link:is(.active, :hover) :is(.icon, .total),
+.vp-category-group .folder:hover .icon,
+.vp-categories-item .post:hover .vpi-post,
+.vp-pagination .btn:is(.active, :hover):not([disabled], .more) {
+  color: var(--gp-icon-highlight);
+}
+
+.vp-sidebar-item.is-active > .item > .indicator {
+  background: var(--gp-gradient-readable);
+}
+
+.vp-doc-footer .pager-link:hover {
+  border-color: var(--gp-icon-highlight);
+}
+
+/* 导航栏工具使用渐变中的高对比青色，避免破坏 Iconify 的遮罩渲染。 */
+.vp-social-link:hover,
+.vp-navbar-extra:hover,
+.vp-navbar-translations:hover,
+.vp-navbar-search .DocSearch-Button:hover .DocSearch-Search-Icon,
+.vp-posts-extract:hover > .icon {
+  color: var(--gp-icon-highlight);
+}
+
+.vp-navbar-search .DocSearch-Button:hover .DocSearch-Button-Placeholder {
+  color: var(--gp-link-color);
+}
+
+/* 内容标记由原来的单一紫色改为青蓝品牌渐变。 */
+:root .vp-doc mark:not(.note, .info, .tip, .warning, .caution, .danger, .important) {
+  --vp-mark-bg-image: var(--gp-mark-gradient);
 }
 
 /* 键盘焦点、选中文本和加载进度也使用统一主题色 */

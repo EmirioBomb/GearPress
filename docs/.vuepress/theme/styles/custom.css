@@ -4,15 +4,25 @@
   --gp-blue: #7096c2;
   --gp-purple: #7040cf;
   --gp-gradient: linear-gradient(100deg, var(--gp-cyan) 0%, var(--gp-blue) 48%, var(--gp-purple) 100%);
+  --gp-gradient-readable: var(--gp-gradient);
   --gp-gradient-soft: linear-gradient(100deg, rgb(104 174 193 / 0.14), rgb(112 64 207 / 0.14));
+  --gp-mark-gradient: linear-gradient(to right, rgb(104 174 193 / 0.72) 0%, rgb(112 150 194 / 0.68) 24%, rgb(112 64 207 / 0.62) 50%, transparent 50%);
+  --gp-link-color: #667f9f;
+  --gp-icon-highlight: var(--gp-cyan);
   --gp-shadow: 0 10px 28px rgb(112 64 207 / 0.22);
 
-  /** 覆盖 Plume 全局品牌变量，统一链接、导航、目录、标签与交互状态 */
-  --vp-c-brand-1: #6750c6;
-  --vp-c-brand-2: #765ed0;
-  --vp-c-brand-3: #5942b0;
-  --vp-c-brand-soft: rgb(103 80 198 / 0.14);
+  /** 小字号文字与图标优先使用渐变中的青蓝色，紫色只作为强调色 */
+  --vp-c-brand-1: var(--gp-blue);
+  --vp-c-brand-2: var(--gp-cyan);
+  --vp-c-brand-3: var(--gp-purple);
+  --vp-c-brand-soft: rgb(112 64 207 / 0.14);
+  --vp-badge-info-text: var(--vp-c-text-2);
+  --vp-badge-info-bg: var(--vp-c-default-soft);
+  --vp-badge-tip-text: var(--gp-blue);
+  --vp-badge-tip-bg: rgb(112 150 194 / 0.16);
   --vp-c-brand: var(--vp-c-brand-1);
+  --vp-code-link-color: var(--gp-link-color);
+  --vp-code-link-hover-color: var(--gp-icon-highlight);
 
   --vp-c-tip-1: var(--vp-c-brand-1);
   --vp-c-tip-2: var(--vp-c-brand-2);
@@ -31,21 +41,22 @@
   --vp-button-brand-active-bg: var(--vp-c-brand-3);
 }
 
-/** 深色模式使用更明亮的同系品牌色，保持对比度 */
+/** 暗黑主题使用同色相的高亮版本，提高小字号文字和图标的对比度 */
 [data-theme="dark"] {
-  --gp-cyan: #83c6d8;
-  --gp-blue: #8ba9d6;
-  --gp-purple: #a67bea;
-  --gp-gradient-soft: linear-gradient(100deg, rgb(131 198 216 / 0.16), rgb(166 123 234 / 0.16));
-  --gp-shadow: 0 10px 30px rgb(122 78 203 / 0.28);
-
-  --vp-c-brand-1: #a88be8;
-  --vp-c-brand-2: #b89cf0;
-  --vp-c-brand-3: #9274d4;
-  --vp-c-brand-soft: rgb(168 139 232 / 0.16);
-  --vp-c-brand: var(--vp-c-brand-1);
-
-  --vp-button-brand-bg: var(--vp-c-brand-1);
-  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
-  --vp-button-brand-active-bg: var(--vp-c-brand-3);
+  --gp-gradient-readable: linear-gradient(100deg, #83c6d8 0%, #8ba9d6 48%, #a67bea 100%);
+  --gp-gradient-soft: linear-gradient(100deg, rgb(104 174 193 / 0.16), rgb(112 64 207 / 0.16));
+  --gp-mark-gradient: linear-gradient(to right, rgb(131 198 216 / 0.68) 0%, rgb(139 169 214 / 0.64) 24%, rgb(166 123 234 / 0.6) 50%, transparent 50%);
+  --gp-link-color: #7186a6;
+  --gp-icon-highlight: #83c6d8;
+  --gp-shadow: 0 10px 30px rgb(112 64 207 / 0.28);
+  --vp-c-brand-1: #8ba9d6;
+  --vp-c-brand-2: #83c6d8;
+  --vp-c-brand-3: #a67bea;
+  --vp-c-brand-soft: rgb(139 169 214 / 0.16);
+  --vp-badge-info-text: #c4cad5;
+  --vp-badge-info-bg: rgb(139 151 173 / 0.2);
+  --vp-badge-info-border: rgb(196 202 213 / 0.18);
+  --vp-badge-tip-text: #9fc8e2;
+  --vp-badge-tip-bg: rgb(112 150 194 / 0.24);
+  --vp-badge-tip-border: rgb(131 198 216 / 0.22);
 }

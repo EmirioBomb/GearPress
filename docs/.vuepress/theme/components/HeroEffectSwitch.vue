@@ -204,7 +204,7 @@ onMounted(() => {
 }
 
 .hero-effect-switch:hover {
-  color: var(--vp-c-brand-2);
+  color: var(--gp-icon-highlight);
   background: var(--vp-c-default-soft);
 }
 
