@@ -3,7 +3,7 @@ import type { Component } from 'vue'
 import DotGrid from 'vuepress-theme-plume/components/background/DotGrid.vue'
 import LiquidEther from 'vuepress-theme-plume/components/background/LiquidEther.vue'
 import Orb from 'vuepress-theme-plume/components/background/Orb.vue'
-import { computed, markRaw, onMounted, ref } from 'vue'
+import { computed, markRaw, onMounted, onUnmounted, ref } from 'vue'
 import { useData } from 'vuepress-theme-plume/composables'
 
 type HeroEffect = 'liquid-ether' | 'dot-grid' | 'orb'
@@ -64,9 +64,21 @@ const effects: readonly EffectOption[] = [
   },
 ]
 
-const { frontmatter, isDark, lang } = useData<'home'>()
+const { frontmatter, isDark, lang } = useData()
 const selected = ref<HeroEffect>(DEFAULT_EFFECT)
-const isHome = computed(() => frontmatter.value.home === true || frontmatter.value.pageLayout === 'home')
+const effectLayer = ref<HTMLElement | null>(null)
+const isHeroPage = computed(() => {
+  if (frontmatter.value.home === true)
+    return true
+
+  const config = frontmatter.value.config
+  return Array.isArray(config) && config.some(item =>
+    typeof item === 'object'
+    && item !== null
+    && 'type' in item
+    && item.type === 'hero',
+  )
+})
 const current = computed(() =>
   effects.find(option => option.value === selected.value)
   ?? effects.find(option => option.value === DEFAULT_EFFECT)!,
@@ -76,6 +88,8 @@ const currentConfig = computed(() => {
   if (current.value.value === 'liquid-ether') {
     return {
       ...current.value.config,
+      // 全站通过窗口级鼠标事件驱动流体，避免背景层阻挡页面交互。
+      autoDemo: false,
       colors: isDark.value
         ? ['#68aec1', '#a88be8', '#7096c2', '#d1e8e2']
         : ['#050a30', '#7040cf', '#7096c2', '#68aec1'],
@@ -95,9 +109,13 @@ const currentConfig = computed(() => {
 const layerStyle = computed(() => ({
   background: current.value.value === 'dot-grid'
     ? isDark.value
-      ? 'radial-gradient(circle at 50% 40%, rgb(18 75 117 / 46%), transparent 45%), #030914'
-      : 'radial-gradient(circle at 50% 40%, rgb(126 191 220 / 28%), transparent 45%), #f5fafd'
-    : 'var(--vp-c-bg)',
+      ? isHeroPage.value
+        ? 'radial-gradient(circle at 50% 40%, rgb(18 75 117 / 46%), transparent 45%), #030914'
+        : 'radial-gradient(circle at 50% 32%, rgb(18 75 117 / 28%), transparent 48%), #080d17'
+      : isHeroPage.value
+        ? 'radial-gradient(circle at 50% 40%, rgb(126 191 220 / 28%), transparent 45%), #f5fafd'
+        : 'radial-gradient(circle at 50% 32%, rgb(126 191 220 / 18%), transparent 48%), #f5fafd'
+    : isDark.value ? '#080d17' : '#f5fafd',
 }))
 
 function isHeroEffect(value: string | null): value is HeroEffect {
@@ -115,20 +133,38 @@ function cycleEffect() {
   setEffect(effects[(index + 1) % effects.length].value)
 }
 
+function forwardPointerToLiquid(event: MouseEvent) {
+  if (selected.value !== 'liquid-ether')
+    return
+
+  const liquid = effectLayer.value?.querySelector<HTMLElement>('.home-hero-effect-liquid-ether')
+  liquid?.dispatchEvent(new MouseEvent('mousemove', {
+    clientX: event.clientX,
+    clientY: event.clientY,
+  }))
+}
+
 onMounted(() => {
   const saved = localStorage.getItem(STORAGE_KEY)
   if (isHeroEffect(saved))
     setEffect(saved, false)
   else
     localStorage.removeItem(STORAGE_KEY)
+
+  window.addEventListener('mousemove', forwardPointerToLiquid)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('mousemove', forwardPointerToLiquid)
 })
 </script>
 
 <template>
   <Teleport to="body">
     <div
-      v-if="isHome"
+      ref="effectLayer"
       class="hero-effect-layer"
+      :class="{ 'is-content-page': !isHeroPage }"
       :style="layerStyle"
     >
       <component
@@ -140,10 +176,9 @@ onMounted(() => {
   </Teleport>
 
   <button
-    v-if="isHome"
     class="hero-effect-switch"
     type="button"
-    :aria-label="lang.startsWith('zh') ? `切换首页背景，当前为${label}` : `Switch homepage background, currently ${label}`"
+    :aria-label="lang.startsWith('zh') ? `切换页面背景，当前为${label}` : `Switch page background, currently ${label}`"
     :title="lang.startsWith('zh') ? `背景：${label}` : `Background: ${label}`"
     @click="cycleEffect"
   >
@@ -176,12 +211,18 @@ onMounted(() => {
   inset: 0;
   z-index: 0;
   overflow: hidden;
+  pointer-events: none;
   transition: background-color var(--vp-t-color);
 }
 
 .hero-effect-canvas {
   position: absolute;
   inset: 0;
+}
+
+/* 主页保留完整效果；内容页降低背景强度，同时继续响应全局鼠标移动。 */
+.hero-effect-layer.is-content-page .hero-effect-canvas {
+  opacity: 0.62;
 }
 
 .hero-effect-switch {

@@ -1,5 +1,45 @@
 @import './custom.css';
 
+/* 全站内容使用半透明表面，让背景效果在文档与博客页面保持可见。 */
+body,
+html.bg-gray body {
+  background-color: transparent;
+}
+
+.theme-plume {
+  --vp-c-bg: var(--gp-surface-bg);
+  --vp-c-bg-alt: var(--gp-surface-bg-alt);
+  --vp-c-bg-elv: var(--gp-surface-bg-elv);
+  --vp-c-bg-soft: var(--gp-surface-bg-soft);
+  --vp-c-bg-safe: var(--gp-surface-bg-safe);
+  --vp-nav-bg-color: var(--gp-nav-bg);
+  --vp-nav-screen-bg-color: var(--gp-surface-bg-elv);
+  --vp-sidebar-bg-color: var(--gp-sidebar-bg);
+
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  background: transparent;
+}
+
+.theme-plume :is(
+  .vp-navbar,
+  .vp-sidebar,
+  .vp-menu,
+  .vp-post-item,
+  .vp-profile,
+  .vp-posts-nav .nav-link,
+  .vp-post-categories,
+  .tags-nav,
+  .tags-container,
+  .archive,
+  .vp-pagination .btn,
+  .vp-footer
+) {
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
 /* 导航栏站点名称与首页标题共用统一的 GearPress 渐变 */
 .vp-navbar-title .title > span,
 .vp-home-hero .hero-name {
@@ -69,8 +109,6 @@
 :root .vp-category-group .folder:hover > span:last-child,
 :root .vp-tags .tag:is(.active, :hover) .tag-name,
 :root .vp-pagination .btn:is(.active, :hover):not([disabled], .more),
-:root .vp-sidebar-item.is-link > .item > .link:hover .text > span:first-child,
-:root .vp-sidebar-item.is-active > .item > .link .text > span:first-child,
 :root .outline-link:is(.active, :hover),
 :root .vp-breadcrumb .breadcrumb:not(.current):hover,
 :root .vp-doc-footer .edit-link-button:hover,
@@ -85,6 +123,24 @@
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* 左侧文档目录仅裁切文字节点，图标继续使用安全的纯色，避免破坏 Iconify 遮罩。 */
+:root .vp-sidebar-item.is-link > .item > .link:hover .text > span:first-child,
+:root .vp-sidebar-item.is-active > .item > .link .text > span:first-child {
+  color: transparent;
+  background-color: transparent;
+  background-image: var(--gp-gradient-readable);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+:root .vp-sidebar-item.is-link > .item:hover > .vp-icon,
+:root .vp-sidebar-item.is-active > .item > .vp-icon {
+  color: var(--gp-icon-highlight);
 }
 
 /* 徽章始终使用自身语义色，父级标题的文字渐变不能裁切徽章内容。 */
@@ -283,6 +339,23 @@
 /* 内容标记由原来的单一紫色改为青蓝品牌渐变。 */
 :root .vp-doc mark:not(.note, .info, .tip, .warning, .caution, .danger, .important) {
   --vp-mark-bg-image: var(--gp-mark-gradient);
+}
+
+/* 返回顶部按钮使用品牌渐变；遮罩图标保留纯白，避免渐变破坏图标形状。 */
+:root .vp-back-to-top {
+  color: #fff;
+  background-color: transparent;
+  background-image: var(--gp-gradient-readable);
+  box-shadow: var(--gp-shadow);
+}
+
+:root .vp-back-to-top .percent,
+:root .vp-back-to-top .icon {
+  color: #fff;
+}
+
+:root .vp-back-to-top svg circle {
+  stroke: rgb(255 255 255 / 0.76);
 }
 
 /* 键盘焦点、选中文本和加载进度也使用统一主题色 */

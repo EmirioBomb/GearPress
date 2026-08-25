@@ -20,6 +20,13 @@
   --vp-badge-info-bg: var(--vp-c-default-soft);
   --vp-badge-tip-text: var(--gp-blue);
   --vp-badge-tip-bg: rgb(112 150 194 / 0.16);
+  --gp-surface-bg: rgb(255 255 255 / 0.88);
+  --gp-surface-bg-alt: rgb(246 246 247 / 0.82);
+  --gp-surface-bg-elv: rgb(255 255 255 / 0.94);
+  --gp-surface-bg-soft: rgb(246 246 247 / 0.88);
+  --gp-surface-bg-safe: rgb(246 248 250 / 0.92);
+  --gp-nav-bg: rgb(255 255 255 / 0.82);
+  --gp-sidebar-bg: rgb(246 246 247 / 0.84);
   --vp-c-brand: var(--vp-c-brand-1);
   --vp-code-link-color: var(--gp-link-color);
   --vp-code-link-hover-color: var(--gp-icon-highlight);
@@ -59,4 +66,11 @@
   --vp-badge-tip-text: #9fc8e2;
   --vp-badge-tip-bg: rgb(112 150 194 / 0.24);
   --vp-badge-tip-border: rgb(131 198 216 / 0.22);
+  --gp-surface-bg: rgb(11 16 27 / 0.84);
+  --gp-surface-bg-alt: rgb(8 13 23 / 0.8);
+  --gp-surface-bg-elv: rgb(20 26 39 / 0.92);
+  --gp-surface-bg-soft: rgb(20 26 39 / 0.86);
+  --gp-surface-bg-safe: rgb(20 26 39 / 0.9);
+  --gp-nav-bg: rgb(8 13 23 / 0.82);
+  --gp-sidebar-bg: rgb(8 13 23 / 0.86);
 }
