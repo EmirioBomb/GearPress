@@ -1,5 +1,6 @@
 ---
 pageLayout: home
+footer: false
 externalLinkIcon: false
 config:
   - type: hero

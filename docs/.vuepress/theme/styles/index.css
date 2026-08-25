@@ -50,6 +50,21 @@ html.bg-gray body {
   -webkit-text-fill-color: transparent;
 }
 
+/* 博客介绍区的名称与副标题使用可读品牌渐变，不影响资料区的其他文字。 */
+.theme-plume .vp-profile > .profile-info > h3,
+.theme-plume .vp-profile > .profile-info > p {
+  width: fit-content;
+  margin-inline: auto;
+  color: transparent;
+  background-color: transparent;
+  background-image: var(--gp-gradient-readable);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 /* 主操作按钮使用同一渐变，主题变量继续负责其他页面的品牌色 */
 .vp-button.brand {
   background-color: transparent;
@@ -109,7 +124,6 @@ html.bg-gray body {
 :root .vp-category-group .folder:hover > span:last-child,
 :root .vp-tags .tag:is(.active, :hover) .tag-name,
 :root .vp-pagination .btn:is(.active, :hover):not([disabled], .more),
-:root .outline-link:is(.active, :hover),
 :root .vp-breadcrumb .breadcrumb:not(.current):hover,
 :root .vp-doc-footer .edit-link-button:hover,
 :root .vp-doc-footer .pager-link:hover .title,
@@ -212,10 +226,32 @@ html.bg-gray body {
 
 :root .vp-posts-extract .nav-link > span:last-child,
 :root .vp-short-post-list .post-link,
-:root .vp-category-group .folder > span:last-child,
-:root .outline-link {
+:root .vp-category-group .folder > span:last-child {
   width: fit-content;
   max-width: 100%;
+}
+
+/* 右侧文章目录保留渐变悬停，并关闭主题的 color 过渡，避免离开时在透明文字与纯色文字之间插值闪烁。 */
+:root .vp-doc-aside-outline .outline-link {
+  width: fit-content;
+  max-width: 100%;
+  color: var(--vp-c-text-2);
+  background-color: transparent;
+  background-image: none;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  -webkit-text-fill-color: currentcolor;
+  transition: none;
+}
+
+:root .vp-doc-aside-outline .outline-link:is(.active, :hover) {
+  color: transparent;
+  background-image: var(--gp-gradient-readable);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .vp-menu-link > .vp-link:is(.active, :hover) :is(.vp-icon, .vp-menu-badge),

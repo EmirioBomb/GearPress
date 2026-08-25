@@ -1,6 +1,7 @@
 ---
 home: true
 pageLayout: home
+footer: false
 externalLinkIcon: false
 config:
   - type: hero

@@ -59,7 +59,7 @@ export default defineThemeConfig({
        * @see https://theme-plume.vuejs.press/config/basic/#profile
        */
       profile: {
-        avatar: 'logo.png',
+        avatar: 'logo.svg',
         name: 'GearPress',
         description: '日积月累，终见其深',
         // circle: true,
@@ -86,7 +86,7 @@ export default defineThemeConfig({
        * @see https://theme-plume.vuejs.press/config/basic/#profile
        */
       profile: {
-        avatar: 'logo.png',
+        avatar: 'logo.svg',
         name: 'GearPress',
         description: 'Notes & Blog',
         // circle: true,
