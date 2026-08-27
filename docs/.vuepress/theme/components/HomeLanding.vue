@@ -2,7 +2,12 @@
 import { Icon } from '@iconify/vue'
 import { withBase } from 'vuepress/client'
 import { useData } from 'vuepress-theme-plume/composables'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+
+type DailyQuote = {
+  text: string
+  source: string
+}
 
 type LocaleContent = {
   casualLine: string
@@ -12,7 +17,7 @@ type LocaleContent = {
   selectedLabel: string
   currentlyLabel: string
   statuses: { label: string, value: string, icon: string }[]
-  quotes: { text: string, source: string }[]
+  fallbackQuote: DailyQuote
   records: { number: string, type: string, date: string, title: string, link: string, icon: string }[]
 }
 
@@ -24,7 +29,7 @@ const content: Record<'zh' | 'en', LocaleContent> = {
     casualLine: '日积月累，终见其深',
     about: '关于我',
     authorLine: 'by Emirio',
-    dailyLabel: '今日一句',
+    dailyLabel: '每日一句',
     selectedLabel: '你可能会喜欢',
     currentlyLabel: '最近',
     statuses: [
@@ -33,13 +38,10 @@ const content: Record<'zh' | 'en', LocaleContent> = {
       { label: '开发中', value: 'GearPress', icon: 'lucide:code-2' },
       { label: '听着', value: 'Spotify', icon: 'lucide:headphones' },
     ],
-    quotes: [
-      { text: '慢一点，把真正想留下的东西做好。', source: '— 今天也留一点空白给自己' },
-      { text: '先把眼前的小事做完，再去想更远的地方。', source: '— 给今天的自己' },
-      { text: '保持好奇，也允许自己暂时没有答案。', source: '— 随手记' },
-      { text: '重要的不是记住所有事情，而是留下值得回看的东西。', source: '— 一点备忘' },
-      { text: '偶尔绕一点路，也许会遇到原本没在找的东西。', source: '— 路上' },
-    ],
+    fallbackQuote: {
+      text: '慢一点，把真正想留下的东西做好。',
+      source: '— 今天也留一点空白给自己',
+    },
     records: [
       { number: '01', type: 'NOTE', date: '05.07', title: '命令速查', link: '/notes/vcs/git/git/', icon: 'lucide:terminal' },
       { number: '02', type: 'BLOG', date: '05.15', title: '个性签名卡片', link: '/blog/profile-card/', icon: 'lucide:id-card' },
@@ -61,13 +63,10 @@ const content: Record<'zh' | 'en', LocaleContent> = {
       { label: 'Building', value: 'GearPress', icon: 'lucide:code-2' },
       { label: 'Listening', value: 'Spotify', icon: 'lucide:headphones' },
     ],
-    quotes: [
-      { text: 'Take it slower, and make the things worth keeping.', source: '— leaving a little room for today' },
-      { text: 'Finish the small thing in front of you before reaching further.', source: '— a note to self' },
-      { text: 'Stay curious, and let yourself not have the answer yet.', source: '— a small note' },
-      { text: 'The point is not to remember everything, but to keep what is worth revisiting.', source: '— a reminder' },
-      { text: 'A small detour can lead to something you were not looking for.', source: '— somewhere along the way' },
-    ],
+    fallbackQuote: {
+      text: 'Take it slower, and make the things worth keeping.',
+      source: '— leaving a little room for today',
+    },
     records: [
       { number: '01', type: 'NOTE', date: '05.07', title: 'Cheat Sheet', link: '/en/notes/vcs/git/git/', icon: 'lucide:terminal' },
       { number: '02', type: 'BLOG', date: '05.15', title: 'Profile Card', link: '/en/blog/profile-card/', icon: 'lucide:id-card' },
@@ -79,18 +78,61 @@ const content: Record<'zh' | 'en', LocaleContent> = {
 }
 
 const current = computed(() => content[isEnglish.value ? 'en' : 'zh'])
-const quoteIndex = ref(0)
-const dailyQuote = computed(() => current.value.quotes[quoteIndex.value % current.value.quotes.length])
+const apiQuote = ref<DailyQuote | null>(null)
+const isQuoteLoading = ref(true)
+const dailyQuote = computed(() => apiQuote.value ?? current.value.fallbackQuote)
+let quoteRequestController: AbortController | undefined
 
-function getUtcDayIndex(length: number) {
-  const today = new Date()
-  const start = Date.UTC(today.getUTCFullYear(), 0, 1)
-  const day = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())
-  return Math.floor((day - start) / 86400000) % length
+function isHitokotoResponse(value: unknown): value is { hitokoto: string, from?: string, from_who?: string } {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+
+  const data = value as Record<string, unknown>
+  return typeof data.hitokoto === 'string' && data.hitokoto.trim().length > 0
+}
+
+async function loadDailyQuote() {
+  quoteRequestController?.abort()
+  const controller = new AbortController()
+  quoteRequestController = controller
+  const timeout = window.setTimeout(() => controller.abort(), 5000)
+
+  try {
+    const response = await fetch('https://v1.hitokoto.cn/', { signal: controller.signal })
+    if (!response.ok) {
+      throw new Error(`Hitokoto request failed with status ${response.status}`)
+    }
+
+    const data: unknown = await response.json()
+    if (!isHitokotoResponse(data)) {
+      throw new Error('Hitokoto response did not contain a quote')
+    }
+
+    const source = [data.from, data.from_who].filter(Boolean).join(' / ')
+    apiQuote.value = {
+      text: data.hitokoto.trim(),
+      source: source ? `— ${source}` : (isEnglish.value ? '— Hitokoto' : '— 一言'),
+    }
+  }
+  catch {
+    apiQuote.value = null
+  }
+  finally {
+    window.clearTimeout(timeout)
+    isQuoteLoading.value = false
+    if (quoteRequestController === controller) {
+      quoteRequestController = undefined
+    }
+  }
 }
 
 onMounted(() => {
-  quoteIndex.value = getUtcDayIndex(current.value.quotes.length)
+  void loadDailyQuote()
+})
+
+onBeforeUnmount(() => {
+  quoteRequestController?.abort()
 })
 </script>
 
@@ -112,10 +154,10 @@ onMounted(() => {
     </section>
 
     <section class="gear-home-desk" aria-label="GearPress home highlights">
-      <article class="gear-home-daily-note">
+      <article class="gear-home-daily-note" :class="{ 'is-loading': isQuoteLoading }" :aria-busy="isQuoteLoading">
         <div class="gear-home-daily-rule" aria-hidden="true" />
         <p class="gear-home-eyebrow">{{ current.dailyLabel }}</p>
-        <p class="gear-home-quote">“{{ dailyQuote.text }}”</p>
+        <p class="gear-home-quote" aria-live="polite">“{{ dailyQuote.text }}”</p>
         <p class="gear-home-quote-source">{{ dailyQuote.source }}</p>
         <span class="gear-home-quote-mark" aria-hidden="true">“</span>
       </article>
@@ -365,16 +407,16 @@ onMounted(() => {
 
 .gear-home-daily-note {
   position: relative;
-  min-height: 86px;
-  padding: 18px 24px 14px;
+  min-height: 104px;
+  padding: 20px 24px 16px;
   overflow: hidden;
   color: var(--gp-home-text);
   background: var(--gp-home-card-bg);
   border: 1px solid var(--gp-home-card-border);
-  border-radius: 18px;
+  border-radius: 16px;
   box-shadow: var(--gp-home-card-shadow);
   backdrop-filter: blur(14px);
-  transition: box-shadow 380ms cubic-bezier(0.4, 0, 0.2, 1), transform 380ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 380ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 380ms cubic-bezier(0.4, 0, 0.2, 1), transform 380ms cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-backdrop-filter: blur(14px);
 }
 
@@ -386,8 +428,32 @@ onMounted(() => {
 .gear-home-daily-rule {
   position: absolute;
   inset: 0 0 auto;
-  height: 4px;
+  height: 3px;
   background: var(--gp-gradient-readable);
+  background-size: 180% 100%;
+}
+
+.gear-home-daily-note.is-loading .gear-home-daily-rule {
+  animation: gear-home-quote-loading 1.8s ease-in-out infinite;
+}
+
+@keyframes gear-home-quote-loading {
+  0%,
+  100% {
+    background-position: 0 50%;
+    opacity: 0.7;
+  }
+
+  50% {
+    background-position: 100% 50%;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gear-home-daily-note.is-loading .gear-home-daily-rule {
+    animation: none;
+  }
 }
 
 .gear-home-eyebrow {
@@ -401,27 +467,39 @@ onMounted(() => {
 .gear-home-quote {
   position: relative;
   z-index: 1;
-  margin: 9px 0 3px;
+  max-width: 100%;
+  padding-right: 64px;
+  margin: 11px 0 6px;
   font-size: clamp(16px, 1.5vw, 18px);
-  line-height: 1.45;
+  font-weight: 560;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
   color: var(--gp-home-text);
+  text-wrap: balance;
 }
 
 .gear-home-quote-source {
+  max-width: calc(100% - 64px);
   margin: 0;
+  overflow: hidden;
   font-size: 12px;
+  line-height: 1.4;
   color: var(--gp-home-muted);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .gear-home-quote-mark {
   position: absolute;
-  right: 28px;
-  bottom: 3px;
+  right: 22px;
+  bottom: -2px;
+  pointer-events: none;
   font-family: Georgia, serif;
-  font-size: 76px;
+  font-size: 72px;
   line-height: 1;
   color: var(--gp-icon-highlight);
-  opacity: 0.22;
+  opacity: 0.14;
 }
 
 .gear-home-selected-heading {
