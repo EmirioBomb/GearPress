@@ -2,11 +2,10 @@
 import type { Component } from 'vue'
 import DotGrid from 'vuepress-theme-plume/components/background/DotGrid.vue'
 import LiquidEther from 'vuepress-theme-plume/components/background/LiquidEther.vue'
-import Orb from 'vuepress-theme-plume/components/background/Orb.vue'
 import { computed, markRaw, onMounted, onUnmounted, ref } from 'vue'
 import { useData } from 'vuepress-theme-plume/composables'
 
-type HeroEffect = 'liquid-ether' | 'dot-grid' | 'orb'
+type HeroEffect = 'liquid-ether' | 'dot-grid'
 
 interface EffectOption {
   value: HeroEffect
@@ -50,16 +49,6 @@ const effects: readonly EffectOption[] = [
       gap: 18,
       activeColor: '#7040cf',
       proximity: 140,
-    },
-  },
-  {
-    value: 'orb',
-    label: { zh: '光球', en: 'Orb' },
-    component: markRaw(Orb),
-    config: {
-      hue: 258,
-      hoverIntensity: 0.25,
-      rotateOnHover: true,
     },
   },
 ]
