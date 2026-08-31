@@ -1,3 +1,24 @@
+## 🔖 Release v2.3.0 (2026-08-31)
+
+### ✨ Features
+
+* **home:** :sparkles: add switchable hero effects ([fee0e14](https://github.com/EmirioBomb/GearPress/commit/fee0e14a3386edcad36d6f22d8d30594e0119014))
+* **home:** refine daily quote card ([044ffea](https://github.com/EmirioBomb/GearPress/commit/044ffea157c63e6bf0da9deccb95f6a29e2e699a))
+* **home:** refine homepage layout and background controls ([6d467f3](https://github.com/EmirioBomb/GearPress/commit/6d467f3e58f1fa85a2a60f9d7e4c07355b74aedb))
+* **theme:** :crescent_moon: enforce dark mode and dot grid ([aa3ea44](https://github.com/EmirioBomb/GearPress/commit/aa3ea44c0c346826fe0774caa580e2c35894dba5))
+* **theme:** :sparkles: extend interactive backgrounds site-wide ([79554bb](https://github.com/EmirioBomb/GearPress/commit/79554bb8eca0542d0bc1e14aef20e0474ee0c3a8))
+
+### 📝 Documentation
+
+* **home:** :memo: refine hero copy ([8525662](https://github.com/EmirioBomb/GearPress/commit/8525662c7e08f00af76baaf614341f6327d5d5f6))
+
+### 🎨 Style
+
+* **css:** :lipstick: unify site-wide gradient theme ([0ffdbbf](https://github.com/EmirioBomb/GearPress/commit/0ffdbbf02d4067392590fba9356f9a06395dbd17))
+* **home:** :lipstick: add gradient logo and simplify homepage ([6220e92](https://github.com/EmirioBomb/GearPress/commit/6220e92c2392ad3fc2bd077360e4cdf5eb301647))
+* **theme:** :lipstick: refine gradient interactions ([cf162c6](https://github.com/EmirioBomb/GearPress/commit/cf162c6bc21b0bd7cf0edec1371bacb9a6654613))
+* **theme:** :lipstick: refine profile and page details ([fa16dea](https://github.com/EmirioBomb/GearPress/commit/fa16dea64f9896c36817b98f250b12516071f0cd))
+
 ## 🔖 Release v2.2.2 (2026-06-08)
 
 ### 🐛 Bug Fixes
