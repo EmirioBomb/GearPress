@@ -81,12 +81,12 @@ const isEnglish = computed(() => lang.value.startsWith('en'))
 <style scoped>
 .about-profile-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(190px, 0.55fr);
-  gap: clamp(16px, 3vw, 32px);
+  grid-template-columns: minmax(0, 1.5fr) minmax(176px, 0.5fr);
+  gap: clamp(12px, 2vw, 22px);
   align-items: center;
-  padding: clamp(16px, 2.2vw, 22px);
+  padding: clamp(12px, 1.5vw, 16px);
   border: 1px solid var(--vp-c-divider);
-  border-radius: 28px;
+  border-radius: 20px;
   background: var(--gp-home-card-bg);
   color: var(--vp-c-text-1);
   box-shadow: var(--gp-home-card-shadow);
@@ -98,9 +98,9 @@ const isEnglish = computed(() => lang.value.startsWith('en'))
 }
 
 .eyebrow {
-  margin: 0 0 16px;
+  margin: 0 0 10px;
   color: var(--gp-icon-highlight);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.2em;
 }
@@ -108,17 +108,17 @@ const isEnglish = computed(() => lang.value.startsWith('en'))
 h1 {
   margin: 0;
   max-width: 620px;
-  font-size: clamp(27px, 3.5vw, 42px);
+  font-size: clamp(24px, 2.7vw, 34px);
   line-height: 1.1;
   letter-spacing: -0.045em;
 }
 
 .profile-description {
   max-width: 540px;
-  margin: 16px 0 0;
+  margin: 11px 0 0;
   color: var(--vp-c-text-2);
-  font-size: 14px;
-  line-height: 1.85;
+  font-size: 13px;
+  line-height: 1.7;
 }
 
 .profile-description p {
@@ -126,53 +126,53 @@ h1 {
 }
 
 .profile-description p + p {
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 .profile-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  margin: 16px 0 0;
-  padding-top: 14px;
+  gap: 10px;
+  margin: 12px 0 0;
+  padding-top: 10px;
   border-top: 1px solid var(--vp-c-divider);
 }
 
 .stat {
   display: flex;
-  min-width: 88px;
+  min-width: 70px;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .stat strong {
   color: var(--vp-c-brand-1);
-  font-size: 22px;
+  font-size: 19px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
 .stat span {
   color: var(--vp-c-text-2);
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .profile-visual {
   display: flex;
-  min-height: 160px;
-  padding: 12px 8px;
+  min-height: 0;
+  padding: 4px;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 8px;
-  border-radius: 22px;
+  gap: 5px;
+  border-radius: 16px;
   background: transparent;
 }
 
 .logo-frame {
   display: grid;
-  width: 188px;
-  height: 188px;
+  width: clamp(148px, 13vw, 168px);
+  height: clamp(148px, 13vw, 168px);
   place-items: center;
   overflow: hidden;
   border: 0;
@@ -181,8 +181,8 @@ h1 {
 }
 
 .logo-frame img {
-  width: 188px;
-  height: 188px;
+  width: 100%;
+  height: 100%;
   max-width: none;
   object-fit: contain;
   object-position: 50% 50%;
@@ -193,13 +193,13 @@ h1 {
   background: var(--gp-gradient);
   background-clip: text;
   -webkit-background-clip: text;
-  font-size: 22px;
+  font-size: 19px;
   font-weight: 800;
 }
 
 .profile-role {
   color: var(--vp-c-text-2);
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .is-static {
@@ -210,12 +210,17 @@ h1 {
 @media (max-width: 760px) {
   .about-profile-panel {
     grid-template-columns: 1fr;
-    gap: 28px;
-    padding: 28px 24px;
+    gap: 18px;
+    padding: 18px 16px;
   }
 
   .profile-visual {
-    min-height: 220px;
+    min-height: 190px;
+  }
+
+  .logo-frame {
+    width: 168px;
+    height: 168px;
   }
 }
 
