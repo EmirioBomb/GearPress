@@ -1,6 +1,12 @@
 <template>
   <div class="page">
-    <ProfileCard align="center" boxMode="banner" />
+    <AboutProfilePanel
+      :blog-count="blogCount"
+      :note-count="noteCount"
+      :game-count="gamesData.length"
+      :language-count="langsData.length"
+      :tool-count="toolsData.length"
+    />
 
     <section class="media-grid">
       <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" />
@@ -14,15 +20,37 @@
 </template>
 
 <script setup lang="ts">
+import { routes } from "@internal/routes"
+import { computed } from "vue"
+import { useData, usePostsData } from "vuepress-theme-plume/composables"
+
 import { toolsData } from "./data/tools.data"
 import { langsData } from "./data/lang.data"
 import { gamesData } from "./data/game-cover.data"
 
-import ProfileCard from "./ProfileCard.vue"
+import AboutProfilePanel from "./AboutProfilePanel.vue"
 import IconMarquee from "./IconMarquee.vue"
 import SpotifyEmbedded from "./SpotifyEmbedded.vue"
 import GameCoverSwiper from "./GameCoverSwiper.vue"
 import SectionTitle from "../SectionTitle.vue"
+
+const { lang } = useData()
+const postsData = usePostsData()
+
+const blogCount = computed(() => {
+  const blogPath = lang.value.startsWith("en") ? "/en/blog/" : "/blog/"
+  return postsData.value[blogPath]?.filter(post => !post.draft).length ?? 0
+})
+
+const noteCount = computed(() => {
+  const localePrefix = lang.value.startsWith("en") ? "/en" : ""
+  const notePath = `${localePrefix}/notes/`
+  const routeTable = routes as Record<string, unknown>
+
+  return Object.keys(routeTable).filter(path =>
+    path.startsWith(notePath) && path !== `${notePath}about-me/`,
+  ).length
+})
 </script>
 
 <style scoped>
