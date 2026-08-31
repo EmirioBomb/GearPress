@@ -329,6 +329,45 @@ html.bg-gray body {
   -webkit-text-fill-color: currentcolor;
 }
 
+/* LinkCard 组件使用渐变边框；仅覆盖卡片本身，避免影响正文链接。 */
+:root .vp-doc .vp-link-card:is(:hover, :focus-within) {
+  background: var(--vp-c-bg-soft) padding-box, var(--gp-gradient-readable) border-box;
+  border-color: transparent;
+}
+
+:root .vp-doc .vp-link-card:is(:hover, :focus-within) .link .text {
+  color: transparent;
+  background: var(--gp-gradient-readable);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 翻页卡片的左右两侧都使用同一套渐变边框和标题文字。 */
+:root .vp-doc-footer .pager-link:is(:hover, :focus-visible) {
+  background: var(--vp-c-bg) padding-box, var(--gp-gradient-readable) border-box;
+  border-color: transparent;
+}
+
+:root .vp-doc-footer .pager-link .title {
+  width: fit-content;
+  max-width: 100%;
+}
+
+:root .vp-doc-footer .pager-link:is(:hover, :focus-visible) .title {
+  color: transparent;
+  background: var(--gp-gradient-readable);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 翻页图标使用 currentcolor 绘制，需要从标题的渐变文字规则中恢复为可见颜色。 */
+:root .vp-doc-footer .pager-link:is(:hover, :focus-visible) .title :is(.vp-icon, [class^='vpi-'], [class*=' vpi-']) {
+  color: var(--gp-icon-highlight);
+  -webkit-text-fill-color: currentcolor;
+}
+
 /* 分类、标签和分页保留控件结构，只统一文字与边框反馈。 */
 .vp-tags .tag:is(.active, :hover) {
   background: var(--gp-gradient-soft);
@@ -355,9 +394,7 @@ html.bg-gray body {
   background: var(--gp-gradient-readable);
 }
 
-.vp-doc-footer .pager-link:hover {
-  border-color: var(--gp-icon-highlight);
-}
+/* 翻页标题的渐变规则已在上方按卡片宽度统一处理。 */
 
 /* 导航栏工具使用渐变中的高对比青色，避免破坏 Iconify 的遮罩渲染。 */
 .vp-social-link:hover,
