@@ -11,6 +11,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue"
+import { useData } from "vuepress-theme-plume/composables"
 
 const props = withDefaults(defineProps<{
   playlistId: string
@@ -20,9 +21,12 @@ const props = withDefaults(defineProps<{
   mode: 'normal'
 })
 
+const { isDark } = useData()
+
 /** Spotify embed url */
 const src = computed(() => {
-  return `https://open.spotify.com/embed/playlist/${props.playlistId}?utm_source=generator&theme=0`
+  const theme = isDark.value ? 0 : 1
+  return `https://open.spotify.com/embed/playlist/${props.playlistId}?utm_source=generator&theme=${theme}`
 })
 
 const iframeHeight = computed(() => {

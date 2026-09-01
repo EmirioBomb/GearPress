@@ -414,21 +414,50 @@ html.bg-gray body {
   --vp-mark-bg-image: var(--gp-mark-gradient);
 }
 
-/* 返回顶部按钮使用品牌渐变；遮罩图标保留纯白，避免渐变破坏图标形状。 */
+/* 返回顶部按钮采用半透明表面与品牌色进度环，降低两种主题下的大面积色块对比。 */
 :root .vp-back-to-top {
-  color: #fff;
-  background-color: transparent;
-  background-image: var(--gp-gradient-readable);
-  box-shadow: var(--gp-shadow);
+  color: var(--vp-c-brand-1);
+  background-color: var(--gp-surface-bg-elv);
+  background-image: none;
+  border: 1px solid color-mix(in srgb, var(--vp-c-brand-1) 34%, transparent);
+  box-shadow: 0 8px 22px rgb(42 67 89 / 0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition:
+    color var(--vp-t-color),
+    background-color var(--vp-t-color),
+    border-color var(--vp-t-color),
+    box-shadow var(--vp-t-color),
+    transform var(--vp-t-color);
+}
+
+:root .vp-back-to-top:hover {
+  color: var(--vp-c-brand-2);
+  background-color: var(--gp-surface-bg);
+  border-color: color-mix(in srgb, var(--vp-c-brand-2) 60%, transparent);
+  box-shadow: 0 10px 26px rgb(112 64 207 / 0.2);
+  transform: translateY(-1px);
 }
 
 :root .vp-back-to-top .percent,
 :root .vp-back-to-top .icon {
-  color: #fff;
+  color: currentcolor;
 }
 
-:root .vp-back-to-top svg circle {
-  stroke: rgb(255 255 255 / 0.76);
+:root .vp-back-to-top svg circle:not(.gp-back-to-top-progress) {
+  opacity: 0;
+}
+
+:root .vp-back-to-top svg circle.gp-back-to-top-progress {
+  stroke: currentcolor;
+}
+
+[data-theme="dark"] .vp-back-to-top {
+  box-shadow: 0 8px 22px rgb(4 9 19 / 0.3);
+}
+
+[data-theme="dark"] .vp-back-to-top:hover {
+  box-shadow: 0 10px 26px rgb(112 64 207 / 0.28);
 }
 
 /* 键盘焦点、选中文本和加载进度也使用统一主题色 */
