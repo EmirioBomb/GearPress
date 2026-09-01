@@ -3,7 +3,7 @@
     <div class="profile-copy">
       <p class="eyebrow">{{ isEnglish ? 'PERSONAL PROFILE' : '个人资料' }}</p>
       <h1 id="about-profile-title">
-        {{ isEnglish ? 'Just figuring things out as I go.' : '踩过的坑，看过的东西' }}
+        {{ isEnglish ? 'Just figuring things out as I go.' : '日积月累，终见其深' }}
       </h1>
       <div class="profile-description">
         <p>
@@ -100,9 +100,10 @@ const isEnglish = computed(() => lang.value.startsWith('en'))
 .eyebrow {
   margin: 0 0 10px;
   color: var(--gp-icon-highlight);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
+  line-height: 1.4;
 }
 
 h1 {
@@ -158,6 +159,7 @@ h1 {
 }
 
 .profile-visual {
+  position: relative;
   display: flex;
   min-height: 0;
   padding: 4px;
@@ -167,6 +169,16 @@ h1 {
   gap: 5px;
   border-radius: 16px;
   background: transparent;
+}
+
+.profile-visual::before {
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  left: 0;
+  width: 1px;
+  content: '';
+  background: var(--vp-c-divider);
 }
 
 .logo-frame {
@@ -216,6 +228,10 @@ h1 {
 
   .profile-visual {
     min-height: 190px;
+  }
+
+  .profile-visual::before {
+    display: none;
   }
 
   .logo-frame {

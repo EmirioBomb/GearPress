@@ -1,5 +1,6 @@
 <template>
   <div class="coverflow-shell">
+    <p v-if="title" class="section-label">{{ title }}</p>
     <Swiper
       class="coverflow"
       effect="coverflow"
@@ -83,7 +84,7 @@ export interface GameItem {
   platform?: string[]
 }
 
-defineProps<{ items: GameItem[] }>()
+defineProps<{ items: GameItem[]; title?: string }>()
 
 const modules = [Autoplay, EffectCoverflow]
 
@@ -116,23 +117,36 @@ function onImgError(e: Event) {
   height: 100%;
 
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
 
-  padding: 18px;
+  box-sizing: border-box;
+  padding: 16px;
 
-  border-radius: 18px;
+  border-radius: 20px;
   overflow: hidden;
 
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--gp-home-card-border);
 
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--gp-home-card-bg);
 
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.03),
-    0 10px 30px rgba(0,0,0,.28);
+  box-shadow: var(--gp-home-card-shadow);
+}
+
+.section-label {
+  flex: none;
+  margin: 0;
+  color: var(--gp-icon-highlight);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.4;
 }
 
 :deep(.swiper) {
+  flex: 1;
+  min-height: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
@@ -252,7 +266,7 @@ function onImgError(e: Event) {
 @media (max-width: 768px) {
   .coverflow-shell {
     height: 320px;
-    padding: 14px;
+    padding: 12px;
   }
 
   .slide {
