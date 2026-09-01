@@ -1,3 +1,17 @@
+## 🔖 Release v2.4.0 (2026-09-01)
+
+### ✨ Features
+
+* **about:** refine profile panel and branding assets ([9f0ffcc](https://github.com/EmirioBomb/GearPress/commit/9f0ffcc641dbdea92010222132072618dbf51a07))
+
+### 🐛 Bug Fixes
+
+* **theme:** finalize logo and favicon configuration ([91decdd](https://github.com/EmirioBomb/GearPress/commit/91decdd0dd8528dc553097042e2410b29ef259d1))
+
+### 🎨 Style
+
+* **about:** compact profile panel layout ([de0cd96](https://github.com/EmirioBomb/GearPress/commit/de0cd96f5821f0bd8de398c697542e9c5e655a9d))
+
 ## 🔖 Release v2.3.0 (2026-08-31)
 
 ### ✨ Features
