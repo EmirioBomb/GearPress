@@ -10,24 +10,29 @@
       :slides-per-view="'auto'"
       :coverflow-effect="coverflow"
       :autoplay="autoplay"
+      :prevent-clicks="true"
+      :prevent-clicks-propagation="true"
       :modules="modules"
+      @swiper="onSwiper"
+      @focusin="pauseAutoplay"
+      @focusout="resumeAutoplay"
     >
       <SwiperSlide
         v-for="game in items"
         :key="game.name"
         class="slide"
       >
-        <a
+        <component
+          :is="game.href ? 'a' : 'div'"
           class="card"
-          :href="game.href"
-          target="_blank"
-          rel="noopener noreferrer"
+          v-bind="game.href ? externalLinkAttributes(game) : undefined"
         >
           <img
             class="cover"
             :src="game.link"
-            :alt="game.alt || game.name"
+            :alt="game.name"
             loading="lazy"
+            decoding="async"
             @error="onImgError"
           />
 
@@ -57,18 +62,21 @@
               </span>
             </div>
 
-            <div v-if="game.alt" class="desc">
-              {{ game.alt }}
+            <div v-if="game.description" class="desc">
+              {{ game.description }}
             </div>
           </div>
-        </a>
+        </component>
       </SwiperSlide>
     </Swiper>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from "vue"
+import { usePreferredReducedMotion } from "@vueuse/core"
 import { Swiper, SwiperSlide } from "swiper/vue"
+import type { Swiper as SwiperInstance } from "swiper"
 import { Autoplay, EffectCoverflow } from "swiper/modules"
 import { Icon } from "@iconify/vue"
 
@@ -77,9 +85,9 @@ import "swiper/css/effect-coverflow"
 
 export interface GameItem {
   name: string
-  link?: string
+  link: string
   href?: string
-  alt?: string
+  description?: string
   tags?: string[]
   platform?: string[]
 }
@@ -87,6 +95,8 @@ export interface GameItem {
 defineProps<{ items: GameItem[]; title?: string }>()
 
 const modules = [Autoplay, EffectCoverflow]
+const prefersReducedMotion = usePreferredReducedMotion()
+const swiper = ref<SwiperInstance>()
 
 const coverflow = {
   rotate: 18,
@@ -96,18 +106,58 @@ const coverflow = {
   slideShadows: false
 }
 
-const autoplay = {
-  delay: 2200,
-  disableOnInteraction: false
+const autoplay = computed(() => {
+  if (prefersReducedMotion.value === "reduce") return false
+
+  return {
+    delay: 4500,
+    disableOnInteraction: false,
+    pauseOnMouseEnter: true,
+  }
+})
+
+function onSwiper(instance: SwiperInstance) {
+  swiper.value = instance
+}
+
+function pauseAutoplay() {
+  swiper.value?.autoplay.pause()
+}
+
+function resumeAutoplay(event: FocusEvent) {
+  const nextFocused = event.relatedTarget
+  const currentTarget = event.currentTarget
+
+  if (
+    currentTarget instanceof HTMLElement
+    && nextFocused instanceof Node
+    && currentTarget.contains(nextFocused)
+  ) return
+
+  if (prefersReducedMotion.value !== "reduce") {
+    swiper.value?.autoplay.resume()
+  }
+}
+
+function externalLinkAttributes(game: GameItem) {
+  return {
+    href: game.href,
+    target: "_blank",
+    rel: "noopener noreferrer",
+    "aria-label": `Open ${game.name} in a new tab`,
+  }
 }
 
 function onImgError(e: Event) {
   const img = e.target as HTMLImageElement
-  if (img.dataset.failed) return
-  img.dataset.failed = "true"
 
-  img.src =
-    "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/Not%20Found.png"
+  if (img.dataset.fallback) {
+    img.hidden = true
+    return
+  }
+
+  img.dataset.fallback = "true"
+  img.src = "/game-cover-fallback.svg"
 }
 </script>
 
@@ -176,15 +226,21 @@ function onImgError(e: Event) {
 
   border-radius: 18px;
   overflow: hidden;
-
+  background: linear-gradient(145deg, #143d50, #252a5c 54%, #3c1d68);
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
 
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
-.card:hover {
+.card:hover,
+.card:focus-visible {
   transform: translateY(-6px);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 3px;
 }
 
 .cover {
@@ -261,6 +317,13 @@ function onImgError(e: Event) {
   margin-top: 6px;
   font-size: 11px;
   opacity: 0.82;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .cover {
+    transition: none;
+  }
 }
 
 @media (max-width: 640px) {
