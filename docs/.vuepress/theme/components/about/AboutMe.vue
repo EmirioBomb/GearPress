@@ -66,26 +66,27 @@ const noteCount = computed(() => {
 <style scoped>
 .page {
   display: flex;
+  width: 100%;
+  min-width: 0;
   flex-direction: column;
-  gap: 32px;
+  gap: clamp(24px, 4vw, 32px);
 }
 
-/* 基于视口高度的响应式布局高度，限制最小/最大值以保证跨浏览器一致性 */
 .media-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 20px;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: clamp(12px, 2vw, 20px);
   align-items: stretch;
-
-  height: 216px;
 }
 
 /* 统一媒体区域的面板外观，内容组件保留各自的展示方式 */
 .media-panel {
   box-sizing: border-box;
   display: flex;
-  height: 100%;
-  min-height: 0;
+  height: 216px;
+  min-width: 0;
   flex-direction: column;
   gap: 10px;
   padding: 16px;
@@ -111,21 +112,22 @@ const noteCount = computed(() => {
 .spotify-panel :deep(.spotify) {
   flex: none;
   width: 100%;
+  min-width: 0;
   height: 152px;
   min-height: 152px;
   border-radius: 12px;
 }
 
-/* 让子项参与等高布局，避免跨浏览器（Chrome/Safari）高度计算不一致 */
 .media-grid > * {
-  height: 100%;
-  min-height: 0;
+  width: 100%;
+  min-width: 0;
 }
 
 .skills-panel {
   box-sizing: border-box;
   display: flex;
-  min-height: 0;
+  height: 216px;
+  min-width: 0;
   flex-direction: column;
   gap: 14px;
   padding: 16px;
@@ -136,10 +138,10 @@ const noteCount = computed(() => {
 }
 
 .skills-panel > :deep(.marquee__group a) {
-  width: 54px;
-  height: 54px;
-  margin: 0 8px;
-  font-size: 40px;
+  width: clamp(40px, 5vw, 54px);
+  height: clamp(40px, 5vw, 54px);
+  margin: 0 clamp(5px, 0.8vw, 8px);
+  font-size: clamp(30px, 3.7vw, 40px);
 }
 
 .game-section {
@@ -150,7 +152,7 @@ const noteCount = computed(() => {
   height: 100%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .page {
     gap: 24px;
   }
@@ -158,13 +160,12 @@ const noteCount = computed(() => {
   .media-grid {
     grid-template-columns: 1fr;
     gap: 16px;
-
-    /* 移动端改为纵向排列，并让 Spotify 与技能面板保持相同高度 */
-    height: auto;
   }
 
-  .media-grid > * {
+  .media-panel,
+  .skills-panel {
     height: 216px;
+    padding: 14px;
   }
 
   .game-section {

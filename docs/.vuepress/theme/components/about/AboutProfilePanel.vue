@@ -8,18 +8,13 @@
       <div class="profile-description">
         <p>
           {{ isEnglish
-            ? 'I’m Emirio. I like coding, games, and music.'
-            : '我是 Emirio，一个喜欢编程、游戏和音乐的普通人。' }}
+            ? 'I’m Emirio. I like coding, games, and music. Most of the time, I write code and make notes about what I’m learning and experimenting with.'
+            : '我是 Emirio，一个喜欢编程、游戏和音乐的普通人。平时写代码，也记录开发、学习和折腾中积累的经验。' }}
         </p>
         <p>
           {{ isEnglish
-            ? 'Most of the time, you’ll find me writing code or making notes about whatever I’m learning and messing around with. When I’m not doing that, I’m happy to switch off for a while with a game or some music. And if something catches my interest, I’ll probably end up trying a new tool or doing things a different way.'
-            : '平时写代码，也会记录开发、学习和折腾过程中积累下来的经验。生活里有时喜欢安静地躺平，享受游戏与音乐带来的放松；有时也会因为一点好奇心，去研究新的工具，尝试不同的做事方式。' }}
-        </p>
-        <p>
-          {{ isEnglish
-            ? 'I’m not in a rush to become anything in particular. I just want to spend my time on things I enjoy, keep learning at my own pace, and make a decent life out of the things that matter to me.'
-            : '不追求成为多么厉害的人，只希望专注于自己真正喜欢的事情，在持续学习和偶尔折腾中慢慢积累，安稳地过好属于自己的普通生活。' }}
+            ? 'When I’m not doing that, I unwind with games or music, and curiosity often leads me to try new tools and different ways of doing things. I’m simply taking my time, learning at my own pace, and building a life around what matters to me.'
+            : '闲下来会用游戏和音乐放松，也会因好奇心研究新工具、尝试不同的做事方式。不追求成为多么厉害的人，只想专注真正喜欢的事，按自己的节奏持续学习，安稳过好普通生活。' }}
         </p>
       </div>
 
@@ -133,22 +128,22 @@ h1 {
 .profile-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin: 12px 0 0;
-  padding-top: 10px;
+  gap: 8px 14px;
+  margin: 10px 0 0;
+  padding-top: 8px;
   border-top: 1px solid var(--vp-c-divider);
 }
 
 .stat {
   display: flex;
-  min-width: 70px;
+  min-width: 56px;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .stat strong {
   color: var(--vp-c-brand-1);
-  font-size: 19px;
+  font-size: 18px;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
@@ -156,6 +151,7 @@ h1 {
 .stat span {
   color: var(--vp-c-text-2);
   font-size: 10px;
+  line-height: 1.2;
 }
 
 .profile-visual {
@@ -219,15 +215,15 @@ h1 {
   user-select: none;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 640px) {
   .about-profile-panel {
     grid-template-columns: 1fr;
-    gap: 18px;
-    padding: 18px 16px;
+    gap: 16px;
+    padding: 16px;
   }
 
   .profile-visual {
-    min-height: 190px;
+    min-height: 168px;
   }
 
   .profile-visual::before {
@@ -235,8 +231,8 @@ h1 {
   }
 
   .logo-frame {
-    width: 168px;
-    height: 168px;
+    width: clamp(148px, 42vw, 168px);
+    height: clamp(148px, 42vw, 168px);
   }
 }
 

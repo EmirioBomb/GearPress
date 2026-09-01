@@ -263,9 +263,8 @@ function onImgError(e: Event) {
   opacity: 0.82;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .coverflow-shell {
-    height: 320px;
     padding: 12px;
   }
 
