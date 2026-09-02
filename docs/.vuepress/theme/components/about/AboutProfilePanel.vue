@@ -162,7 +162,7 @@ h1 {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 5px;
+  gap: 14px;
   border-radius: 16px;
   background: transparent;
 }
@@ -178,17 +178,95 @@ h1 {
 }
 
 .logo-frame {
+  position: relative;
   display: grid;
   width: clamp(148px, 13vw, 168px);
   height: clamp(148px, 13vw, 168px);
   place-items: center;
-  overflow: hidden;
+  overflow: visible;
   border: 0;
   border-radius: 50%;
   background: transparent;
+  isolation: isolate;
+}
+
+@property --profile-logo-orbit-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.logo-frame::before {
+  position: absolute;
+  z-index: -1;
+  inset: -10px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--gp-icon-highlight) 28%, transparent) 0%,
+    color-mix(in srgb, var(--gp-blue) 17%, transparent) 40%,
+    color-mix(in srgb, var(--gp-purple) 10%, transparent) 58%,
+    transparent 74%
+  );
+  filter: blur(10px);
+  opacity: 0.3;
+  content: '';
+  animation: profile-logo-halo 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.logo-frame::after {
+  position: absolute;
+  z-index: 0;
+  inset: -8px;
+  padding: 2px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from var(--profile-logo-orbit-angle),
+    transparent 0deg 36deg,
+    color-mix(in srgb, var(--gp-cyan) 42%, transparent) 48deg,
+    var(--gp-cyan) 58deg,
+    #eaffff 66deg,
+    var(--gp-blue) 76deg,
+    var(--gp-purple) 94deg,
+    color-mix(in srgb, var(--gp-purple) 18%, transparent) 112deg,
+    transparent 128deg 360deg
+  );
+  content: '';
+  animation: profile-logo-orbit 5.5s linear infinite;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+@keyframes profile-logo-halo {
+  0%,
+  100% {
+    filter: blur(8px);
+    opacity: 0.22;
+  }
+
+  50% {
+    filter: blur(13px);
+    opacity: 0.42;
+  }
+}
+
+@keyframes profile-logo-orbit {
+  from {
+    --profile-logo-orbit-angle: 0deg;
+  }
+
+  to {
+    --profile-logo-orbit-angle: 360deg;
+  }
 }
 
 .logo-frame img {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   max-width: none;
@@ -240,6 +318,16 @@ h1 {
   .about-profile-panel,
   .logo-frame {
     transition: none;
+  }
+
+  .logo-frame::before,
+  .logo-frame::after {
+    animation: none;
+  }
+
+  .logo-frame::before {
+    filter: blur(10px);
+    opacity: 0.34;
   }
 }
 </style>

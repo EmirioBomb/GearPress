@@ -86,6 +86,7 @@ import ProfileCard from './theme/components/about/ProfileCard.vue'
 import AboutMe from './theme/components/about/AboutMe.vue'
 import HeroEffectSwitch from './theme/components/HeroEffectSwitch.vue'
 import HomeLanding from './theme/components/HomeLanding.vue'
+import NavigationHub from './theme/components/navigation/NavigationHub.vue'
 
 import './theme/styles/index.css'
 
@@ -111,5 +112,6 @@ export default defineClientConfig({
     app.component('ProfileCard', ProfileCard)
     app.component('AboutMe', AboutMe)
     app.component('HomeLanding', HomeLanding)
+    app.component('NavigationHub', NavigationHub)
   },
 })

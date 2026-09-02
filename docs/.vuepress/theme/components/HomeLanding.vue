@@ -26,6 +26,7 @@ type ArticleCandidate = Omit<ArticleRecord, 'number'> & {
 type LocaleContent = {
   casualLine: string
   about: string
+  navigation: string
   authorLine: string
   dailyLabel: string
   selectedLabel: string
@@ -44,6 +45,7 @@ const content: Record<'zh' | 'en', LocaleContent> = {
   zh: {
     casualLine: '日积月累，终见其深',
     about: '关于我',
+    navigation: '导航',
     authorLine: 'by Emirio',
     dailyLabel: '每日一句',
     selectedLabel: '我的随记',
@@ -65,6 +67,7 @@ const content: Record<'zh' | 'en', LocaleContent> = {
   en: {
     casualLine: 'Building & Keeping',
     about: 'About me',
+    navigation: 'Navigation',
     authorLine: 'by Emirio',
     dailyLabel: 'DAILY NOTE',
     selectedLabel: 'My Posts',
@@ -281,15 +284,19 @@ onBeforeUnmount(() => {
 <template>
   <main class="gear-home">
     <section class="gear-home-identity" aria-labelledby="gear-home-title">
-      <img class="gear-home-logo" :src="withBase('/logo.svg')" alt="" aria-hidden="true" no-view>
-      <h1 id="gear-home-title">GearPress</h1>
+      <div class="gear-home-logo-orbit">
+        <img class="gear-home-logo" :src="withBase('/logo.svg')" alt="" aria-hidden="true" no-view>
+      </div>
+      <h1 id="gear-home-title"><span>GearPress</span></h1>
       <p class="gear-home-casual-line">{{ current.casualLine }}</p>
       <div class="gear-home-actions">
         <a class="gear-home-button gear-home-button-primary" :href="withBase(isEnglish ? '/en/notes/about-me/' : '/notes/about-me/')">
-          {{ current.about }}
+          <Icon icon="lucide:user-round" class="gear-home-button-icon" aria-hidden="true" />
+          <span>{{ current.about }}</span>
         </a>
-        <a class="gear-home-button gear-home-button-secondary" href="https://github.com/EmirioBomb/GearPress" target="_blank" rel="noreferrer">
-          GitHub
+        <a class="gear-home-button gear-home-button-secondary" :href="withBase(isEnglish ? '/en/navigation/' : '/navigation/')">
+          <Icon icon="lucide:compass" class="gear-home-button-icon" aria-hidden="true" />
+          <span>{{ current.navigation }}</span>
         </a>
       </div>
       <p class="gear-home-author"><span>{{ current.authorLine }}</span></p>
@@ -418,26 +425,115 @@ onBeforeUnmount(() => {
   content: '';
 }
 
-.gear-home-logo {
-  display: block;
-  width: clamp(180px, 17vw, 250px);
-  height: auto;
-  margin: 0 auto 18px;
-  animation: gear-home-logo-breathe 14s ease-in-out infinite;
+@property --gear-home-logo-orbit-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
 }
 
-@keyframes gear-home-logo-breathe {
+.gear-home-logo-orbit {
+  position: relative;
+  display: grid;
+  width: clamp(180px, 17vw, 250px);
+  aspect-ratio: 290 / 255;
+  place-items: center;
+  margin: 0 auto 24px;
+  isolation: isolate;
+}
+
+.gear-home-logo-orbit::before {
+  position: absolute;
+  z-index: -2;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--gp-cyan) 40%, transparent) 0%,
+    color-mix(in srgb, var(--gp-blue) 25%, transparent) 40%,
+    color-mix(in srgb, var(--gp-purple) 18%, transparent) 58%,
+    transparent 76%
+  );
+  filter: blur(10px);
+  opacity: 0.28;
+  content: '';
+  animation: gear-home-logo-halo 3.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.gear-home-logo-orbit::after {
+  position: absolute;
+  z-index: 0;
+  inset: -10px;
+  padding: 2px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from var(--gear-home-logo-orbit-angle),
+    transparent 0deg 34deg,
+    color-mix(in srgb, var(--gp-cyan) 45%, transparent) 46deg,
+    var(--gp-cyan) 56deg,
+    #eaffff 64deg,
+    var(--gp-blue) 74deg,
+    var(--gp-purple) 92deg,
+    color-mix(in srgb, var(--gp-purple) 20%, transparent) 110deg,
+    transparent 124deg 360deg
+  );
+  content: '';
+  animation: gear-home-logo-orbit 4.8s linear infinite;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.gear-home-logo {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--gp-cyan) 28%, transparent)) drop-shadow(0 0 16px color-mix(in srgb, var(--gp-purple) 14%, transparent));
+  animation: gear-home-logo-glow 3.8s ease-in-out infinite;
+}
+
+@keyframes gear-home-logo-halo {
   0%,
   100% {
-    transform: translateY(0) scale(1);
+    opacity: 0.16;
+    transform: scale(1);
   }
 
   50% {
-    transform: translateY(-3px) scale(1.006);
+    opacity: 0.44;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes gear-home-logo-orbit {
+  from {
+    --gear-home-logo-orbit-angle: 0deg;
+  }
+
+  to {
+    --gear-home-logo-orbit-angle: 360deg;
+  }
+}
+
+@keyframes gear-home-logo-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--gp-cyan) 28%, transparent)) drop-shadow(0 0 16px color-mix(in srgb, var(--gp-purple) 14%, transparent));
+    transform: scale(1);
+  }
+
+  50% {
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--gp-cyan) 44%, transparent)) drop-shadow(0 0 18px color-mix(in srgb, var(--gp-purple) 21%, transparent));
+    transform: scale(1.008);
   }
 }
 
 .gear-home-identity h1 {
+  position: relative;
   width: fit-content;
   padding-inline: 0.04em;
   margin: 0 auto;
@@ -445,23 +541,133 @@ onBeforeUnmount(() => {
   font-weight: 750;
   line-height: 1.08;
   letter-spacing: -0.04em;
+  isolation: isolate;
+}
+
+.gear-home-identity h1::before {
+  position: absolute;
+  z-index: 0;
+  inset: -2% -1%;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      ellipse at 34% 50%,
+      color-mix(in srgb, var(--gp-cyan) 40%, transparent) 0%,
+      color-mix(in srgb, var(--gp-cyan) 16%, transparent) 30%,
+      transparent 52%
+    ),
+    radial-gradient(
+      ellipse at 68% 50%,
+      color-mix(in srgb, var(--gp-purple) 32%, transparent) 0%,
+      color-mix(in srgb, var(--gp-blue) 15%, transparent) 32%,
+      transparent 54%
+    );
+  filter: blur(4px);
+  opacity: 0.16;
+  content: '';
+  animation: gear-home-title-halo 3.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes gear-home-title-halo {
+  0%,
+  100% {
+    filter: blur(3px);
+    opacity: 0.08;
+    transform: scale(1);
+  }
+
+  50% {
+    filter: blur(5px);
+    opacity: 0.26;
+    transform: scale(1.006, 1.012);
+  }
+}
+
+.gear-home-identity h1 > span {
+  display: block;
+  position: relative;
+  z-index: 1;
   color: transparent;
-  background: var(--gp-gradient-readable);
-  background-size: 160% 100%;
+  background: linear-gradient(110deg, var(--gp-cyan) 0%, var(--gp-blue) 48%, var(--gp-purple) 100%);
+  background-size: 100% 100%;
   background-clip: text;
-  animation: gear-home-title-shift 18s ease-in-out infinite;
+  filter:
+    drop-shadow(0 0 2px color-mix(in srgb, var(--gp-cyan) 26%, transparent))
+    drop-shadow(0 0 4px color-mix(in srgb, var(--gp-blue) 17%, transparent))
+    drop-shadow(0 0 7px color-mix(in srgb, var(--gp-purple) 11%, transparent));
+  animation: gear-home-title-glow 3.8s ease-in-out infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-@keyframes gear-home-title-shift {
+@keyframes gear-home-title-glow {
   0%,
   100% {
-    background-position: 0 50%;
+    filter:
+      drop-shadow(0 0 2px color-mix(in srgb, var(--gp-cyan) 23%, transparent))
+      drop-shadow(0 0 4px color-mix(in srgb, var(--gp-blue) 14%, transparent))
+      drop-shadow(0 0 6px color-mix(in srgb, var(--gp-purple) 9%, transparent));
   }
 
   50% {
-    background-position: 100% 50%;
+    filter:
+      drop-shadow(0 0 4px color-mix(in srgb, var(--gp-cyan) 40%, transparent))
+      drop-shadow(0 0 6px color-mix(in srgb, var(--gp-blue) 25%, transparent))
+      drop-shadow(0 0 9px color-mix(in srgb, var(--gp-purple) 16%, transparent));
+  }
+}
+
+.gear-home-identity h1::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  color: transparent;
+  background-image: linear-gradient(
+    110deg,
+    transparent 0%,
+    transparent 31%,
+    color-mix(in srgb, var(--gp-cyan) 24%, transparent) 39%,
+    color-mix(in srgb, var(--gp-cyan) 72%, transparent) 46%,
+    #f3ffff 50%,
+    color-mix(in srgb, var(--gp-blue) 72%, transparent) 55%,
+    color-mix(in srgb, var(--gp-purple) 28%, transparent) 62%,
+    transparent 71%,
+    transparent 100%
+  );
+  background-size: 280% 100%;
+  background-clip: text;
+  content: 'GearPress';
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--gp-cyan) 16%, transparent));
+  opacity: 0;
+  pointer-events: none;
+  animation: gear-home-title-sweep 5.6s linear infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+}
+
+@keyframes gear-home-title-sweep {
+  0%,
+  18%,
+  100% {
+    background-position: 210% 50%;
+    opacity: 0;
+  }
+
+  27% {
+    background-position: 150% 50%;
+    opacity: 0.76;
+  }
+
+  53% {
+    background-position: 30% 50%;
+    opacity: 1;
+  }
+
+  82% {
+    background-position: -110% 50%;
+    opacity: 0;
   }
 }
 
@@ -497,21 +703,55 @@ onBeforeUnmount(() => {
   transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), filter 300ms ease, box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1), background-position 420ms ease;
 }
 
+@property --gear-home-border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
 .gear-home-button::before {
   position: absolute;
   z-index: 1;
   inset: 0;
-  padding: 1px;
+  padding: 2px;
   pointer-events: none;
-  background: var(--gp-gradient-readable);
+  background: conic-gradient(
+    from var(--gear-home-border-angle),
+    transparent 0deg 36deg,
+    color-mix(in srgb, var(--gp-cyan) 48%, transparent) 47deg,
+    var(--gp-cyan) 57deg,
+    #eaffff 65deg,
+    var(--gp-blue) 75deg,
+    var(--gp-purple) 93deg,
+    color-mix(in srgb, var(--gp-purple) 22%, transparent) 113deg,
+    transparent 130deg 360deg
+  );
   border-radius: inherit;
-  opacity: 0;
+  opacity: 1;
   content: '';
+  animation: gear-home-button-border-flow 4.2s linear infinite;
   transition: opacity 260ms ease;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
+}
+
+@keyframes gear-home-button-border-flow {
+  from {
+    --gear-home-border-angle: 0deg;
+  }
+
+  to {
+    --gear-home-border-angle: 360deg;
+  }
+}
+
+.gear-home-button-icon {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-right: 7px;
 }
 
 .gear-home-button:hover,
@@ -524,6 +764,7 @@ onBeforeUnmount(() => {
 .gear-home-button:hover::before,
 .gear-home-button:focus-visible::before {
   opacity: 1;
+  animation-duration: 3.2s;
 }
 
 .gear-home-button:focus-visible {
@@ -531,34 +772,50 @@ onBeforeUnmount(() => {
   outline-offset: 3px;
 }
 
-.gear-home-button-primary {
-  color: #fff;
-  background: var(--gp-gradient-readable);
-  background-position: 0 50%;
-  background-size: 140% 100%;
-  border: 1px solid var(--gp-home-button-border);
-  box-shadow: var(--gp-shadow), 0 6px 16px rgb(32 52 75 / 0.18);
+.gear-home-button-primary,
+.gear-home-button-secondary {
+  color: var(--gp-home-button-secondary-text);
+  background: transparent;
+  border: 2px solid color-mix(in srgb, var(--gp-blue) 38%, var(--gp-home-card-border));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 28%, transparent),
+    0 0 16px color-mix(in srgb, var(--gp-blue) 14%, transparent),
+    0 8px 22px rgb(32 52 75 / 0.22);
 }
 
 .gear-home-button-primary:hover,
-.gear-home-button-primary:focus-visible {
-  color: #fff;
-  background-position: 100% 50%;
-  filter: brightness(1.06) saturate(1.08);
-  box-shadow: var(--gp-shadow), 0 8px 20px rgb(32 52 75 / 0.21);
-}
-
-.gear-home-button-secondary {
-  color: var(--gp-home-button-secondary-text);
-  background: var(--gp-home-button-secondary-bg);
-  border: 1px solid var(--gp-home-button-border);
-  box-shadow: var(--gp-shadow), 0 6px 16px rgb(32 52 75 / 0.12);
-}
-
+.gear-home-button-primary:focus-visible,
 .gear-home-button-secondary:hover,
 .gear-home-button-secondary:focus-visible {
   color: var(--gp-home-button-secondary-text);
-  box-shadow: var(--gp-shadow), 0 8px 20px rgb(32 52 75 / 0.16);
+  background: var(--gp-gradient-soft);
+  filter: none;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 42%, transparent),
+    0 0 20px color-mix(in srgb, var(--gp-blue) 32%, transparent),
+    0 12px 30px rgb(32 52 75 / 0.26);
+}
+
+/* 暗色主题使用亮色外发光，避免深色投影融入背景。 */
+:global(html[data-theme="dark"] .gear-home .gear-home-button-primary),
+:global(html[data-theme="dark"] .gear-home .gear-home-button-secondary) {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 40%, transparent),
+    0 0 12px color-mix(in srgb, #eaffff 18%, transparent),
+    0 0 24px color-mix(in srgb, var(--gp-blue) 22%, transparent),
+    0 10px 26px rgb(2 8 20 / 0.45);
+}
+
+:global(html[data-theme="dark"] .gear-home .gear-home-button-primary:hover),
+:global(html[data-theme="dark"] .gear-home .gear-home-button-primary:focus-visible),
+:global(html[data-theme="dark"] .gear-home .gear-home-button-secondary:hover),
+:global(html[data-theme="dark"] .gear-home .gear-home-button-secondary:focus-visible) {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 58%, transparent),
+    0 0 14px color-mix(in srgb, #eaffff 24%, transparent),
+    0 0 26px color-mix(in srgb, var(--gp-cyan) 42%, transparent),
+    0 0 38px color-mix(in srgb, var(--gp-blue) 34%, transparent),
+    0 14px 34px rgb(2 8 20 / 0.48);
 }
 
 .gear-home-author {
@@ -618,31 +875,37 @@ onBeforeUnmount(() => {
   position: absolute;
   inset: 0 0 auto;
   height: 3px;
-  background: var(--gp-gradient-readable);
-  background-size: 180% 100%;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--gp-home-card-border) 78%, var(--gp-cyan) 22%);
+  box-shadow: 0 1px 5px color-mix(in srgb, var(--gp-cyan) 18%, transparent);
 }
 
-.gear-home-daily-note.is-loading .gear-home-daily-rule {
-  animation: gear-home-quote-loading 1.8s ease-in-out infinite;
-}
-
-@keyframes gear-home-quote-loading {
-  0%,
-  100% {
-    background-position: 0 50%;
-    opacity: 0.7;
-  }
-
-  50% {
-    background-position: 100% 50%;
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gear-home-daily-note.is-loading .gear-home-daily-rule {
-    animation: none;
-  }
+.gear-home-daily-note::before,
+.gear-home-status-rail::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--gear-home-border-angle),
+    transparent 0deg 36deg,
+    color-mix(in srgb, var(--gp-cyan) 48%, transparent) 47deg,
+    var(--gp-cyan) 57deg,
+    #eaffff 65deg,
+    var(--gp-blue) 75deg,
+    var(--gp-purple) 93deg,
+    color-mix(in srgb, var(--gp-purple) 22%, transparent) 113deg,
+    transparent 130deg 360deg
+  );
+  content: '';
+  clip-path: inset(0 0 calc(100% - 3px) 0);
+  animation: gear-home-button-border-flow 4.2s linear infinite;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
 }
 
 .gear-home-eyebrow {
@@ -710,6 +973,22 @@ onBeforeUnmount(() => {
   background: var(--gp-gradient-readable);
   border-radius: 50%;
   box-shadow: 0 0 0 3px rgb(104 174 193 / 0.10);
+  animation: gear-home-section-dot-pulse 4.5s ease-in-out infinite;
+}
+
+@keyframes gear-home-section-dot-pulse {
+  0%,
+  100% {
+    opacity: 0.72;
+    box-shadow: 0 0 0 3px rgb(104 174 193 / 0.08);
+  }
+
+  50% {
+    opacity: 1;
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--gp-cyan) 18%, transparent),
+      0 0 9px color-mix(in srgb, var(--gp-blue) 22%, transparent);
+  }
 }
 
 .gear-home-records {
@@ -736,9 +1015,19 @@ onBeforeUnmount(() => {
   position: absolute;
   z-index: 1;
   inset: 0;
-  padding: 1px;
+  padding: 2px;
   pointer-events: none;
-  background: var(--gp-gradient-readable);
+  background: conic-gradient(
+    from var(--gear-home-border-angle),
+    transparent 0deg 36deg,
+    color-mix(in srgb, var(--gp-cyan) 48%, transparent) 47deg,
+    var(--gp-cyan) 57deg,
+    #eaffff 65deg,
+    var(--gp-blue) 75deg,
+    var(--gp-purple) 93deg,
+    color-mix(in srgb, var(--gp-purple) 22%, transparent) 113deg,
+    transparent 130deg 360deg
+  );
   border-radius: inherit;
   opacity: 0;
   content: '';
@@ -761,13 +1050,16 @@ onBeforeUnmount(() => {
 .gear-home-record:focus-visible {
   color: var(--gp-home-text);
   text-decoration: none;
-  box-shadow: 0 8px 18px rgb(42 67 89 / 0.17);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 18%, transparent),
+    0 8px 22px rgb(42 67 89 / 0.18);
   transform: translateY(-1px);
 }
 
 .gear-home-record:hover::before,
 .gear-home-record:focus-visible::before {
   opacity: 1;
+  animation: gear-home-button-border-flow 3.6s linear infinite;
 }
 
 .gear-home-record:focus-visible {
@@ -777,9 +1069,21 @@ onBeforeUnmount(() => {
 
 .gear-home-record-spine {
   align-self: stretch;
-  width: 8px;
-  flex: 0 0 8px;
-  background: var(--gp-gradient-readable);
+  width: 4px;
+  flex: 0 0 4px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--gp-cyan) 78%, var(--gp-home-card-border)) 0%,
+    color-mix(in srgb, var(--gp-blue) 74%, var(--gp-home-card-border)) 52%,
+    color-mix(in srgb, var(--gp-purple) 70%, var(--gp-home-card-border)) 100%
+  );
+  transition: filter 260ms ease, opacity 260ms ease;
+}
+
+.gear-home-record:hover .gear-home-record-spine,
+.gear-home-record:focus-visible .gear-home-record-spine {
+  filter: brightness(1.12);
+  opacity: 1;
 }
 
 .gear-home-record-index {
@@ -909,10 +1213,11 @@ onBeforeUnmount(() => {
   position: absolute;
   z-index: 1;
   inset: 0 0 auto;
-  height: 2px;
+  height: 3px;
   pointer-events: none;
-  background: var(--gp-gradient-readable);
-  opacity: 0.72;
+  background: color-mix(in srgb, var(--gp-blue) 28%, var(--gp-home-card-border));
+  box-shadow: 0 1px 7px color-mix(in srgb, var(--gp-cyan) 22%, transparent);
+  opacity: 0.88;
   content: '';
 }
 
@@ -927,7 +1232,7 @@ onBeforeUnmount(() => {
   color: var(--gp-home-text);
   text-decoration: none;
   border: 1px solid transparent;
-  transition: color 300ms ease, background 420ms cubic-bezier(0.22, 1, 0.36, 1), border-color 300ms ease, box-shadow 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color 220ms ease, background 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }
 
 .gear-home-status:not(:last-child)::after {
@@ -944,39 +1249,58 @@ onBeforeUnmount(() => {
   cursor: pointer;
 }
 
-.gear-home-status:hover,
-.gear-home-status.is-link:focus-visible {
-  color: var(--gp-home-text);
-  text-decoration: none;
-  background:
-    linear-gradient(
-      115deg,
-      color-mix(in srgb, var(--gp-cyan) 10%, var(--gp-home-card-bg)),
-      color-mix(in srgb, var(--gp-blue) 8%, var(--gp-home-card-bg)),
-      color-mix(in srgb, var(--gp-purple) 10%, var(--gp-home-card-bg))
-    ) padding-box,
-    var(--gp-gradient-readable) border-box;
-  border-color: transparent;
-}
-
-/* 亮色主题保留边框反馈，但不在状态项内部填充彩色渐变。 */
-:global(:root:not([data-theme="dark"]) .gear-home-status:hover),
-:global(:root:not([data-theme="dark"]) .gear-home-status.is-link:focus-visible) {
-  /* 重置多层渐变背景，避免边框层透入内容区。 */
-  background: transparent;
-  border-color: var(--gp-icon-highlight);
+.gear-home-status.is-link::before {
+  position: absolute;
+  z-index: 2;
+  inset: 1px;
+  padding: 1px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--gear-home-border-angle),
+    transparent 0deg 36deg,
+    color-mix(in srgb, var(--gp-cyan) 46%, transparent) 47deg,
+    var(--gp-cyan) 57deg,
+    #eaffff 65deg,
+    var(--gp-blue) 75deg,
+    var(--gp-purple) 93deg,
+    color-mix(in srgb, var(--gp-purple) 20%, transparent) 113deg,
+    transparent 130deg 360deg
+  );
+  content: '';
+  opacity: 0;
+  transition: opacity 220ms ease, filter 220ms ease;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
 }
 
 .gear-home-status.is-link:hover,
 .gear-home-status.is-link:focus-visible {
-  box-shadow: inset 0 -2px 0 var(--gp-cyan);
+  z-index: 1;
+  color: var(--gp-home-text);
+  text-decoration: none;
+  background: color-mix(in srgb, var(--gp-blue) 7%, var(--gp-home-card-bg));
+  border-color: transparent;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gp-cyan) 14%, transparent);
+}
+
+.gear-home-status.is-link:hover::before,
+.gear-home-status.is-link:focus-visible::before {
+  opacity: 0.78;
+  animation: gear-home-button-border-flow 3.6s linear infinite;
+}
+
+:global(html[data-theme="dark"] .gear-home .gear-home-status.is-link:hover::before),
+:global(html[data-theme="dark"] .gear-home .gear-home-status.is-link:focus-visible::before) {
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--gp-cyan) 24%, transparent));
+  opacity: 0.92;
 }
 
 .gear-home-status.is-link:focus-visible {
   z-index: 2;
   outline: 2px solid var(--vp-c-brand-2);
   outline-offset: -3px;
-  border-radius: 10px;
 }
 
 .gear-home-status-icon {
@@ -991,47 +1315,38 @@ onBeforeUnmount(() => {
   border: 1px solid var(--gp-home-icon-border);
   border-radius: 9px;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
-  transition: background 420ms cubic-bezier(0.22, 1, 0.36, 1), border-color 300ms ease, color 300ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: background 220ms ease, border-color 220ms ease, box-shadow 220ms ease, color 220ms ease, transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.gear-home-status-icon::before {
-  position: absolute;
-  z-index: -1;
-  inset: -1px;
-  padding: 1px;
-  pointer-events: none;
-  background: var(--gp-gradient-readable);
-  border-radius: inherit;
-  content: '';
-  opacity: 0;
-  transition: opacity 300ms ease;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-}
-
-.gear-home-status:hover .gear-home-status-icon,
+.gear-home-status.is-link:hover .gear-home-status-icon,
 .gear-home-status.is-link:focus-visible .gear-home-status-icon {
   color: var(--gp-icon-highlight);
-  background:
-    linear-gradient(var(--gp-home-icon-bg), var(--gp-home-icon-bg)) padding-box,
-    var(--gp-gradient-readable) border-box;
-  border-color: transparent;
-  transform: translateY(-1px);
+  background: var(--gp-home-icon-bg);
+  border-color: var(--gp-icon-highlight);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--gp-cyan) 16%, transparent);
+  transform: scale(1.04);
 }
 
-/* 亮色主题的图标 hover 只保留渐变描边，不填充图标容器内部。 */
-:global(:root:not([data-theme="dark"]) .gear-home-status:hover .gear-home-status-icon),
-:global(:root:not([data-theme="dark"]) .gear-home-status.is-link:focus-visible .gear-home-status-icon) {
+/* 亮色主题不填充状态项和图标，只显示跑马灯与描边反馈。 */
+:global(html:not([data-theme="dark"]) .gear-home .gear-home-status.is-link:hover),
+:global(html:not([data-theme="dark"]) .gear-home .gear-home-status.is-link:focus-visible) {
   background: transparent;
   border-color: transparent;
   box-shadow: none;
 }
 
-:global(:root:not([data-theme="dark"]) .gear-home-status:hover .gear-home-status-icon::before),
-:global(:root:not([data-theme="dark"]) .gear-home-status.is-link:focus-visible .gear-home-status-icon::before) {
-  opacity: 1;
+:global(html:not([data-theme="dark"]) .gear-home .gear-home-status.is-link:hover::before),
+:global(html:not([data-theme="dark"]) .gear-home .gear-home-status.is-link:focus-visible::before) {
+  filter: none;
+  opacity: 0.62;
+}
+
+:global(html:not([data-theme="dark"]) .gear-home .gear-home-status.is-link:hover .gear-home-status-icon),
+:global(html:not([data-theme="dark"]) .gear-home .gear-home-status.is-link:focus-visible .gear-home-status-icon) {
+  color: var(--gp-icon-highlight);
+  background: transparent;
+  border-color: var(--gp-icon-highlight);
+  box-shadow: none;
 }
 
 .gear-home-status-copy {
@@ -1068,13 +1383,13 @@ onBeforeUnmount(() => {
   font-size: 13px;
   color: var(--gp-icon-highlight);
   opacity: 0.52;
-  transition: opacity 300ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: opacity 220ms ease, transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .gear-home-status.is-link:hover .gear-home-status-arrow,
 .gear-home-status.is-link:focus-visible .gear-home-status-arrow {
   opacity: 1;
-  transform: translate(1px, -1px);
+  transform: translate(2px, -1px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1085,13 +1400,30 @@ onBeforeUnmount(() => {
   .gear-home-status-icon,
   .gear-home-status-arrow,
   .gear-home-button::before,
-  .gear-home-record::before {
+  .gear-home-record::before,
+  .gear-home-status.is-link::before {
     transition-duration: 0.01ms;
   }
 
   .gear-home-logo,
-  .gear-home-identity h1,
-  .gear-home-daily-note.is-loading .gear-home-daily-rule,
+  .gear-home-logo-orbit::before,
+  .gear-home-logo-orbit::after,
+  .gear-home-identity h1::before,
+  .gear-home-identity h1 > span,
+  .gear-home-identity h1::after,
+  .gear-home-button::before,
+  .gear-home-button:hover::before,
+  .gear-home-button:focus-visible::before,
+  .gear-home-daily-note::before,
+  .gear-home-status-rail::after,
+  .gear-home-status.is-link::before,
+  .gear-home-status.is-link:hover::before,
+  .gear-home-status.is-link:focus-visible::before,
+  .gear-home-record::before,
+  .gear-home-record:hover::before,
+  .gear-home-record:focus-visible::before,
+  .gear-home-section-dot,
+  .gear-home-status-rail::before,
   .gear-home-record-skeleton {
     animation: none;
   }
@@ -1101,7 +1433,9 @@ onBeforeUnmount(() => {
   .gear-home-daily-note:hover,
   .gear-home-record:hover,
   .gear-home-record:focus-visible,
-  .gear-home-status:hover .gear-home-status-icon,
+  .gear-home-status.is-link:hover,
+  .gear-home-status.is-link:focus-visible,
+  .gear-home-status.is-link:hover .gear-home-status-icon,
   .gear-home-status.is-link:focus-visible .gear-home-status-icon,
   .gear-home-status.is-link:hover .gear-home-status-arrow,
   .gear-home-status.is-link:focus-visible .gear-home-status-arrow {
@@ -1131,7 +1465,7 @@ onBeforeUnmount(() => {
     transform: none;
   }
 
-  .gear-home-logo,
+  .gear-home-logo-orbit,
   .gear-home-identity h1 {
     margin-right: auto;
     margin-left: auto;
@@ -1148,9 +1482,9 @@ onBeforeUnmount(() => {
     padding: 56px 20px 40px;
   }
 
-  .gear-home-logo {
+  .gear-home-logo-orbit {
     width: 176px;
-    margin-bottom: 22px;
+    margin-bottom: 26px;
   }
 
   .gear-home-identity h1 {
