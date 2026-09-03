@@ -45,28 +45,45 @@
 
     <div class="navigation-content">
       <aside class="category-rail" :aria-label="copy.categoryLabel">
-        <div class="category-rail-title">{{ copy.purposeLabel }}</div>
-        <div class="category-rail-list">
-          <button
-            type="button"
-            :class="{ active: activeCategory === 'all' }"
-            :aria-pressed="activeCategory === 'all'"
-            @click="activeCategory = 'all'"
-          >
-            <span>{{ copy.allCategories }}</span>
-            <small class="count-badge">{{ categoryCount("all") }}</small>
-          </button>
-          <button
-            v-for="category in availableCategories"
-            :key="category"
-            type="button"
-            :class="{ active: activeCategory === category }"
-            :aria-pressed="activeCategory === category"
-            @click="activeCategory = category"
-          >
-            <span>{{ localize(categoryLabels[category]) }}</span>
-            <small class="count-badge">{{ categoryCount(category) }}</small>
-          </button>
+        <div class="filter-group">
+          <div class="category-rail-title">{{ copy.categoryTitle }}</div>
+          <div class="category-rail-list">
+            <button
+              type="button"
+              :class="{ active: activeCategory === 'all' }"
+              :aria-pressed="activeCategory === 'all'"
+              @click="activeCategory = 'all'"
+            >
+              <span>{{ copy.allCategories }}</span>
+              <small class="count-badge">{{ categoryCount("all") }}</small>
+            </button>
+            <button
+              v-for="category in availableCategories"
+              :key="category"
+              type="button"
+              :class="{ active: activeCategory === category }"
+              :aria-pressed="activeCategory === category"
+              @click="activeCategory = category"
+            >
+              <span>{{ localize(categoryLabels[category]) }}</span>
+              <small class="count-badge">{{ categoryCount(category) }}</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-group feature-filter-group">
+          <div class="category-rail-title">{{ copy.featureTitle }}</div>
+          <div class="category-rail-list feature-filter-list">
+            <button
+              type="button"
+              :class="{ active: openSourceOnly }"
+              :aria-pressed="openSourceOnly"
+              @click="openSourceOnly = !openSourceOnly"
+            >
+              <span>{{ copy.openSource }}</span>
+              <small class="count-badge">{{ openSourceCount }}</small>
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -89,21 +106,23 @@
             </span>
 
             <span class="card-content">
-              <span class="card-category">{{ localize(categoryLabels[item.category]) }}</span>
+              <span class="card-meta-row">
+                <span class="card-category">{{ localize(categoryLabels[item.category]) }}</span>
+                <span class="platform-stack">
+                  <span
+                    v-for="platform in item.platforms"
+                    :key="platform"
+                    :title="platformName(platform)"
+                  >
+                    <Icon :icon="platformIcon(platform)" />
+                  </span>
+                </span>
+              </span>
               <strong>{{ item.name }}</strong>
               <span class="card-description">{{ localize(item.description) }}</span>
             </span>
 
             <span class="card-footer">
-              <span class="platform-stack">
-                <span
-                  v-for="platform in item.platforms"
-                  :key="platform"
-                  :title="platformName(platform)"
-                >
-                  <Icon :icon="platformIcon(platform)" />
-                </span>
-              </span>
               <span class="tags">
                 <small v-for="tag in item.tags.slice(0, 2)" :key="tag">{{ tag }}</small>
               </span>
@@ -144,11 +163,13 @@ const content = {
     eyebrow: "PERSONAL LAUNCH DECK",
     title: "一切从这里开始",
     intro: "这里收录了我日常最常使用的应用与网站。",
-    searchPlaceholder: "搜索应用、网站或用途…",
+    searchPlaceholder: "搜索应用、网站或分类…",
     searchLabel: "搜索导航项目",
-    platformLabel: "按系统筛选",
-    categoryLabel: "按用途筛选",
-    purposeLabel: "用途",
+    platformLabel: "按平台筛选",
+    categoryLabel: "按分类与特性筛选",
+    categoryTitle: "分类",
+    featureTitle: "特性",
+    openSource: "开源",
     allCategories: "全部",
     clear: "清空搜索",
     emptyTitle: "这条轨道暂时没有坐标",
@@ -159,11 +180,13 @@ const content = {
     eyebrow: "PERSONAL LAUNCH DECK",
     title: "Everything you need, just a click away",
     intro: "A collection of the apps and websites I use most often every day.",
-    searchPlaceholder: "Search apps, websites, or tasks…",
+    searchPlaceholder: "Search apps, websites, or categories…",
     searchLabel: "Search navigation items",
     platformLabel: "Filter by platform",
-    categoryLabel: "Filter by purpose",
-    purposeLabel: "Purpose",
+    categoryLabel: "Filter by category and feature",
+    categoryTitle: "Category",
+    featureTitle: "Feature",
+    openSource: "Open source",
     allCategories: "All",
     clear: "Clear search",
     emptyTitle: "No destinations on this orbit",
@@ -175,9 +198,11 @@ const content = {
 const copy = computed(() => content[locale.value])
 const activePlatform = ref<NavigationPlatform | "all">("all")
 const activeCategory = ref<NavigationCategory | "all">("all")
+const openSourceOnly = ref(false)
 const query = ref("")
 const searchInput = ref<HTMLInputElement>()
 const isSearchFocused = ref(false)
+const categoryOrder: NavigationCategory[] = ["productivity", "development", "ai", "design", "utilities", "knowledge"]
 
 function localize(text: LocalizedText) {
   return text[locale.value]
@@ -204,12 +229,21 @@ function itemsForActivePlatform() {
 }
 
 function categoryCount(category: NavigationCategory | "all") {
-  const source = itemsForActivePlatform()
+  const platformItems = itemsForActivePlatform()
+  const source = openSourceOnly.value ? platformItems.filter(item => item.openSource) : platformItems
   return category === "all" ? source.length : source.filter(item => item.category === category).length
 }
 
+const openSourceCount = computed(() => {
+  return itemsForActivePlatform().filter((item) => {
+    const matchesCategory = activeCategory.value === "all" || item.category === activeCategory.value
+    return item.openSource && matchesCategory
+  }).length
+})
+
 const availableCategories = computed(() => {
-  return [...new Set(itemsForActivePlatform().map(item => item.category))]
+  const platformItems = itemsForActivePlatform()
+  return categoryOrder.filter(category => platformItems.some(item => item.category === category))
 })
 
 watch(activePlatform, () => {
@@ -223,14 +257,16 @@ const filteredItems = computed(() => {
   return navigationItems.filter((item) => {
     const matchesPlatform = activePlatform.value === "all" || item.platforms.includes(activePlatform.value)
     const matchesCategory = activeCategory.value === "all" || item.category === activeCategory.value
+    const matchesOpenSource = !openSourceOnly.value || item.openSource
     const searchable = [
       item.name,
       localize(item.description),
       localize(categoryLabels[item.category]),
+      item.openSource ? copy.value.openSource : "",
       ...item.tags,
     ].join(" ").toLocaleLowerCase(locale.value)
 
-    return matchesPlatform && matchesCategory && (!term || searchable.includes(term))
+    return matchesPlatform && matchesCategory && matchesOpenSource && (!term || searchable.includes(term))
   })
 })
 
@@ -242,6 +278,7 @@ function clearSearch() {
 function resetFilters() {
   activePlatform.value = "all"
   activeCategory.value = "all"
+  openSourceOnly.value = false
   query.value = ""
 }
 </script>
@@ -397,6 +434,11 @@ h1 {
   color: var(--vp-c-text-3);
 }
 
+.command-search input::-webkit-search-cancel-button {
+  display: none;
+  appearance: none;
+}
+
 .command-search button {
   display: grid;
   width: 28px;
@@ -480,29 +522,30 @@ h1 {
 
 .count-badge {
   display: inline-flex;
-  min-width: 20px;
-  height: 18px;
+  min-width: 22px;
+  height: 20px;
   box-sizing: border-box;
   align-items: center;
   justify-content: center;
-  padding: 0 5px;
-  color: var(--vp-c-text-3);
-  font-size: 9px;
-  font-weight: 700;
+  padding: 0 6px;
+  color: var(--vp-c-text-2);
+  font-size: 11px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
   line-height: 1;
   white-space: nowrap;
-  border: 1px solid color-mix(in srgb, var(--gp-blue) 22%, var(--gp-home-card-border));
+  border: 1px solid color-mix(in srgb, var(--gp-blue) 30%, var(--gp-home-card-border));
   border-radius: 999px;
-  background: color-mix(in srgb, var(--gp-blue) 7%, var(--gp-surface-bg-elv));
+  background: color-mix(in srgb, var(--gp-blue) 12%, var(--gp-surface-bg-elv));
 }
 
 .system-filter-item:hover .count-badge,
 .system-filter-item.active .count-badge,
 .category-rail button:hover .count-badge,
 .category-rail button.active .count-badge {
-  color: var(--gp-icon-highlight);
-  border-color: color-mix(in srgb, var(--gp-blue) 38%, var(--gp-home-card-border));
-  background: color-mix(in srgb, var(--gp-blue) 14%, var(--gp-surface-bg-elv));
+  color: var(--vp-c-text-1);
+  border-color: color-mix(in srgb, var(--gp-blue) 48%, var(--gp-home-card-border));
+  background: color-mix(in srgb, var(--gp-blue) 22%, var(--gp-surface-bg-elv));
 }
 
 .navigation-content {
@@ -529,6 +572,10 @@ h1 {
   font-size: 10px;
   font-weight: 750;
   letter-spacing: 0.12em;
+}
+
+.feature-filter-group {
+  margin-top: 18px;
 }
 
 .category-rail-list {
@@ -614,11 +661,11 @@ h1 {
 
 .category-rail .count-badge {
   flex: none;
-  min-width: 19px;
-  height: 17px;
-  padding: 0 5px;
-  border: 0;
-  background: color-mix(in srgb, var(--gp-blue) 7%, transparent);
+  min-width: 22px;
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid color-mix(in srgb, var(--gp-blue) 28%, var(--gp-home-card-border));
+  background: color-mix(in srgb, var(--gp-blue) 12%, var(--gp-surface-bg-elv));
 }
 
 .empty-state button {
@@ -706,7 +753,7 @@ h1 {
 }
 
 .card-topline,
-.card-footer,
+.card-meta-row,
 .platform-stack,
 .tags {
   display: flex;
@@ -714,8 +761,14 @@ h1 {
 }
 
 .card-topline,
-.card-footer {
+.card-meta-row {
   justify-content: space-between;
+}
+
+.card-meta-row {
+  min-width: 0;
+  gap: 8px;
+  margin-bottom: 6px;
 }
 
 .app-icon {
@@ -750,12 +803,15 @@ h1 {
 }
 
 .card-category {
-  margin-bottom: 5px;
+  min-width: 0;
+  overflow: hidden;
   color: color-mix(in srgb, var(--item-accent) 72%, var(--vp-c-text-1));
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.12em;
+  text-overflow: ellipsis;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .card-content strong {
@@ -782,21 +838,35 @@ h1 {
 }
 
 .card-footer {
-  gap: 8px;
+  display: flex;
+  min-width: 0;
+  align-items: center;
   margin-top: 12px;
+}
+
+.platform-stack {
+  flex: 0 0 auto;
 }
 
 .platform-stack span {
   display: grid;
-  width: 23px;
-  height: 23px;
+  width: 20px;
+  height: 20px;
   place-items: center;
-  margin-left: -5px;
+  margin-left: -4px;
   color: var(--vp-c-text-2);
-  font-size: 12px;
+  font-size: 11px;
   border: 1px solid var(--gp-home-card-border);
   border-radius: 50%;
   background: var(--gp-surface-bg-elv);
+  transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.nav-card:hover .platform-stack span,
+.nav-card:focus-visible .platform-stack span {
+  color: var(--vp-c-text-1);
+  border-color: color-mix(in srgb, var(--gp-blue) 32%, var(--gp-home-card-border));
+  background: color-mix(in srgb, var(--gp-blue) 8%, var(--gp-surface-bg-elv));
 }
 
 .platform-stack span:first-child {
@@ -804,20 +874,25 @@ h1 {
 }
 
 .tags {
+  flex-wrap: wrap;
   gap: 5px;
   min-width: 0;
-  overflow: hidden;
+  max-width: 100%;
 }
 
 .tags small {
-  padding: 3px 6px;
+  max-width: 100%;
+  padding: 3px 7px;
   overflow: hidden;
-  color: var(--vp-c-text-3);
-  font-size: 9px;
+  color: color-mix(in srgb, var(--item-accent) 76%, var(--vp-c-text-1));
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.2;
   white-space: nowrap;
   text-overflow: ellipsis;
-  border-radius: 5px;
-  background: var(--gp-surface-bg-soft);
+  border: 1px solid color-mix(in srgb, var(--item-accent) 24%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--item-accent) 10%, var(--gp-surface-bg-soft));
 }
 
 .empty-state {
@@ -919,6 +994,10 @@ h1 {
 
   .category-rail-title {
     margin-bottom: 5px;
+  }
+
+  .feature-filter-group {
+    margin-top: 8px;
   }
 
   .category-rail-list {

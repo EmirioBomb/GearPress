@@ -5,6 +5,7 @@ export type NavigationPlatform = "web" | "windows" | "macos" | "linux" | "mobile
 export type NavigationCategory =
   | "productivity"
   | "development"
+  | "ai"
   | "design"
   | "utilities"
   | "knowledge"
@@ -23,6 +24,7 @@ export interface NavigationItem {
   platforms: NavigationPlatform[]
   category: NavigationCategory
   tags: string[]
+  openSource?: boolean
   accent: string
   featured?: "wide" | "tall"
 }
@@ -45,6 +47,7 @@ export const platformFilters: NavigationFilter[] = [
 export const categoryLabels: Record<NavigationCategory, LocalizedText> = {
   productivity: { zh: "效率", en: "Productivity" },
   development: { zh: "开发", en: "Development" },
+  ai: { zh: "AI", en: "AI" },
   design: { zh: "设计", en: "Design" },
   utilities: { zh: "工具", en: "Utilities" },
   knowledge: { zh: "知识", en: "Knowledge" },
@@ -72,6 +75,7 @@ export const navigationItems: NavigationItem[] = [
     platforms: ["windows"],
     category: "utilities",
     tags: ["Microsoft", "Open Source"],
+    openSource: true,
     accent: "#4aa7ff",
     featured: "tall",
   },
@@ -86,6 +90,41 @@ export const navigationItems: NavigationItem[] = [
     tags: ["Notes", "Markdown"],
     accent: "#a88bfa",
     featured: "wide",
+  },
+  {
+    id: "chatgpt",
+    name: "ChatGPT",
+    description: { zh: "用于问答、写作、分析与多模态创作的 AI 助手。", en: "An AI assistant for answers, writing, analysis, and multimodal creation." },
+    url: "https://chatgpt.com/",
+    icon: "simple-icons:openai",
+    platforms: ["web", "windows", "macos", "mobile"],
+    category: "ai",
+    tags: ["Assistant", "Multimodal"],
+    accent: "#10a37f",
+    featured: "wide",
+  },
+  {
+    id: "claude",
+    name: "Claude",
+    description: { zh: "适合长文本理解、写作、研究与编程协作的 AI 助手。", en: "An AI assistant for long-form understanding, writing, research, and coding." },
+    url: "https://claude.ai/",
+    icon: "simple-icons:claude",
+    platforms: ["web", "windows", "macos", "mobile"],
+    category: "ai",
+    tags: ["Assistant", "Research"],
+    accent: "#d97757",
+  },
+  {
+    id: "ollama",
+    name: "Ollama",
+    description: { zh: "在本地运行和管理开源大语言模型。", en: "Run and manage open-source large language models locally." },
+    url: "https://ollama.com/",
+    icon: "simple-icons:ollama",
+    platforms: ["windows", "macos", "linux"],
+    category: "ai",
+    tags: ["Local AI", "Open Source"],
+    openSource: true,
+    accent: "#8a95a5",
   },
   {
     id: "vscode",
@@ -107,6 +146,7 @@ export const navigationItems: NavigationItem[] = [
     platforms: ["windows", "macos", "linux", "mobile"],
     category: "utilities",
     tags: ["Transfer", "Open Source"],
+    openSource: true,
     accent: "#36c9a0",
   },
   {
@@ -117,7 +157,8 @@ export const navigationItems: NavigationItem[] = [
     icon: "simple-icons:iterm2",
     platforms: ["macos"],
     category: "development",
-    tags: ["Terminal", "Shell"],
+    tags: ["Terminal", "Open Source"],
+    openSource: true,
     accent: "#7d8b98",
   },
   {
@@ -139,7 +180,7 @@ export const navigationItems: NavigationItem[] = [
     icon: "simple-icons:github",
     platforms: ["web"],
     category: "development",
-    tags: ["Git", "Open Source"],
+    tags: ["Git", "Collaboration"],
     accent: "#8b949e",
     featured: "wide",
   },
@@ -151,7 +192,8 @@ export const navigationItems: NavigationItem[] = [
     icon: "simple-icons:excalidraw",
     platforms: ["web"],
     category: "design",
-    tags: ["Diagram", "Canvas"],
+    tags: ["Diagram", "Open Source"],
+    openSource: true,
     accent: "#7b61ff",
     featured: "tall",
   },
@@ -174,7 +216,8 @@ export const navigationItems: NavigationItem[] = [
     icon: "simple-icons:iconify",
     platforms: ["web"],
     category: "design",
-    tags: ["Icons", "Frontend"],
+    tags: ["Icons", "Open Source"],
+    openSource: true,
     accent: "#1769aa",
   },
   {
