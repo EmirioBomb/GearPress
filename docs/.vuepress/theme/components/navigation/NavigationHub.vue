@@ -9,7 +9,9 @@
         <h1>{{ copy.title }}</h1>
         <p class="intro">{{ copy.intro }}</p>
       </div>
+    </header>
 
+    <div class="filter-dock">
       <label class="command-search" :class="{ focused: isSearchFocused }">
         <Icon icon="lucide:search" class="search-icon" />
         <input
@@ -25,23 +27,23 @@
           <Icon icon="lucide:x" />
         </button>
       </label>
-    </header>
 
-    <section class="system-filter" :aria-label="copy.platformLabel">
-      <button
-        v-for="filter in platformFilters"
-        :key="filter.id"
-        type="button"
-        class="system-filter-item"
-        :class="{ active: activePlatform === filter.id }"
-        :aria-pressed="activePlatform === filter.id"
-        @click="activePlatform = filter.id"
-      >
-        <Icon :icon="filter.icon" class="system-filter-icon" aria-hidden="true" />
-        <span>{{ localize(filter.label) }}</span>
-        <small class="count-badge">{{ platformCount(filter.id) }}</small>
-      </button>
-    </section>
+      <section class="system-filter" :aria-label="copy.platformLabel">
+        <button
+          v-for="filter in platformFilters"
+          :key="filter.id"
+          type="button"
+          class="system-filter-item"
+          :class="{ active: activePlatform === filter.id }"
+          :aria-pressed="activePlatform === filter.id"
+          @click="activePlatform = filter.id"
+        >
+          <Icon :icon="filter.icon" class="system-filter-icon" aria-hidden="true" />
+          <span>{{ localize(filter.label) }}</span>
+          <small class="count-badge">{{ platformCount(filter.id) }}</small>
+        </button>
+      </section>
+    </div>
 
     <div class="navigation-content">
       <aside class="category-rail" :aria-label="copy.categoryLabel">
@@ -393,6 +395,8 @@ function resetFilters() {
 
 .navigation-hub {
   --hub-radius: 24px;
+  --filter-dock-top: 64px;
+  --filter-dock-height: 54px;
   box-sizing: border-box;
   width: min(100%, 1440px);
   margin: 0 auto;
@@ -402,10 +406,7 @@ function resetFilters() {
 
 .hub-hero {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(240px, 0.6fr);
-  gap: clamp(14px, 2vw, 22px);
-  align-items: center;
+  display: block;
   padding: 14px clamp(14px, 1.8vw, 20px);
   overflow: hidden;
   border: 1px solid var(--gp-home-card-border);
@@ -432,10 +433,31 @@ function resetFilters() {
   pointer-events: none;
 }
 
-.hero-copy,
-.command-search {
+.hero-copy {
   position: relative;
   z-index: 1;
+}
+
+.filter-dock {
+  position: sticky;
+  z-index: 20;
+  top: var(--filter-dock-top);
+  display: grid;
+  grid-template-columns: minmax(230px, 0.42fr) minmax(0, 1fr);
+  min-height: var(--filter-dock-height);
+  box-sizing: border-box;
+  gap: 8px;
+  align-items: center;
+  margin: 12px 0 18px;
+  padding: 6px;
+  border: 1px solid color-mix(in srgb, var(--gp-blue) 24%, var(--gp-home-card-border));
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--gp-surface-bg-elv) 90%, transparent);
+  box-shadow:
+    0 8px 24px rgb(42 67 89 / 0.10),
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 5%, transparent);
+  backdrop-filter: blur(18px) saturate(1.12);
+  -webkit-backdrop-filter: blur(18px) saturate(1.12);
 }
 
 .eyebrow {
@@ -486,21 +508,26 @@ h1 {
 .command-search {
   display: grid;
   grid-template-columns: auto 1fr auto;
-  gap: 9px;
+  gap: 8px;
   align-items: center;
-  min-height: 46px;
-  padding: 0 14px;
+  width: 100%;
+  height: 40px;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: 0 12px;
   border: 1px solid color-mix(in srgb, var(--gp-blue) 24%, var(--gp-home-card-border));
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--gp-surface-bg-elv) 86%, transparent);
-  box-shadow: 0 15px 35px rgb(35 48 72 / 0.12);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--gp-surface-bg-soft) 88%, transparent);
+  box-shadow: 0 5px 14px rgb(35 48 72 / 0.08);
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
 .command-search.focused {
   border-color: var(--gp-cyan);
-  box-shadow: 0 18px 44px color-mix(in srgb, var(--gp-blue) 20%, transparent);
-  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--gp-cyan) 14%, transparent),
+    0 7px 18px color-mix(in srgb, var(--gp-blue) 16%, transparent);
+  transform: translateY(-1px);
 }
 
 .search-icon {
@@ -512,7 +539,7 @@ h1 {
 .command-search input {
   width: 100%;
   min-width: 0;
-  padding: 10px 0;
+  padding: 6px 0;
   color: var(--vp-c-text-1);
   font: inherit;
   background: transparent;
@@ -550,13 +577,14 @@ h1 {
 .system-filter {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
+  min-width: 0;
   gap: 3px;
-  margin: 14px 0 18px;
-  padding: 4px;
-  border: 1px solid var(--gp-home-card-border);
-  border-radius: 16px;
-  background: color-mix(in srgb, var(--gp-surface-bg-elv) 72%, transparent);
-  box-shadow: 0 8px 24px rgb(42 67 89 / 0.06);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
 }
 
 .system-filter-item {
@@ -639,7 +667,7 @@ h1 {
   );
   border-radius: inherit;
   content: "";
-  animation: nav-filter-border-flow 8s linear infinite;
+  animation: nav-filter-border-flow 1.2s cubic-bezier(0.22, 1, 0.36, 1) 1;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -823,7 +851,7 @@ h1 {
 
 .category-rail {
   position: sticky;
-  top: 88px;
+  top: calc(var(--filter-dock-top) + var(--filter-dock-height) + 12px);
   min-width: 0;
   padding: 4px 0 4px 14px;
 }
@@ -1218,13 +1246,18 @@ h1 {
   font-size: 13px;
 }
 
-:global(html[data-theme="dark"]) .system-filter,
+:global(html[data-theme="dark"]) .filter-dock,
 :global(html[data-theme="dark"]) .active-filter-bar {
   border-color: color-mix(in srgb, var(--gp-active-border) 42%, var(--gp-home-card-border));
-  background: color-mix(in srgb, var(--gp-surface-bg-elv) 92%, transparent);
+  background: color-mix(in srgb, var(--gp-surface-bg-elv) 94%, transparent);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--gp-cyan) 6%, transparent),
     0 10px 28px rgb(2 8 20 / 0.30);
+}
+
+:global(html[data-theme="dark"]) .system-filter {
+  background: transparent;
+  box-shadow: none;
 }
 
 :global(html[data-theme="dark"]) .system-filter-item.active {
@@ -1257,15 +1290,33 @@ h1 {
   }
 }
 
-@media (max-width: 920px) {
-  .hub-hero {
+@media (max-width: 959px) {
+  .navigation-hub {
+    --filter-dock-top: 0px;
+    --filter-dock-height: 102px;
+  }
+
+  .filter-dock {
     grid-template-columns: 1fr;
   }
 
   .system-filter {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 
+  .system-filter::-webkit-scrollbar {
+    display: none;
+  }
+
+  .system-filter-item {
+    min-width: 106px;
+    flex: 1 0 auto;
+  }
+}
+
+@media (max-width: 920px) {
   .card-field {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1277,9 +1328,27 @@ h1 {
   }
 
   .hub-hero {
-    gap: 12px;
+    margin-bottom: 12px;
     padding: 14px;
     border-radius: 24px;
+  }
+
+  .filter-dock {
+    display: contents;
+  }
+
+  .command-search {
+    position: sticky;
+    z-index: 20;
+    top: var(--filter-dock-top);
+    margin-bottom: 8px;
+    border-color: color-mix(in srgb, var(--gp-active-border) 56%, var(--gp-home-card-border));
+    background: color-mix(in srgb, var(--gp-surface-bg-elv) 94%, transparent);
+    box-shadow:
+      0 7px 20px rgb(42 67 89 / 0.14),
+      0 0 0 1px color-mix(in srgb, var(--gp-cyan) 6%, transparent);
+    backdrop-filter: blur(18px) saturate(1.12);
+    -webkit-backdrop-filter: blur(18px) saturate(1.12);
   }
 
   h1 {
@@ -1294,8 +1363,7 @@ h1 {
   .system-filter {
     display: flex;
     gap: 3px;
-    margin-right: -4px;
-    margin-left: -4px;
+    margin: 0 -4px 18px;
     padding: 4px;
     overflow-x: auto;
     scrollbar-width: none;
