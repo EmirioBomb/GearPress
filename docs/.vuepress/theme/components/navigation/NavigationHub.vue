@@ -1,11 +1,35 @@
 <template>
-  <main class="navigation-hub">
+  <main class="navigation-hub" :class="{ 'mobile-filters-open': mobileFiltersOpen }">
     <header class="hub-hero">
+      <div class="hero-visual" aria-hidden="true">
+        <span class="hero-aurora hero-aurora-cyan" />
+        <span class="hero-aurora hero-aurora-blue" />
+        <span class="hero-aurora hero-aurora-purple" />
+        <svg class="hero-routes" viewBox="0 0 1200 160" preserveAspectRatio="none">
+          <path
+            class="hero-route hero-route-one"
+            d="M-80 126 C 160 34, 330 142, 560 82 S 820 28, 936 80 S 1100 132, 1280 92"
+          />
+          <path
+            class="hero-route-highlight hero-route-highlight-one"
+            d="M-80 126 C 160 34, 330 142, 560 82 S 820 28, 936 80 S 1100 132, 1280 92"
+          />
+          <path
+            class="hero-route hero-route-two"
+            d="M-50 42 C 180 118, 380 6, 650 62 S 820 132, 936 80 S 1100 24, 1260 70"
+          />
+          <path
+            class="hero-route-highlight hero-route-highlight-two"
+            d="M-50 42 C 180 118, 380 6, 650 62 S 820 132, 936 80 S 1100 24, 1260 70"
+          />
+        </svg>
+        <span class="hero-orbit">
+          <span class="hero-orbit-ring hero-orbit-ring-one" />
+          <span class="hero-orbit-ring hero-orbit-ring-two" />
+          <span class="hero-orbit-core" />
+        </span>
+      </div>
       <div class="hero-copy">
-        <p class="eyebrow">
-          <span class="live-dot" aria-hidden="true" />
-          {{ copy.eyebrow }}
-        </p>
         <h1>{{ copy.title }}</h1>
         <p class="intro">{{ copy.intro }}</p>
       </div>
@@ -28,7 +52,28 @@
         </button>
       </label>
 
-      <section class="system-filter" :aria-label="copy.platformLabel">
+      <button
+        type="button"
+        class="mobile-filter-toggle"
+        :aria-expanded="mobileFiltersOpen"
+        aria-controls="mobile-platform-filters mobile-detail-filters"
+        @click="mobileFiltersOpen = !mobileFiltersOpen"
+      >
+        <span class="mobile-filter-toggle-label">
+          <Icon icon="lucide:list-filter" aria-hidden="true" />
+          <span>{{ copy.mobileFilters }}</span>
+        </span>
+        <small v-if="activeFilterCount" class="mobile-filter-count">
+          {{ activeFilterCountLabel }}
+        </small>
+        <Icon
+          icon="lucide:chevron-down"
+          class="mobile-filter-chevron"
+          aria-hidden="true"
+        />
+      </button>
+
+      <section id="mobile-platform-filters" class="system-filter" :aria-label="copy.platformLabel">
         <button
           v-for="filter in platformFilters"
           :key="filter.id"
@@ -46,7 +91,7 @@
     </div>
 
     <div class="navigation-content">
-      <aside class="category-rail" :aria-label="copy.categoryLabel">
+      <aside id="mobile-detail-filters" class="category-rail" :aria-label="copy.categoryLabel">
         <div class="filter-group">
           <div class="category-rail-title">{{ copy.categoryTitle }}</div>
           <div class="category-rail-list">
@@ -54,9 +99,10 @@
               type="button"
               :class="{ active: activeCategory === 'all' }"
               :aria-pressed="activeCategory === 'all'"
+              :title="copy.allCategories"
               @click="activeCategory = 'all'"
             >
-              <span>{{ copy.allCategories }}</span>
+              <span class="filter-label">{{ copy.allCategories }}</span>
               <small class="count-badge">{{ categoryCount("all") }}</small>
             </button>
             <button
@@ -65,9 +111,10 @@
               type="button"
               :class="{ active: activeCategory === category }"
               :aria-pressed="activeCategory === category"
+              :title="localize(categoryLabels[category])"
               @click="activeCategory = category"
             >
-              <span>{{ localize(categoryLabels[category]) }}</span>
+              <span class="filter-label">{{ localize(categoryLabels[category]) }}</span>
               <small class="count-badge">{{ categoryCount(category) }}</small>
             </button>
           </div>
@@ -77,19 +124,16 @@
           <div class="category-rail-title">{{ copy.featureTitle }}</div>
           <div class="category-rail-list feature-filter-list">
             <button
+              v-for="feature in featureFilters"
+              :key="feature.id"
               type="button"
-              class="open-source-toggle"
-              :class="{ active: openSourceOnly }"
-              :aria-pressed="openSourceOnly"
-              @click="openSourceOnly = !openSourceOnly"
+              :class="{ active: isFeatureActive(feature.id) }"
+              :aria-pressed="isFeatureActive(feature.id)"
+              :title="localize(feature.label)"
+              @click="toggleFeature(feature.id)"
             >
-              <span class="feature-toggle-label">
-                <span class="feature-check" aria-hidden="true">
-                  <Icon :icon="openSourceOnly ? 'lucide:check' : 'lucide:code-2'" />
-                </span>
-                <span>{{ copy.openSourceOnly }}</span>
-              </span>
-              <small class="count-badge">{{ openSourceCount }}</small>
+              <span class="filter-label">{{ localize(feature.label) }}</span>
+              <small class="count-badge">{{ featureCount(feature.id) }}</small>
             </button>
           </div>
         </div>
@@ -125,13 +169,14 @@
               <Icon icon="lucide:x" class="chip-remove" aria-hidden="true" />
             </button>
             <button
-              v-if="openSourceOnly"
+              v-for="feature in activeFeatureFilters"
+              :key="feature.id"
               type="button"
-              :aria-label="`${copy.removeFilter} ${copy.openSource}`"
-              @click="openSourceOnly = false"
+              :aria-label="`${copy.removeFilter} ${localize(feature.label)}`"
+              @click="removeFeature(feature.id)"
             >
-              <Icon icon="lucide:code-2" aria-hidden="true" />
-              <span>{{ copy.openSource }}</span>
+              <Icon :icon="feature.icon" aria-hidden="true" />
+              <span>{{ localize(feature.label) }}</span>
               <Icon icon="lucide:x" class="chip-remove" aria-hidden="true" />
             </button>
             <button
@@ -211,10 +256,13 @@ import { useData } from "vuepress-theme-plume/composables"
 
 import {
   categoryLabels,
+  featureFilters,
   navigationItems,
   platformFilters,
   type LocalizedText,
   type NavigationCategory,
+  type NavigationFeature,
+  type NavigationItem,
   type NavigationPlatform,
 } from "./navigation.data"
 
@@ -223,7 +271,6 @@ const locale = computed<"zh" | "en">(() => lang.value.startsWith("en") ? "en" : 
 
 const content = {
   zh: {
-    eyebrow: "PERSONAL LAUNCH DECK",
     title: "一切从这里开始",
     intro: "这里收录了我日常最常使用的应用与网站。",
     searchPlaceholder: "搜索应用、网站或分类…",
@@ -232,8 +279,8 @@ const content = {
     categoryLabel: "按分类与特性筛选",
     categoryTitle: "分类",
     featureTitle: "特性",
-    openSource: "开源",
-    openSourceOnly: "仅看开源",
+    mobileFilters: "筛选",
+    selectedFilters: "已选",
     activeFilters: "当前筛选",
     removeFilter: "移除筛选",
     clearAll: "清除全部",
@@ -244,17 +291,16 @@ const content = {
     reset: "重置筛选",
   },
   en: {
-    eyebrow: "PERSONAL LAUNCH DECK",
     title: "Everything you need, just a click away",
     intro: "A collection of the apps and websites I use most often every day.",
     searchPlaceholder: "Search apps, websites, or categories…",
     searchLabel: "Search navigation items",
     platformLabel: "Filter by platform",
-    categoryLabel: "Filter by category and feature",
+    categoryLabel: "Filter by category and features",
     categoryTitle: "Category",
-    featureTitle: "Feature",
-    openSource: "Open source",
-    openSourceOnly: "Open source",
+    featureTitle: "Features",
+    mobileFilters: "Filters",
+    selectedFilters: "Selected",
     activeFilters: "Active filters",
     removeFilter: "Remove filter",
     clearAll: "Clear all",
@@ -269,10 +315,11 @@ const content = {
 const copy = computed(() => content[locale.value])
 const activePlatform = ref<NavigationPlatform | "all">("all")
 const activeCategory = ref<NavigationCategory | "all">("all")
-const openSourceOnly = ref(false)
+const activeFeatures = ref<NavigationFeature[]>([])
 const query = ref("")
 const searchInput = ref<HTMLInputElement>()
 const isSearchFocused = ref(false)
+const mobileFiltersOpen = ref(false)
 const categoryOrder: NavigationCategory[] = ["productivity", "development", "ai", "design", "utilities", "knowledge"]
 
 function localize(text: LocalizedText) {
@@ -299,17 +346,46 @@ function itemsForActivePlatform() {
     : navigationItems.filter(item => item.platforms.includes(activePlatform.value))
 }
 
+function itemHasFeature(item: NavigationItem, feature: NavigationFeature) {
+  if (feature === "openSource") return Boolean(item.openSource)
+  if (feature === "crossPlatform") return item.platforms.length >= 3
+  return Boolean(item.localFirst)
+}
+
+function matchesFeatures(item: NavigationItem, features = activeFeatures.value) {
+  return features.every(feature => itemHasFeature(item, feature))
+}
+
+function isFeatureActive(feature: NavigationFeature) {
+  return activeFeatures.value.includes(feature)
+}
+
+function toggleFeature(feature: NavigationFeature) {
+  activeFeatures.value = isFeatureActive(feature)
+    ? activeFeatures.value.filter(item => item !== feature)
+    : [...activeFeatures.value, feature]
+}
+
+function removeFeature(feature: NavigationFeature) {
+  activeFeatures.value = activeFeatures.value.filter(item => item !== feature)
+}
+
 function categoryCount(category: NavigationCategory | "all") {
-  const platformItems = itemsForActivePlatform()
-  const source = openSourceOnly.value ? platformItems.filter(item => item.openSource) : platformItems
+  const source = itemsForActivePlatform().filter(item => matchesFeatures(item))
   return category === "all" ? source.length : source.filter(item => item.category === category).length
 }
 
-const openSourceCount = computed(() => {
+function featureCount(feature: NavigationFeature) {
+  const otherFeatures = activeFeatures.value.filter(item => item !== feature)
+
   return itemsForActivePlatform().filter((item) => {
     const matchesCategory = activeCategory.value === "all" || item.category === activeCategory.value
-    return item.openSource && matchesCategory
+    return matchesCategory && matchesFeatures(item, otherFeatures) && itemHasFeature(item, feature)
   }).length
+}
+
+const activeFeatureFilters = computed(() => {
+  return featureFilters.filter(feature => isFeatureActive(feature.id))
 })
 
 const availableCategories = computed(() => {
@@ -328,24 +404,38 @@ const filteredItems = computed(() => {
   return navigationItems.filter((item) => {
     const matchesPlatform = activePlatform.value === "all" || item.platforms.includes(activePlatform.value)
     const matchesCategory = activeCategory.value === "all" || item.category === activeCategory.value
-    const matchesOpenSource = !openSourceOnly.value || item.openSource
+    const matchingFeatureLabels = featureFilters
+      .filter(feature => itemHasFeature(item, feature.id))
+      .map(feature => localize(feature.label))
     const searchable = [
       item.name,
       localize(item.description),
       localize(categoryLabels[item.category]),
-      item.openSource ? copy.value.openSource : "",
+      ...matchingFeatureLabels,
       ...item.tags,
     ].join(" ").toLocaleLowerCase(locale.value)
 
-    return matchesPlatform && matchesCategory && matchesOpenSource && (!term || searchable.includes(term))
+    return matchesPlatform && matchesCategory && matchesFeatures(item) && (!term || searchable.includes(term))
   })
 })
 
 const hasActiveFilters = computed(() => {
   return activePlatform.value !== "all"
     || activeCategory.value !== "all"
-    || openSourceOnly.value
+    || activeFeatures.value.length > 0
     || Boolean(query.value.trim())
+})
+
+const activeFilterCount = computed(() => {
+  return Number(activePlatform.value !== "all")
+    + Number(activeCategory.value !== "all")
+    + activeFeatures.value.length
+    + Number(Boolean(query.value.trim()))
+})
+
+const activeFilterCountLabel = computed(() => {
+  if (locale.value === "zh") return `${copy.value.selectedFilters} ${activeFilterCount.value} 项`
+  return `${activeFilterCount.value} ${copy.value.selectedFilters.toLocaleLowerCase(locale.value)}`
 })
 
 const activePlatformLabel = computed(() => {
@@ -370,7 +460,7 @@ function clearSearch() {
 function resetFilters() {
   activePlatform.value = "all"
   activeCategory.value = "all"
-  openSourceOnly.value = false
+  activeFeatures.value = []
   query.value = ""
 }
 </script>
@@ -406,36 +496,292 @@ function resetFilters() {
 
 .hub-hero {
   position: relative;
-  display: block;
-  padding: 14px clamp(14px, 1.8vw, 20px);
+  isolation: isolate;
+  display: flex;
+  min-height: 132px;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 24px clamp(20px, 3vw, 38px);
   overflow: hidden;
   border: 1px solid var(--gp-home-card-border);
   border-radius: calc(var(--hub-radius) + 8px);
   background:
-    radial-gradient(circle at 8% 10%, color-mix(in srgb, var(--gp-cyan) 22%, transparent), transparent 34%),
-    radial-gradient(circle at 90% 90%, color-mix(in srgb, var(--gp-purple) 20%, transparent), transparent 36%),
+    linear-gradient(112deg, color-mix(in srgb, var(--gp-surface-bg-elv) 94%, transparent), color-mix(in srgb, var(--gp-home-card-bg) 86%, transparent)),
     var(--gp-home-card-bg);
   box-shadow: var(--gp-home-card-shadow);
 }
 
 .hub-hero::after {
   position: absolute;
-  right: -72px;
-  top: -110px;
-  width: 170px;
-  height: 170px;
-  border: 1px solid color-mix(in srgb, var(--gp-cyan) 30%, transparent);
-  border-radius: 50%;
-  box-shadow:
-    0 0 0 38px color-mix(in srgb, var(--gp-blue) 7%, transparent),
-    0 0 0 78px color-mix(in srgb, var(--gp-purple) 5%, transparent);
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 2%,
+    color-mix(in srgb, var(--gp-cyan) 58%, transparent) 28%,
+    color-mix(in srgb, var(--gp-blue) 72%, transparent) 56%,
+    color-mix(in srgb, var(--gp-purple) 58%, transparent) 82%,
+    transparent 98%
+  );
+  box-shadow: 0 -1px 12px color-mix(in srgb, var(--gp-blue) 22%, transparent);
   content: "";
   pointer-events: none;
 }
 
+.hero-visual {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-visual::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--gp-home-card-bg) 55%, transparent), transparent 64%);
+  content: "";
+}
+
+.hero-aurora {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(38px);
+  opacity: 0.18;
+  will-change: transform;
+}
+
+.hero-aurora-cyan {
+  top: -94px;
+  left: -4%;
+  width: 48%;
+  height: 230px;
+  background: radial-gradient(ellipse, var(--gp-cyan), transparent 68%);
+  animation: hero-aurora-cyan-drift 18s ease-in-out infinite alternate;
+}
+
+.hero-aurora-blue {
+  top: -132px;
+  left: 31%;
+  width: 54%;
+  height: 280px;
+  background: radial-gradient(ellipse, var(--gp-blue), transparent 68%);
+  opacity: 0.16;
+  animation: hero-aurora-blue-drift 22s ease-in-out infinite alternate;
+}
+
+.hero-aurora-purple {
+  right: -7%;
+  bottom: -132px;
+  width: 48%;
+  height: 270px;
+  background: radial-gradient(ellipse, var(--gp-purple), transparent 68%);
+  opacity: 0.15;
+  animation: hero-aurora-purple-drift 20s ease-in-out infinite alternate;
+}
+
+.hero-routes {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: 0.52;
+}
+
+.hero-route,
+.hero-route-highlight {
+  fill: none;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.hero-route {
+  stroke-width: 0.8;
+}
+
+.hero-route-one {
+  stroke: color-mix(in srgb, var(--gp-cyan) 35%, transparent);
+}
+
+.hero-route-two {
+  stroke: color-mix(in srgb, var(--gp-purple) 30%, transparent);
+}
+
+.hero-route-highlight {
+  stroke-width: 1.45;
+  stroke-dasharray: 120 1250;
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+.hero-route-highlight-one {
+  color: var(--gp-cyan);
+  stroke: color-mix(in srgb, var(--gp-cyan) 82%, white);
+  animation: hero-route-flow 13s linear infinite;
+}
+
+.hero-route-highlight-two {
+  color: var(--gp-purple);
+  stroke: color-mix(in srgb, var(--gp-purple) 76%, white);
+  animation: hero-route-flow 16s linear -7s infinite reverse;
+}
+
+.hero-orbit {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 78%;
+  display: block;
+  width: clamp(154px, 18vw, 220px);
+  aspect-ratio: 1;
+  opacity: 0.58;
+  transform: translate(-50%, -50%);
+}
+
+.hero-orbit::before {
+  position: absolute;
+  inset: 24%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--gp-cyan) 30%, transparent),
+    color-mix(in srgb, var(--gp-blue) 16%, transparent) 42%,
+    transparent 72%
+  );
+  filter: blur(10px);
+  content: "";
+}
+
+.hero-orbit-ring {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 12deg,
+    transparent 0deg 28deg,
+    color-mix(in srgb, var(--gp-cyan) 76%, transparent) 46deg,
+    color-mix(in srgb, #eaffff 72%, transparent) 58deg,
+    color-mix(in srgb, var(--gp-blue) 56%, transparent) 75deg,
+    transparent 94deg 202deg,
+    color-mix(in srgb, var(--gp-purple) 52%, transparent) 222deg,
+    color-mix(in srgb, var(--gp-blue) 42%, transparent) 246deg,
+    transparent 269deg 360deg
+  );
+  will-change: transform;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
+}
+
+.hero-orbit-ring-one {
+  top: 29%;
+  left: 0;
+  width: 100%;
+  height: 42%;
+  animation: hero-orbit-spin-one 14s linear infinite;
+}
+
+.hero-orbit-ring-two {
+  top: 19%;
+  left: 16%;
+  width: 68%;
+  height: 62%;
+  animation: hero-orbit-spin-two 10s linear infinite reverse;
+}
+
+.hero-orbit-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: 42px;
+  height: 42px;
+  border: 1px solid color-mix(in srgb, var(--gp-cyan) 44%, transparent);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #f4feff 0 5%,
+    color-mix(in srgb, var(--gp-cyan) 88%, white) 11%,
+    color-mix(in srgb, var(--gp-blue) 54%, transparent) 34%,
+    transparent 70%
+  );
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--gp-cyan) 42%, transparent),
+    0 0 32px color-mix(in srgb, var(--gp-blue) 24%, transparent);
+  transform: translate(-50%, -50%);
+  animation: hero-orbit-core-pulse 4.8s ease-in-out infinite;
+}
+
+.hero-orbit-core::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #f7ffff;
+  box-shadow: 0 0 8px var(--gp-cyan);
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
 .hero-copy {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+}
+
+@keyframes hero-orbit-spin-one {
+  from {
+    transform: rotate(-18deg);
+  }
+
+  to {
+    transform: rotate(342deg);
+  }
+}
+
+@keyframes hero-orbit-spin-two {
+  from {
+    transform: rotate(38deg);
+  }
+
+  to {
+    transform: rotate(398deg);
+  }
+}
+
+@keyframes hero-orbit-core-pulse {
+  50% {
+    opacity: 0.78;
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+}
+
+@keyframes hero-aurora-cyan-drift {
+  to {
+    transform: translate3d(24%, 18px, 0) scale(1.12);
+  }
+}
+
+@keyframes hero-aurora-blue-drift {
+  to {
+    transform: translate3d(-13%, 24px, 0) scale(0.92);
+  }
+}
+
+@keyframes hero-aurora-purple-drift {
+  to {
+    transform: translate3d(-18%, -18px, 0) scale(1.1);
+  }
+}
+
+@keyframes hero-route-flow {
+  to {
+    stroke-dashoffset: -1370;
+  }
 }
 
 .filter-dock {
@@ -450,33 +796,30 @@ function resetFilters() {
   align-items: center;
   margin: 12px 0 18px;
   padding: 6px;
-  border: 1px solid color-mix(in srgb, var(--gp-blue) 24%, var(--gp-home-card-border));
+  border: 1px solid rgb(104 158 190 / 0.28);
   border-radius: 18px;
-  background: color-mix(in srgb, var(--gp-surface-bg-elv) 90%, transparent);
+  background: linear-gradient(
+    105deg,
+    rgb(226 241 246 / 0.90),
+    rgb(229 237 248 / 0.92) 52%,
+    rgb(237 231 248 / 0.88)
+  );
   box-shadow:
-    0 8px 24px rgb(42 67 89 / 0.10),
-    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 5%, transparent);
+    inset 0 1px 0 rgb(255 255 255 / 0.52),
+    0 8px 22px rgb(42 67 89 / 0.10);
   backdrop-filter: blur(18px) saturate(1.12);
   -webkit-backdrop-filter: blur(18px) saturate(1.12);
 }
 
-.eyebrow {
-  display: flex;
-  gap: 7px;
-  align-items: center;
-  margin: 0 0 5px;
-  color: var(--gp-icon-highlight);
-  font-size: 10px;
-  font-weight: 750;
-  letter-spacing: 0.19em;
+.mobile-filter-toggle {
+  display: none;
 }
 
-.live-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--gp-cyan);
-  box-shadow: 0 0 0 5px color-mix(in srgb, var(--gp-cyan) 16%, transparent);
+@keyframes mobile-filter-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
 }
 
 h1 {
@@ -505,7 +848,15 @@ h1 {
   -webkit-line-clamp: 2;
 }
 
+@property --nav-search-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 .command-search {
+  position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: 8px;
@@ -522,12 +873,45 @@ h1 {
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
-.command-search.focused {
+.command-search.focused,
+.command-search:focus-within {
   border-color: var(--gp-cyan);
   box-shadow:
     0 0 0 2px color-mix(in srgb, var(--gp-cyan) 14%, transparent),
     0 7px 18px color-mix(in srgb, var(--gp-blue) 16%, transparent);
   transform: translateY(-1px);
+}
+
+.command-search.focused::before,
+.command-search:focus-within::before {
+  position: absolute;
+  z-index: 1;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--nav-search-angle),
+    transparent 0deg 226deg,
+    color-mix(in srgb, var(--gp-cyan) 42%, transparent) 244deg,
+    var(--gp-cyan) 260deg,
+    #eaffff 273deg,
+    var(--gp-blue) 289deg,
+    var(--gp-purple) 310deg,
+    transparent 332deg 360deg
+  );
+  content: "";
+  animation: nav-search-border-flow 1.4s cubic-bezier(0.22, 1, 0.36, 1) 1;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+@keyframes nav-search-border-flow {
+  to {
+    --nav-search-angle: 360deg;
+  }
 }
 
 .search-icon {
@@ -657,17 +1041,18 @@ h1 {
   pointer-events: none;
   background: conic-gradient(
     from var(--nav-filter-angle),
-    transparent 0deg 225deg,
-    color-mix(in srgb, var(--gp-cyan) 45%, transparent) 245deg,
-    var(--gp-cyan) 266deg,
-    #eaffff 280deg,
-    var(--gp-blue) 296deg,
-    var(--gp-purple) 320deg,
-    transparent 342deg 360deg
+    transparent 0deg 252deg,
+    color-mix(in srgb, var(--gp-cyan) 34%, transparent) 267deg,
+    color-mix(in srgb, var(--gp-cyan) 72%, transparent) 279deg,
+    color-mix(in srgb, #eaffff 74%, transparent) 287deg,
+    color-mix(in srgb, var(--gp-blue) 70%, transparent) 297deg,
+    color-mix(in srgb, var(--gp-purple) 62%, transparent) 314deg,
+    transparent 331deg 360deg
   );
   border-radius: inherit;
+  opacity: 0.72;
   content: "";
-  animation: nav-filter-border-flow 1.2s cubic-bezier(0.22, 1, 0.36, 1) 1;
+  animation: nav-filter-border-flow 5.5s linear infinite;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -723,7 +1108,7 @@ h1 {
 
 .navigation-content {
   display: grid;
-  grid-template-columns: 132px minmax(0, 1fr);
+  grid-template-columns: 148px minmax(0, 1fr);
   gap: 18px;
   align-items: start;
 }
@@ -740,12 +1125,17 @@ h1 {
   justify-content: space-between;
   margin-bottom: 12px;
   padding: 9px 11px;
-  border: 1px solid color-mix(in srgb, var(--gp-active-border) 72%, var(--gp-home-card-border));
+  border: 1px solid rgb(104 158 190 / 0.24);
   border-radius: 14px;
-  background: color-mix(in srgb, var(--gp-surface-bg-elv) 82%, transparent);
+  background: linear-gradient(
+    105deg,
+    rgb(226 241 246 / 0.72),
+    rgb(229 237 248 / 0.76) 52%,
+    rgb(237 231 248 / 0.70)
+  );
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 8%, transparent),
-    0 8px 20px rgb(32 52 75 / 0.10);
+    inset 0 1px 0 rgb(255 255 255 / 0.38),
+    0 6px 16px rgb(42 67 89 / 0.08);
   animation: active-filter-bar-enter 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -868,34 +1258,6 @@ h1 {
   margin-top: 18px;
 }
 
-.feature-toggle-label {
-  display: flex;
-  min-width: 0;
-  gap: 6px;
-  align-items: center;
-}
-
-.feature-check {
-  display: grid;
-  width: 18px;
-  height: 18px;
-  flex: 0 0 auto;
-  place-items: center;
-  color: var(--vp-c-text-3);
-  font-size: 11px;
-  border: 1px solid var(--gp-home-card-border);
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--gp-surface-bg-elv) 78%, transparent);
-  transition: color 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
-}
-
-.open-source-toggle.active .feature-check {
-  color: #f7fdff;
-  border-color: color-mix(in srgb, var(--gp-cyan) 78%, transparent);
-  background: linear-gradient(135deg, var(--gp-cyan), var(--gp-blue));
-  box-shadow: 0 0 12px color-mix(in srgb, var(--gp-cyan) 42%, transparent);
-}
-
 .category-rail-list {
   position: relative;
   display: flex;
@@ -939,6 +1301,13 @@ h1 {
   background: transparent;
   cursor: pointer;
   transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.category-rail button > .filter-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .category-rail button::before {
@@ -1246,21 +1615,85 @@ h1 {
   font-size: 13px;
 }
 
-:global(html[data-theme="dark"]) .filter-dock,
-:global(html[data-theme="dark"]) .active-filter-bar {
+:global(html[data-theme="dark"] .hub-hero) {
+  border-color: color-mix(in srgb, var(--gp-blue) 20%, var(--gp-home-card-border));
+  background:
+    linear-gradient(112deg, color-mix(in srgb, var(--gp-surface-bg-elv) 96%, transparent), color-mix(in srgb, var(--gp-home-card-bg) 88%, transparent)),
+    var(--gp-home-card-bg);
+}
+
+:global(html[data-theme="dark"] .hero-aurora-cyan) {
+  opacity: 0.3;
+}
+
+:global(html[data-theme="dark"] .hero-aurora-blue) {
+  opacity: 0.26;
+}
+
+:global(html[data-theme="dark"] .hero-aurora-purple) {
+  opacity: 0.25;
+}
+
+:global(html[data-theme="dark"] .hero-routes) {
+  opacity: 0.7;
+}
+
+:global(html[data-theme="dark"] .hero-orbit) {
+  opacity: 0.84;
+}
+
+:global(html[data-theme="dark"] .hero-orbit-core) {
+  border-color: color-mix(in srgb, var(--gp-cyan) 62%, transparent);
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--gp-cyan) 58%, transparent),
+    0 0 38px color-mix(in srgb, var(--gp-blue) 38%, transparent),
+    0 0 58px color-mix(in srgb, var(--gp-purple) 18%, transparent);
+}
+
+:global(html[data-theme="dark"] .hero-visual::after) {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--gp-home-card-bg) 42%, transparent), transparent 64%);
+}
+
+:global(html[data-theme="dark"] .filter-dock),
+:global(html[data-theme="dark"] .active-filter-bar) {
   border-color: color-mix(in srgb, var(--gp-active-border) 42%, var(--gp-home-card-border));
-  background: color-mix(in srgb, var(--gp-surface-bg-elv) 94%, transparent);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--gp-cyan) 6%, transparent),
     0 10px 28px rgb(2 8 20 / 0.30);
 }
 
-:global(html[data-theme="dark"]) .system-filter {
+:global(html[data-theme="dark"] .filter-dock) {
+  border-color: rgb(139 190 218 / 0.28);
+  background: linear-gradient(
+    105deg,
+    rgb(27 45 58 / 0.96),
+    rgb(28 40 63 / 0.96) 52%,
+    rgb(39 31 66 / 0.94)
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(205 232 255 / 0.07),
+    0 10px 28px rgb(2 8 20 / 0.34);
+}
+
+:global(html[data-theme="dark"] .active-filter-bar) {
+  border-color: rgb(139 190 218 / 0.22);
+  background: linear-gradient(
+    105deg,
+    rgb(27 45 58 / 0.84),
+    rgb(28 40 63 / 0.86) 52%,
+    rgb(39 31 66 / 0.82)
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(205 232 255 / 0.05),
+    0 8px 22px rgb(2 8 20 / 0.28);
+}
+
+:global(html[data-theme="dark"] .system-filter) {
   background: transparent;
   box-shadow: none;
 }
 
-:global(html[data-theme="dark"]) .system-filter-item.active {
+:global(html[data-theme="dark"] .system-filter-item.active) {
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--gp-cyan) 34%, transparent),
     0 0 16px color-mix(in srgb, #eaffff 12%, transparent),
@@ -1268,19 +1701,19 @@ h1 {
     0 8px 20px rgb(2 8 20 / 0.34);
 }
 
-:global(html[data-theme="dark"]) .category-rail button.active {
+:global(html[data-theme="dark"] .category-rail button.active) {
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--gp-active-border) 82%, transparent),
     0 0 16px color-mix(in srgb, var(--gp-cyan) 16%, transparent),
     0 7px 18px rgb(2 8 20 / 0.26);
 }
 
-:global(html[data-theme="dark"]) .nav-card {
+:global(html[data-theme="dark"] .nav-card) {
   border-color: color-mix(in srgb, var(--gp-blue) 16%, var(--gp-home-card-border));
 }
 
-:global(html[data-theme="dark"]) .system-filter-item:not(.active),
-:global(html[data-theme="dark"]) .category-rail button:not(.active) {
+:global(html[data-theme="dark"] .system-filter-item:not(.active)),
+:global(html[data-theme="dark"] .category-rail button:not(.active)) {
   color: var(--gp-home-muted);
 }
 
@@ -1328,9 +1761,62 @@ h1 {
   }
 
   .hub-hero {
+    min-height: 118px;
     margin-bottom: 12px;
-    padding: 14px;
+    padding: 16px 14px;
     border-radius: 24px;
+  }
+
+  .hero-aurora {
+    filter: blur(24px);
+  }
+
+  .hero-aurora-cyan {
+    top: -72px;
+    width: 68%;
+    height: 190px;
+  }
+
+  .hero-aurora-blue {
+    top: -96px;
+    left: 24%;
+    width: 72%;
+    height: 220px;
+  }
+
+  .hero-aurora-purple {
+    right: -20%;
+    bottom: -98px;
+    width: 66%;
+    height: 210px;
+  }
+
+  .hero-orbit {
+    left: 82%;
+    width: 138px;
+    opacity: 0.42;
+  }
+
+  :global(html[data-theme="dark"] .hero-orbit) {
+    opacity: 0.58;
+  }
+
+  .hero-orbit-ring-one {
+    display: none;
+  }
+
+  .hero-orbit-ring-two,
+  .hero-orbit-core {
+    animation: none;
+  }
+
+  .hero-orbit-core {
+    width: 34px;
+    height: 34px;
+  }
+
+  .hero-route-highlight {
+    animation: none;
   }
 
   .filter-dock {
@@ -1351,6 +1837,69 @@ h1 {
     -webkit-backdrop-filter: blur(18px) saturate(1.12);
   }
 
+  .mobile-filter-toggle {
+    display: flex;
+    min-height: 42px;
+    box-sizing: border-box;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 7px 11px;
+    color: var(--vp-c-text-1);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 750;
+    border: 1px solid color-mix(in srgb, var(--gp-blue) 30%, var(--gp-home-card-border));
+    border-radius: 12px;
+    background: linear-gradient(
+      105deg,
+      color-mix(in srgb, var(--gp-cyan) 7%, var(--gp-surface-bg-elv)),
+      color-mix(in srgb, var(--gp-purple) 6%, var(--gp-surface-bg-elv))
+    );
+    box-shadow: 0 5px 14px rgb(42 67 89 / 0.09);
+    cursor: pointer;
+  }
+
+  .mobile-filter-toggle:focus-visible {
+    outline: 2px solid var(--gp-cyan);
+    outline-offset: 2px;
+  }
+
+  .mobile-filter-toggle-label {
+    display: inline-flex;
+    gap: 7px;
+    align-items: center;
+  }
+
+  .mobile-filter-toggle-label > svg {
+    width: 16px;
+    height: 16px;
+    color: var(--gp-icon-highlight);
+  }
+
+  .mobile-filter-count {
+    padding: 3px 7px;
+    color: var(--vp-c-text-1);
+    font-size: 10px;
+    font-weight: 750;
+    line-height: 1.2;
+    border: 1px solid color-mix(in srgb, var(--gp-cyan) 44%, var(--gp-home-card-border));
+    border-radius: 999px;
+    background: var(--gp-gradient-active);
+  }
+
+  .mobile-filter-chevron {
+    width: 17px;
+    height: 17px;
+    margin-left: auto;
+    color: var(--vp-c-text-2);
+    transition: transform 180ms ease;
+  }
+
+  .mobile-filters-open .mobile-filter-chevron {
+    transform: rotate(180deg);
+  }
+
   h1 {
     font-size: clamp(28px, 9vw, 36px);
   }
@@ -1360,22 +1909,29 @@ h1 {
     line-height: 1.45;
   }
 
-  .system-filter {
-    display: flex;
-    gap: 3px;
-    margin: 0 -4px 18px;
-    padding: 4px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .system-filter::-webkit-scrollbar {
+  .system-filter,
+  .category-rail {
     display: none;
   }
 
+  .mobile-filters-open .system-filter {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+    margin: 0 0 8px;
+    padding: 7px;
+    overflow: visible;
+    border: 1px solid color-mix(in srgb, var(--gp-blue) 22%, var(--gp-home-card-border));
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--gp-surface-bg-elv) 76%, transparent);
+    animation: mobile-filter-panel-enter 220ms ease-out;
+  }
+
   .system-filter-item {
-    flex: 0 0 auto;
-    min-width: 106px;
+    width: 100%;
+    min-width: 0;
+    min-height: 40px;
+    flex: none;
   }
 
   .navigation-content {
@@ -1383,10 +1939,17 @@ h1 {
     gap: 8px;
   }
 
-  .category-rail {
+  .mobile-filters-open .category-rail {
     position: static;
+    display: grid;
     width: auto;
-    padding: 0;
+    gap: 10px;
+    margin-bottom: 8px;
+    padding: 8px;
+    border: 1px solid color-mix(in srgb, var(--gp-blue) 22%, var(--gp-home-card-border));
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--gp-surface-bg-elv) 76%, transparent);
+    animation: mobile-filter-panel-enter 220ms ease-out;
   }
 
   .category-rail-title {
@@ -1394,20 +1957,20 @@ h1 {
   }
 
   .feature-filter-group {
-    margin-top: 8px;
+    margin-top: 0;
   }
 
   .category-rail-list {
-    flex-direction: row;
-    gap: 6px;
-    margin: 0 -4px;
-    padding: 2px 4px 6px;
-    overflow-x: auto;
-    scrollbar-width: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
   }
 
-  .category-rail-list::-webkit-scrollbar {
-    display: none;
+  .feature-filter-list {
+    grid-template-columns: 1fr;
   }
 
   .category-rail-list::before,
@@ -1416,13 +1979,16 @@ h1 {
   }
 
   .category-rail button {
-    width: auto;
-    min-height: 30px;
-    flex: 0 0 auto;
+    width: 100%;
+    min-height: 38px;
+    flex: none;
     gap: 7px;
-    padding: 5px 9px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--gp-surface-bg-elv) 72%, transparent);
+    padding: 6px 10px;
+    white-space: nowrap;
+    border: 1px solid color-mix(in srgb, var(--gp-blue) 18%, var(--gp-home-card-border));
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--gp-surface-bg-elv) 76%, transparent);
+    transform: none;
   }
 
   .category-rail button:hover {
@@ -1434,6 +2000,7 @@ h1 {
     box-shadow:
       inset 0 0 0 1px color-mix(in srgb, var(--gp-active-border) 74%, transparent),
       0 5px 14px color-mix(in srgb, var(--gp-active-glow) 58%, transparent);
+    transform: none;
   }
 
   .active-filter-bar {
@@ -1480,11 +2047,11 @@ h1 {
 
 @media (prefers-reduced-motion: reduce) {
   .command-search,
+  .mobile-filter-chevron,
   .system-filter-item,
   .system-filter-icon,
   .category-rail button,
   .category-rail button::before,
-  .feature-check,
   .active-filter-bar,
   .active-filter-chips button,
   .nav-card,
@@ -1493,9 +2060,21 @@ h1 {
     transition: none;
   }
 
+  .hero-aurora,
+  .hero-route-highlight,
+  .hero-orbit-ring,
+  .hero-orbit-core,
+  .command-search.focused::before,
+  .mobile-filters-open .system-filter,
+  .mobile-filters-open .category-rail,
   .system-filter-item.active::before,
   .active-filter-bar {
     animation: none;
+  }
+
+  .hero-aurora,
+  .hero-orbit-ring {
+    will-change: auto;
   }
 }
 </style>

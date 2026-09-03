@@ -2,6 +2,8 @@ export type NavigationLocale = "zh" | "en"
 
 export type NavigationPlatform = "web" | "windows" | "macos" | "linux" | "mobile"
 
+export type NavigationFeature = "openSource" | "crossPlatform" | "localFirst"
+
 export type NavigationCategory =
   | "productivity"
   | "development"
@@ -25,12 +27,19 @@ export interface NavigationItem {
   category: NavigationCategory
   tags: string[]
   openSource?: boolean
+  localFirst?: boolean
   accent: string
   featured?: "wide" | "tall"
 }
 
 export interface NavigationFilter {
   id: NavigationPlatform | "all"
+  label: LocalizedText
+  icon: string
+}
+
+export interface NavigationFeatureFilter {
+  id: NavigationFeature
   label: LocalizedText
   icon: string
 }
@@ -42,6 +51,12 @@ export const platformFilters: NavigationFilter[] = [
   { id: "macos", label: { zh: "macOS", en: "macOS" }, icon: "wpf:macos" },
   { id: "linux", label: { zh: "Linux", en: "Linux" }, icon: "mdi:linux" },
   { id: "mobile", label: { zh: "移动端", en: "Mobile" }, icon: "lucide:smartphone" },
+]
+
+export const featureFilters: NavigationFeatureFilter[] = [
+  { id: "openSource", label: { zh: "开源", en: "Open source" }, icon: "lucide:code-2" },
+  { id: "crossPlatform", label: { zh: "跨平台", en: "Cross-platform" }, icon: "lucide:waypoints" },
+  { id: "localFirst", label: { zh: "本地优先", en: "Local-first" }, icon: "lucide:hard-drive" },
 ]
 
 export const categoryLabels: Record<NavigationCategory, LocalizedText> = {
@@ -76,6 +91,7 @@ export const navigationItems: NavigationItem[] = [
     category: "utilities",
     tags: ["Microsoft", "Open Source"],
     openSource: true,
+    localFirst: true,
     accent: "#4aa7ff",
     featured: "tall",
   },
@@ -88,6 +104,7 @@ export const navigationItems: NavigationItem[] = [
     platforms: ["windows", "macos", "linux", "mobile"],
     category: "knowledge",
     tags: ["Notes", "Markdown"],
+    localFirst: true,
     accent: "#a88bfa",
     featured: "wide",
   },
@@ -124,6 +141,7 @@ export const navigationItems: NavigationItem[] = [
     category: "ai",
     tags: ["Local AI", "Open Source"],
     openSource: true,
+    localFirst: true,
     accent: "#8a95a5",
   },
   {
@@ -135,6 +153,7 @@ export const navigationItems: NavigationItem[] = [
     platforms: ["windows", "macos", "linux"],
     category: "development",
     tags: ["Editor", "Microsoft"],
+    localFirst: true,
     accent: "#3aa7e8",
   },
   {
@@ -147,6 +166,7 @@ export const navigationItems: NavigationItem[] = [
     category: "utilities",
     tags: ["Transfer", "Open Source"],
     openSource: true,
+    localFirst: true,
     accent: "#36c9a0",
   },
   {
@@ -159,6 +179,7 @@ export const navigationItems: NavigationItem[] = [
     category: "development",
     tags: ["Terminal", "Open Source"],
     openSource: true,
+    localFirst: true,
     accent: "#7d8b98",
   },
   {
@@ -170,6 +191,7 @@ export const navigationItems: NavigationItem[] = [
     platforms: ["windows"],
     category: "utilities",
     tags: ["Search", "Files"],
+    localFirst: true,
     accent: "#f0c44f",
   },
   {
