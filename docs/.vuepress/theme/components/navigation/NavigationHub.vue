@@ -76,11 +76,17 @@
           <div class="category-rail-list feature-filter-list">
             <button
               type="button"
+              class="open-source-toggle"
               :class="{ active: openSourceOnly }"
               :aria-pressed="openSourceOnly"
               @click="openSourceOnly = !openSourceOnly"
             >
-              <span>{{ copy.openSource }}</span>
+              <span class="feature-toggle-label">
+                <span class="feature-check" aria-hidden="true">
+                  <Icon :icon="openSourceOnly ? 'lucide:check' : 'lucide:code-2'" />
+                </span>
+                <span>{{ copy.openSourceOnly }}</span>
+              </span>
               <small class="count-badge">{{ openSourceCount }}</small>
             </button>
           </div>
@@ -88,6 +94,61 @@
       </aside>
 
       <div class="card-area">
+        <section v-if="hasActiveFilters" class="active-filter-bar" :aria-label="copy.activeFilters">
+          <span class="active-filter-summary">
+            <Icon icon="lucide:list-filter" aria-hidden="true" />
+            <span>{{ copy.activeFilters }}</span>
+            <strong aria-live="polite">{{ resultSummary }}</strong>
+          </span>
+
+          <span class="active-filter-chips">
+            <button
+              v-if="activePlatform !== 'all'"
+              type="button"
+              :aria-label="`${copy.removeFilter} ${activePlatformLabel}`"
+              @click="activePlatform = 'all'"
+            >
+              <Icon :icon="platformIcon(activePlatform)" aria-hidden="true" />
+              <span>{{ activePlatformLabel }}</span>
+              <Icon icon="lucide:x" class="chip-remove" aria-hidden="true" />
+            </button>
+            <button
+              v-if="activeCategory !== 'all'"
+              type="button"
+              :aria-label="`${copy.removeFilter} ${activeCategoryLabel}`"
+              @click="activeCategory = 'all'"
+            >
+              <Icon icon="lucide:shapes" aria-hidden="true" />
+              <span>{{ activeCategoryLabel }}</span>
+              <Icon icon="lucide:x" class="chip-remove" aria-hidden="true" />
+            </button>
+            <button
+              v-if="openSourceOnly"
+              type="button"
+              :aria-label="`${copy.removeFilter} ${copy.openSource}`"
+              @click="openSourceOnly = false"
+            >
+              <Icon icon="lucide:code-2" aria-hidden="true" />
+              <span>{{ copy.openSource }}</span>
+              <Icon icon="lucide:x" class="chip-remove" aria-hidden="true" />
+            </button>
+            <button
+              v-if="query.trim()"
+              type="button"
+              class="query-chip"
+              :aria-label="`${copy.removeFilter} ${query}`"
+              @click="clearSearch"
+            >
+              <Icon icon="lucide:search" aria-hidden="true" />
+              <span>{{ query }}</span>
+              <Icon icon="lucide:x" class="chip-remove" aria-hidden="true" />
+            </button>
+            <button type="button" class="clear-filter-button" @click="resetFilters">
+              {{ copy.clearAll }}
+            </button>
+          </span>
+        </section>
+
         <section v-if="filteredItems.length" class="card-field">
           <a
             v-for="item in filteredItems"
@@ -170,6 +231,10 @@ const content = {
     categoryTitle: "分类",
     featureTitle: "特性",
     openSource: "开源",
+    openSourceOnly: "仅看开源",
+    activeFilters: "当前筛选",
+    removeFilter: "移除筛选",
+    clearAll: "清除全部",
     allCategories: "全部",
     clear: "清空搜索",
     emptyTitle: "这条轨道暂时没有坐标",
@@ -187,6 +252,10 @@ const content = {
     categoryTitle: "Category",
     featureTitle: "Feature",
     openSource: "Open source",
+    openSourceOnly: "Open source",
+    activeFilters: "Active filters",
+    removeFilter: "Remove filter",
+    clearAll: "Clear all",
     allCategories: "All",
     clear: "Clear search",
     emptyTitle: "No destinations on this orbit",
@@ -268,6 +337,27 @@ const filteredItems = computed(() => {
 
     return matchesPlatform && matchesCategory && matchesOpenSource && (!term || searchable.includes(term))
   })
+})
+
+const hasActiveFilters = computed(() => {
+  return activePlatform.value !== "all"
+    || activeCategory.value !== "all"
+    || openSourceOnly.value
+    || Boolean(query.value.trim())
+})
+
+const activePlatformLabel = computed(() => {
+  return activePlatform.value === "all" ? "" : platformName(activePlatform.value)
+})
+
+const activeCategoryLabel = computed(() => {
+  return activeCategory.value === "all" ? "" : localize(categoryLabels[activeCategory.value])
+})
+
+const resultSummary = computed(() => {
+  return locale.value === "zh"
+    ? `共 ${filteredItems.value.length} 项`
+    : `${filteredItems.value.length} ${filteredItems.value.length === 1 ? "item" : "items"}`
 })
 
 function clearSearch() {
@@ -470,6 +560,8 @@ h1 {
 }
 
 .system-filter-item {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   min-width: 0;
   min-height: 38px;
@@ -482,11 +574,15 @@ h1 {
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
-  border: 0;
+  border: 1px solid transparent;
   border-radius: 11px;
   background: transparent;
   cursor: pointer;
-  transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+  transition:
+    color 180ms ease,
+    background 180ms ease,
+    box-shadow 240ms ease,
+    transform 180ms ease;
 }
 
 .system-filter-icon {
@@ -508,10 +604,52 @@ h1 {
   color: var(--gp-icon-highlight);
 }
 
+@property --nav-filter-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 .system-filter-item.active {
   color: var(--vp-c-text-1);
-  background: color-mix(in srgb, var(--gp-blue) 13%, var(--gp-surface-bg-elv));
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--gp-blue) 12%, transparent);
+  font-weight: 750;
+  border-color: var(--gp-active-border);
+  background: var(--gp-gradient-active);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 24%, transparent),
+    0 0 18px var(--gp-active-glow),
+    0 6px 16px rgb(32 52 75 / 0.18);
+}
+
+.system-filter-item.active::before {
+  position: absolute;
+  z-index: 1;
+  inset: -1px;
+  padding: 1px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--nav-filter-angle),
+    transparent 0deg 225deg,
+    color-mix(in srgb, var(--gp-cyan) 45%, transparent) 245deg,
+    var(--gp-cyan) 266deg,
+    #eaffff 280deg,
+    var(--gp-blue) 296deg,
+    var(--gp-purple) 320deg,
+    transparent 342deg 360deg
+  );
+  border-radius: inherit;
+  content: "";
+  animation: nav-filter-border-flow 8s linear infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+@keyframes nav-filter-border-flow {
+  to {
+    --nav-filter-angle: 360deg;
+  }
 }
 
 .system-filter-item:focus-visible,
@@ -548,6 +686,13 @@ h1 {
   background: color-mix(in srgb, var(--gp-blue) 22%, var(--gp-surface-bg-elv));
 }
 
+.system-filter-item.active .count-badge,
+.category-rail button.active .count-badge {
+  border-color: color-mix(in srgb, var(--gp-cyan) 64%, var(--gp-home-card-border));
+  background: color-mix(in srgb, var(--gp-cyan) 26%, var(--gp-surface-bg-elv));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--gp-cyan) 20%, transparent);
+}
+
 .navigation-content {
   display: grid;
   grid-template-columns: 132px minmax(0, 1fr);
@@ -557,6 +702,123 @@ h1 {
 
 .card-area {
   min-width: 0;
+}
+
+.active-filter-bar {
+  display: flex;
+  min-width: 0;
+  gap: 10px 14px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 9px 11px;
+  border: 1px solid color-mix(in srgb, var(--gp-active-border) 72%, var(--gp-home-card-border));
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--gp-surface-bg-elv) 82%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 8%, transparent),
+    0 8px 20px rgb(32 52 75 / 0.10);
+  animation: active-filter-bar-enter 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes active-filter-bar-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+}
+
+.active-filter-summary,
+.active-filter-chips,
+.active-filter-chips button {
+  display: flex;
+  align-items: center;
+}
+
+.active-filter-summary {
+  flex: 0 0 auto;
+  gap: 6px;
+  color: var(--vp-c-text-2);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.active-filter-summary > svg {
+  width: 15px;
+  height: 15px;
+  color: var(--gp-icon-highlight);
+}
+
+.active-filter-summary strong {
+  color: var(--vp-c-text-1);
+  font-weight: 750;
+}
+
+.active-filter-chips {
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.active-filter-chips button {
+  min-width: 0;
+  gap: 5px;
+  padding: 4px 7px;
+  color: var(--vp-c-text-1);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+  border: 1px solid color-mix(in srgb, var(--gp-active-border) 72%, var(--gp-home-card-border));
+  border-radius: 999px;
+  background: var(--gp-gradient-active);
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.active-filter-chips button:hover,
+.active-filter-chips button:focus-visible {
+  border-color: var(--gp-active-border);
+  box-shadow: 0 0 12px var(--gp-active-glow);
+  transform: translateY(-1px);
+}
+
+.active-filter-chips button:focus-visible {
+  outline: 2px solid var(--gp-cyan);
+  outline-offset: 2px;
+}
+
+.active-filter-chips button > svg {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  color: var(--gp-icon-highlight);
+}
+
+.active-filter-chips button > span {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.active-filter-chips .chip-remove {
+  color: var(--vp-c-text-2);
+}
+
+.active-filter-chips .clear-filter-button {
+  color: var(--vp-c-text-2);
+  border-color: transparent;
+  background: transparent;
+}
+
+.active-filter-chips .clear-filter-button:hover,
+.active-filter-chips .clear-filter-button:focus-visible {
+  color: var(--vp-c-text-1);
+  border-color: var(--gp-home-card-border);
+  background: color-mix(in srgb, var(--gp-blue) 10%, transparent);
+  box-shadow: none;
 }
 
 .category-rail {
@@ -576,6 +838,34 @@ h1 {
 
 .feature-filter-group {
   margin-top: 18px;
+}
+
+.feature-toggle-label {
+  display: flex;
+  min-width: 0;
+  gap: 6px;
+  align-items: center;
+}
+
+.feature-check {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--vp-c-text-3);
+  font-size: 11px;
+  border: 1px solid var(--gp-home-card-border);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--gp-surface-bg-elv) 78%, transparent);
+  transition: color 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.open-source-toggle.active .feature-check {
+  color: #f7fdff;
+  border-color: color-mix(in srgb, var(--gp-cyan) 78%, transparent);
+  background: linear-gradient(135deg, var(--gp-cyan), var(--gp-blue));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--gp-cyan) 42%, transparent);
 }
 
 .category-rail-list {
@@ -647,16 +937,22 @@ h1 {
 
 .category-rail button.active {
   color: var(--vp-c-text-1);
-  font-weight: 700;
+  font-weight: 750;
+  background: var(--gp-gradient-active);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--gp-active-border) 74%, transparent),
+    0 5px 14px color-mix(in srgb, var(--gp-active-glow) 58%, transparent);
+  transform: translateX(2px);
 }
 
 .category-rail button.active::before {
-  width: 7px;
-  height: 7px;
-  background: var(--gp-blue);
+  width: 3px;
+  height: 17px;
+  border-radius: 999px;
+  background: var(--gp-gradient-readable);
   box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--gp-blue) 12%, transparent),
-    0 0 10px color-mix(in srgb, var(--gp-purple) 30%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 20%, transparent),
+    0 0 12px color-mix(in srgb, var(--gp-cyan) 48%, transparent);
 }
 
 .category-rail .count-badge {
@@ -922,6 +1218,39 @@ h1 {
   font-size: 13px;
 }
 
+:global(html[data-theme="dark"]) .system-filter,
+:global(html[data-theme="dark"]) .active-filter-bar {
+  border-color: color-mix(in srgb, var(--gp-active-border) 42%, var(--gp-home-card-border));
+  background: color-mix(in srgb, var(--gp-surface-bg-elv) 92%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 6%, transparent),
+    0 10px 28px rgb(2 8 20 / 0.30);
+}
+
+:global(html[data-theme="dark"]) .system-filter-item.active {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 34%, transparent),
+    0 0 16px color-mix(in srgb, #eaffff 12%, transparent),
+    0 0 24px var(--gp-active-glow),
+    0 8px 20px rgb(2 8 20 / 0.34);
+}
+
+:global(html[data-theme="dark"]) .category-rail button.active {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--gp-active-border) 82%, transparent),
+    0 0 16px color-mix(in srgb, var(--gp-cyan) 16%, transparent),
+    0 7px 18px rgb(2 8 20 / 0.26);
+}
+
+:global(html[data-theme="dark"]) .nav-card {
+  border-color: color-mix(in srgb, var(--gp-blue) 16%, var(--gp-home-card-border));
+}
+
+:global(html[data-theme="dark"]) .system-filter-item:not(.active),
+:global(html[data-theme="dark"]) .category-rail button:not(.active) {
+  color: var(--gp-home-muted);
+}
+
 @media (max-width: 1200px) {
   .card-field {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1033,7 +1362,33 @@ h1 {
   }
 
   .category-rail button.active {
-    background: color-mix(in srgb, var(--gp-blue) 13%, var(--gp-surface-bg-elv));
+    background: var(--gp-gradient-active);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--gp-active-border) 74%, transparent),
+      0 5px 14px color-mix(in srgb, var(--gp-active-glow) 58%, transparent);
+  }
+
+  .active-filter-bar {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+    padding: 9px;
+  }
+
+  .active-filter-summary {
+    justify-content: space-between;
+  }
+
+  .active-filter-summary > svg {
+    margin-right: 1px;
+  }
+
+  .active-filter-summary > span {
+    margin-right: auto;
+  }
+
+  .active-filter-chips {
+    justify-content: flex-start;
   }
 
   .card-field {
@@ -1061,10 +1416,18 @@ h1 {
   .system-filter-icon,
   .category-rail button,
   .category-rail button::before,
+  .feature-check,
+  .active-filter-bar,
+  .active-filter-chips button,
   .nav-card,
   .card-aura,
   .open-icon {
     transition: none;
+  }
+
+  .system-filter-item.active::before,
+  .active-filter-bar {
+    animation: none;
   }
 }
 </style>

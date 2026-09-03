@@ -6,6 +6,9 @@
   --gp-gradient: linear-gradient(100deg, var(--gp-cyan) 0%, var(--gp-blue) 48%, var(--gp-purple) 100%);
   --gp-gradient-readable: var(--gp-gradient);
   --gp-gradient-soft: linear-gradient(100deg, rgb(104 174 193 / 0.14), rgb(112 64 207 / 0.14));
+  --gp-gradient-active: linear-gradient(100deg, rgb(104 174 193 / 0.22), rgb(112 150 194 / 0.20), rgb(112 64 207 / 0.18));
+  --gp-active-border: rgb(84 151 190 / 0.58);
+  --gp-active-glow: rgb(112 150 194 / 0.24);
   --gp-mark-gradient: linear-gradient(to right, rgb(104 174 193 / 0.72) 0%, rgb(112 150 194 / 0.68) 24%, rgb(112 64 207 / 0.62) 50%, transparent 50%);
   --gp-link-color: #667f9f;
   --gp-icon-highlight: var(--gp-cyan);
@@ -69,18 +72,23 @@
 
 /** 暗黑主题使用同色相的高亮版本，提高小字号文字和图标的对比度 */
 [data-theme="dark"] {
-  --gp-gradient-readable: linear-gradient(100deg, #83c6d8 0%, #8ba9d6 48%, #a67bea 100%);
-  --gp-gradient-soft: linear-gradient(100deg, rgb(104 174 193 / 0.16), rgb(112 64 207 / 0.16));
+  --gp-gradient-readable: linear-gradient(100deg, #8bd3e3 0%, #97b5e1 48%, #b58af2 100%);
+  --gp-gradient-soft: linear-gradient(100deg, rgb(131 198 216 / 0.20), rgb(166 123 234 / 0.20));
+  --gp-gradient-active: linear-gradient(100deg, rgb(131 198 216 / 0.34), rgb(139 169 214 / 0.30), rgb(166 123 234 / 0.28));
+  --gp-active-border: rgb(139 207 226 / 0.72);
+  --gp-active-glow: rgb(131 198 216 / 0.34);
   --gp-mark-gradient: linear-gradient(to right, rgb(131 198 216 / 0.68) 0%, rgb(139 169 214 / 0.64) 24%, rgb(166 123 234 / 0.6) 50%, transparent 50%);
-  --gp-link-color: #7186a6;
-  --gp-icon-highlight: #83c6d8;
-  --gp-home-card-bg: rgb(17 26 41 / 0.82);
-  --gp-home-card-bg-alt: rgb(20 27 44 / 0.78);
-  --gp-home-card-shadow: 0 8px 24px rgb(4 9 19 / 0.30);
-  --gp-home-button-border: rgb(156 187 234 / 0.34);
-  --gp-home-text: #c7d2e2;
-  --gp-home-muted: #9eafc2;
-  --gp-home-meta: #91c6d8;
+  --gp-link-color: #8fa8cb;
+  --gp-icon-highlight: #8bd3e3;
+  --gp-home-card-bg: rgb(22 32 50 / 0.88);
+  --gp-home-card-bg-alt: rgb(26 36 56 / 0.86);
+  --gp-home-card-shadow:
+    0 8px 26px rgb(2 7 16 / 0.34),
+    0 0 0 1px rgb(139 169 214 / 0.06);
+  --gp-home-button-border: rgb(166 199 239 / 0.40);
+  --gp-home-text: #dce5f1;
+  --gp-home-muted: #afbdd0;
+  --gp-home-meta: #a2d5e2;
   --gp-home-icon-bg: rgb(24 45 67 / 0.72);
   --gp-home-icon-color: #9bddeb;
   --gp-home-icon-border: rgb(131 198 216 / 0.62);
@@ -99,11 +107,11 @@
   --vp-badge-tip-text: #9fc8e2;
   --vp-badge-tip-bg: rgb(112 150 194 / 0.24);
   --vp-badge-tip-border: rgb(131 198 216 / 0.22);
-  --gp-surface-bg: rgb(11 16 27 / 0.84);
-  --gp-surface-bg-alt: rgb(8 13 23 / 0.8);
-  --gp-surface-bg-elv: rgb(20 26 39 / 0.92);
-  --gp-surface-bg-soft: rgb(20 26 39 / 0.86);
-  --gp-surface-bg-safe: rgb(20 26 39 / 0.9);
-  --gp-nav-bg: rgb(8 13 23 / 0.82);
-  --gp-sidebar-bg: rgb(8 13 23 / 0.86);
+  --gp-surface-bg: rgb(13 19 31 / 0.88);
+  --gp-surface-bg-alt: rgb(12 18 30 / 0.86);
+  --gp-surface-bg-elv: rgb(25 34 52 / 0.94);
+  --gp-surface-bg-soft: rgb(22 31 48 / 0.90);
+  --gp-surface-bg-safe: rgb(23 32 48 / 0.92);
+  --gp-nav-bg: rgb(12 18 30 / 0.88);
+  --gp-sidebar-bg: rgb(13 19 31 / 0.90);
 }
