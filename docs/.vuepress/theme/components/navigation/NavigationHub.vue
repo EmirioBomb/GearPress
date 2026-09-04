@@ -1,6 +1,6 @@
 <template>
   <main class="navigation-hub" :class="{ 'mobile-filters-open': mobileFiltersOpen }">
-    <header class="hub-hero">
+    <section class="navigation-panel">
       <div class="hero-visual" aria-hidden="true">
         <span class="hero-aurora hero-aurora-cyan" />
         <span class="hero-aurora hero-aurora-blue" />
@@ -29,13 +29,14 @@
           <span class="hero-orbit-core" />
         </span>
       </div>
-      <div class="hero-copy">
-        <h1>{{ copy.title }}</h1>
-        <p class="intro">{{ copy.intro }}</p>
-      </div>
-    </header>
+      <header class="hub-hero">
+        <div class="hero-copy">
+          <h1>{{ copy.title }}</h1>
+          <p class="intro">{{ copy.intro }}</p>
+        </div>
+      </header>
 
-    <div class="filter-dock">
+      <div class="filter-dock">
       <label class="command-search" :class="{ focused: isSearchFocused }">
         <Icon icon="lucide:search" class="search-icon" />
         <input
@@ -89,6 +90,7 @@
         </button>
       </section>
     </div>
+    </section>
 
     <div class="navigation-content">
       <aside id="mobile-detail-filters" class="category-rail" :aria-label="copy.categoryLabel">
@@ -487,11 +489,27 @@ function resetFilters() {
   --hub-radius: 24px;
   --filter-dock-top: 64px;
   --filter-dock-height: 54px;
+  --hero-visual-height: 132px;
+  --nav-panel-gradient: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--gp-surface-bg-elv) 94%, transparent),
+    color-mix(in srgb, var(--gp-home-card-bg) 88%, transparent) 52%,
+    color-mix(in srgb, var(--gp-purple) 7%, var(--gp-home-card-bg))
+  );
   box-sizing: border-box;
   width: min(100%, 1440px);
   margin: 0 auto;
   padding: 0 clamp(12px, 1.8vw, 24px) 48px;
   color: var(--vp-c-text-1);
+}
+
+.navigation-panel {
+  position: relative;
+  margin-bottom: 18px;
+  border: 1px solid var(--gp-home-card-border);
+  border-radius: calc(var(--hub-radius) + 8px);
+  background: var(--nav-panel-gradient);
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--gp-blue) 9%, transparent);
 }
 
 .hub-hero {
@@ -503,32 +521,10 @@ function resetFilters() {
   align-items: center;
   padding: 24px clamp(20px, 3vw, 38px);
   overflow: hidden;
-  border: 1px solid var(--gp-home-card-border);
-  border-radius: calc(var(--hub-radius) + 8px);
-  background:
-    linear-gradient(112deg, color-mix(in srgb, var(--gp-surface-bg-elv) 94%, transparent), color-mix(in srgb, var(--gp-home-card-bg) 86%, transparent)),
-    var(--gp-home-card-bg);
-  box-shadow: var(--gp-home-card-shadow);
-}
-
-.hub-hero::after {
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 2%,
-    color-mix(in srgb, var(--gp-cyan) 58%, transparent) 28%,
-    color-mix(in srgb, var(--gp-blue) 72%, transparent) 56%,
-    color-mix(in srgb, var(--gp-purple) 58%, transparent) 82%,
-    transparent 98%
-  );
-  box-shadow: 0 -1px 12px color-mix(in srgb, var(--gp-blue) 22%, transparent);
-  content: "";
-  pointer-events: none;
+  border: 0;
+  border-radius: calc(var(--hub-radius) + 8px) calc(var(--hub-radius) + 8px) 0 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .hero-visual {
@@ -536,6 +532,7 @@ function resetFilters() {
   z-index: 0;
   inset: 0;
   overflow: hidden;
+  border-radius: inherit;
   pointer-events: none;
 }
 
@@ -580,6 +577,8 @@ function resetFilters() {
   height: 270px;
   background: radial-gradient(ellipse, var(--gp-purple), transparent 68%);
   opacity: 0.15;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0 58%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0 58%, transparent 100%);
   animation: hero-aurora-purple-drift 20s ease-in-out infinite alternate;
 }
 
@@ -588,9 +587,9 @@ function resetFilters() {
   z-index: 1;
   inset: 0;
   width: 100%;
-  height: 100%;
+  height: var(--hero-visual-height);
   overflow: visible;
-  opacity: 0.52;
+  opacity: 0.86;
 }
 
 .hero-route,
@@ -605,35 +604,35 @@ function resetFilters() {
 }
 
 .hero-route-one {
-  stroke: color-mix(in srgb, var(--gp-cyan) 35%, transparent);
+  stroke: color-mix(in srgb, var(--gp-cyan) 54%, transparent);
 }
 
 .hero-route-two {
-  stroke: color-mix(in srgb, var(--gp-purple) 30%, transparent);
+  stroke: color-mix(in srgb, var(--gp-purple) 50%, transparent);
 }
 
 .hero-route-highlight {
-  stroke-width: 1.45;
+  stroke-width: 1.9;
   stroke-dasharray: 120 1250;
-  filter: drop-shadow(0 0 4px currentColor);
+  filter: drop-shadow(0 0 6px currentColor);
 }
 
 .hero-route-highlight-one {
   color: var(--gp-cyan);
-  stroke: color-mix(in srgb, var(--gp-cyan) 82%, white);
-  animation: hero-route-flow 13s linear infinite;
+  stroke: color-mix(in srgb, var(--gp-cyan) 94%, white);
+  animation: hero-route-flow 7s linear infinite;
 }
 
 .hero-route-highlight-two {
   color: var(--gp-purple);
-  stroke: color-mix(in srgb, var(--gp-purple) 76%, white);
-  animation: hero-route-flow 16s linear -7s infinite reverse;
+  stroke: color-mix(in srgb, var(--gp-purple) 88%, white);
+  animation: hero-route-flow 9s linear -4s infinite reverse;
 }
 
 .hero-orbit {
   position: absolute;
   z-index: 2;
-  top: 50%;
+  top: calc(var(--hero-visual-height) / 2);
   left: 78%;
   display: block;
   width: clamp(154px, 18vw, 220px);
@@ -794,21 +793,12 @@ function resetFilters() {
   box-sizing: border-box;
   gap: 8px;
   align-items: center;
-  margin: 12px 0 18px;
-  padding: 6px;
-  border: 1px solid rgb(104 158 190 / 0.28);
-  border-radius: 18px;
-  background: linear-gradient(
-    105deg,
-    rgb(226 241 246 / 0.90),
-    rgb(229 237 248 / 0.92) 52%,
-    rgb(237 231 248 / 0.88)
-  );
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.52),
-    0 8px 22px rgb(42 67 89 / 0.10);
-  backdrop-filter: blur(18px) saturate(1.12);
-  -webkit-backdrop-filter: blur(18px) saturate(1.12);
+  margin: 0;
+  padding: 8px 12px 12px;
+  border: 0;
+  border-radius: 0 0 calc(var(--hub-radius) + 8px) calc(var(--hub-radius) + 8px);
+  background: transparent;
+  box-shadow: none;
 }
 
 .mobile-filter-toggle {
@@ -848,7 +838,7 @@ h1 {
   -webkit-line-clamp: 2;
 }
 
-@property --nav-search-angle {
+@property --gear-home-border-angle {
   syntax: "<angle>";
   inherits: false;
   initial-value: 0deg;
@@ -866,7 +856,7 @@ h1 {
   min-height: 0;
   box-sizing: border-box;
   padding: 0 12px;
-  border: 1px solid color-mix(in srgb, var(--gp-blue) 24%, var(--gp-home-card-border));
+  border: 2px solid color-mix(in srgb, var(--gp-blue) 24%, var(--gp-home-card-border));
   border-radius: 12px;
   background: color-mix(in srgb, var(--gp-surface-bg-soft) 88%, transparent);
   box-shadow: 0 5px 14px rgb(35 48 72 / 0.08);
@@ -877,8 +867,9 @@ h1 {
 .command-search:focus-within {
   border-color: var(--gp-cyan);
   box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--gp-cyan) 14%, transparent),
-    0 7px 18px color-mix(in srgb, var(--gp-blue) 16%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 28%, transparent),
+    0 0 16px color-mix(in srgb, var(--gp-blue) 14%, transparent),
+    0 8px 22px rgb(32 52 75 / 0.22);
   transform: translateY(-1px);
 }
 
@@ -886,34 +877,28 @@ h1 {
 .command-search:focus-within::before {
   position: absolute;
   z-index: 1;
-  inset: -1px;
-  padding: 1px;
+  inset: 0;
+  padding: 2px;
   border-radius: inherit;
   background: conic-gradient(
-    from var(--nav-search-angle),
-    transparent 0deg 226deg,
-    color-mix(in srgb, var(--gp-cyan) 42%, transparent) 244deg,
-    var(--gp-cyan) 260deg,
-    #eaffff 273deg,
-    var(--gp-blue) 289deg,
-    var(--gp-purple) 310deg,
-    transparent 332deg 360deg
+    from var(--gear-home-border-angle),
+    transparent 0deg 36deg,
+    color-mix(in srgb, var(--gp-cyan) 48%, transparent) 47deg,
+    var(--gp-cyan) 57deg,
+    #eaffff 65deg,
+    var(--gp-blue) 75deg,
+    var(--gp-purple) 93deg,
+    color-mix(in srgb, var(--gp-purple) 22%, transparent) 113deg,
+    transparent 130deg 360deg
   );
   content: "";
-  animation: nav-search-border-flow 1.4s cubic-bezier(0.22, 1, 0.36, 1) 1;
+  animation: gear-home-button-border-flow 4.2s linear infinite;
   pointer-events: none;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
 }
-
-@keyframes nav-search-border-flow {
-  to {
-    --nav-search-angle: 360deg;
-  }
-}
-
 .search-icon {
   width: 18px;
   height: 18px;
@@ -986,9 +971,9 @@ h1 {
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
-  border: 1px solid transparent;
+  border: 2px solid color-mix(in srgb, var(--gp-blue) 14%, var(--gp-home-card-border));
   border-radius: 11px;
-  background: transparent;
+  background: color-mix(in srgb, var(--gp-surface-bg-elv) 22%, transparent);
   cursor: pointer;
   transition:
     color 180ms ease,
@@ -1007,7 +992,9 @@ h1 {
 
 .system-filter-item:hover {
   color: var(--vp-c-text-1);
-  background: color-mix(in srgb, var(--gp-blue) 7%, transparent);
+  border-color: color-mix(in srgb, var(--gp-cyan) 34%, var(--gp-home-card-border));
+  background: color-mix(in srgb, var(--gp-blue) 10%, transparent);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--gp-blue) 8%, transparent);
   transform: translateY(-1px);
 }
 
@@ -1016,52 +1003,51 @@ h1 {
   color: var(--gp-icon-highlight);
 }
 
-@property --nav-filter-angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-
 .system-filter-item.active {
   color: var(--vp-c-text-1);
   font-weight: 750;
   border-color: var(--gp-active-border);
   background: var(--gp-gradient-active);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 24%, transparent),
-    0 0 18px var(--gp-active-glow),
-    0 6px 16px rgb(32 52 75 / 0.18);
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 28%, transparent),
+    0 0 16px color-mix(in srgb, var(--gp-blue) 14%, transparent),
+    0 8px 22px rgb(32 52 75 / 0.22);
 }
 
 .system-filter-item.active::before {
   position: absolute;
   z-index: 1;
-  inset: -1px;
-  padding: 1px;
+  inset: 0;
+  padding: 2px;
   pointer-events: none;
   background: conic-gradient(
-    from var(--nav-filter-angle),
-    transparent 0deg 252deg,
-    color-mix(in srgb, var(--gp-cyan) 34%, transparent) 267deg,
-    color-mix(in srgb, var(--gp-cyan) 72%, transparent) 279deg,
-    color-mix(in srgb, #eaffff 74%, transparent) 287deg,
-    color-mix(in srgb, var(--gp-blue) 70%, transparent) 297deg,
-    color-mix(in srgb, var(--gp-purple) 62%, transparent) 314deg,
-    transparent 331deg 360deg
+    from var(--gear-home-border-angle),
+    transparent 0deg 36deg,
+    color-mix(in srgb, var(--gp-cyan) 48%, transparent) 47deg,
+    var(--gp-cyan) 57deg,
+    #eaffff 65deg,
+    var(--gp-blue) 75deg,
+    var(--gp-purple) 93deg,
+    color-mix(in srgb, var(--gp-purple) 22%, transparent) 113deg,
+    transparent 130deg 360deg
   );
   border-radius: inherit;
-  opacity: 0.72;
+  opacity: 1;
   content: "";
-  animation: nav-filter-border-flow 5.5s linear infinite;
+  animation: gear-home-button-border-flow 4.2s linear infinite;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
 }
 
-@keyframes nav-filter-border-flow {
+@keyframes gear-home-button-border-flow {
+  from {
+    --gear-home-border-angle: 0deg;
+  }
+
   to {
-    --nav-filter-angle: 360deg;
+    --gear-home-border-angle: 360deg;
   }
 }
 
@@ -1615,11 +1601,18 @@ h1 {
   font-size: 13px;
 }
 
-:global(html[data-theme="dark"] .hub-hero) {
+:global(html[data-theme="dark"] .navigation-hub) {
+  --nav-panel-gradient: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--gp-surface-bg-elv) 96%, transparent),
+    color-mix(in srgb, var(--gp-home-card-bg) 90%, transparent) 52%,
+    color-mix(in srgb, var(--gp-purple) 10%, var(--gp-home-card-bg))
+  );
+}
+
+:global(html[data-theme="dark"] .navigation-panel) {
   border-color: color-mix(in srgb, var(--gp-blue) 20%, var(--gp-home-card-border));
-  background:
-    linear-gradient(112deg, color-mix(in srgb, var(--gp-surface-bg-elv) 96%, transparent), color-mix(in srgb, var(--gp-home-card-bg) 88%, transparent)),
-    var(--gp-home-card-bg);
+  background: var(--nav-panel-gradient);
 }
 
 :global(html[data-theme="dark"] .hero-aurora-cyan) {
@@ -1635,7 +1628,7 @@ h1 {
 }
 
 :global(html[data-theme="dark"] .hero-routes) {
-  opacity: 0.7;
+  opacity: 0.84;
 }
 
 :global(html[data-theme="dark"] .hero-orbit) {
@@ -1654,25 +1647,10 @@ h1 {
   background: linear-gradient(90deg, color-mix(in srgb, var(--gp-home-card-bg) 42%, transparent), transparent 64%);
 }
 
-:global(html[data-theme="dark"] .filter-dock),
-:global(html[data-theme="dark"] .active-filter-bar) {
-  border-color: color-mix(in srgb, var(--gp-active-border) 42%, var(--gp-home-card-border));
+:global(html[data-theme="dark"] .navigation-panel) {
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--gp-cyan) 6%, transparent),
     0 10px 28px rgb(2 8 20 / 0.30);
-}
-
-:global(html[data-theme="dark"] .filter-dock) {
-  border-color: rgb(139 190 218 / 0.28);
-  background: linear-gradient(
-    105deg,
-    rgb(27 45 58 / 0.96),
-    rgb(28 40 63 / 0.96) 52%,
-    rgb(39 31 66 / 0.94)
-  );
-  box-shadow:
-    inset 0 1px 0 rgb(205 232 255 / 0.07),
-    0 10px 28px rgb(2 8 20 / 0.34);
 }
 
 :global(html[data-theme="dark"] .active-filter-bar) {
@@ -1757,14 +1735,15 @@ h1 {
 
 @media (max-width: 680px) {
   .navigation-hub {
+    --hero-visual-height: 118px;
     padding-bottom: 48px;
   }
 
   .hub-hero {
     min-height: 118px;
-    margin-bottom: 12px;
+    margin-bottom: 0;
     padding: 16px 14px;
-    border-radius: 24px;
+    border-radius: 24px 24px 0 0;
   }
 
   .hero-aurora {
@@ -1819,15 +1798,27 @@ h1 {
     animation: none;
   }
 
+  .navigation-panel {
+    margin-bottom: 12px;
+    border-radius: 24px;
+  }
+
   .filter-dock {
-    display: contents;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin: 0;
+    padding: 8px 10px 10px;
+    border: 0;
+    border-radius: 0 0 24px 24px;
+    background: transparent;
   }
 
   .command-search {
     position: sticky;
     z-index: 20;
     top: var(--filter-dock-top);
-    margin-bottom: 8px;
+    margin-bottom: 0;
     border-color: color-mix(in srgb, var(--gp-active-border) 56%, var(--gp-home-card-border));
     background: color-mix(in srgb, var(--gp-surface-bg-elv) 94%, transparent);
     box-shadow:
@@ -1843,7 +1834,7 @@ h1 {
     box-sizing: border-box;
     gap: 8px;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     padding: 7px 11px;
     color: var(--vp-c-text-1);
     font: inherit;
