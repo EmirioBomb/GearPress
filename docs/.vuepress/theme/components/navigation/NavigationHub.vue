@@ -8,19 +8,19 @@
         <svg class="hero-routes" viewBox="0 0 1200 160" preserveAspectRatio="none">
           <path
             class="hero-route hero-route-one"
-            d="M-80 126 C 160 34, 330 142, 560 82 S 820 28, 936 80 S 1100 132, 1280 92"
+            d="M-80 118 C 150 42, 330 126, 540 78 S 820 18, 1040 44 S 1190 70, 1280 38"
           />
           <path
             class="hero-route-highlight hero-route-highlight-one"
-            d="M-80 126 C 160 34, 330 142, 560 82 S 820 28, 936 80 S 1100 132, 1280 92"
+            d="M-80 118 C 150 42, 330 126, 540 78 S 820 18, 1040 44 S 1190 70, 1280 38"
           />
           <path
             class="hero-route hero-route-two"
-            d="M-50 42 C 180 118, 380 6, 650 62 S 820 132, 936 80 S 1100 24, 1260 70"
+            d="M-60 34 C 170 92, 350 18, 570 58 S 820 118, 1010 96 S 1160 70, 1270 112"
           />
           <path
             class="hero-route-highlight hero-route-highlight-two"
-            d="M-50 42 C 180 118, 380 6, 650 62 S 820 132, 936 80 S 1100 24, 1260 70"
+            d="M-60 34 C 170 92, 350 18, 570 58 S 820 118, 1010 96 S 1160 70, 1270 112"
           />
         </svg>
         <span class="hero-orbit">
@@ -489,7 +489,7 @@ function resetFilters() {
   --hub-radius: 24px;
   --filter-dock-top: 64px;
   --filter-dock-height: 54px;
-  --hero-visual-height: 132px;
+  --hero-visual-height: 92px;
   --nav-panel-gradient: linear-gradient(
     90deg,
     color-mix(in srgb, var(--gp-surface-bg-elv) 94%, transparent),
@@ -516,10 +516,10 @@ function resetFilters() {
   position: relative;
   isolation: isolate;
   display: flex;
-  min-height: 132px;
+  min-height: 92px;
   box-sizing: border-box;
   align-items: center;
-  padding: 24px clamp(20px, 3vw, 38px);
+  padding: 11px clamp(20px, 3vw, 38px);
   overflow: hidden;
   border: 0;
   border-radius: calc(var(--hub-radius) + 8px) calc(var(--hub-radius) + 8px) 0 0;
@@ -589,7 +589,9 @@ function resetFilters() {
   width: 100%;
   height: var(--hero-visual-height);
   overflow: visible;
-  opacity: 0.86;
+  opacity: 0.68;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0 64%, rgb(0 0 0 / 0.72) 84%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0 64%, rgb(0 0 0 / 0.72) 84%, transparent 100%);
 }
 
 .hero-route,
@@ -600,21 +602,21 @@ function resetFilters() {
 }
 
 .hero-route {
-  stroke-width: 0.8;
+  stroke-width: 0.65;
 }
 
 .hero-route-one {
-  stroke: color-mix(in srgb, var(--gp-cyan) 54%, transparent);
+  stroke: color-mix(in srgb, var(--gp-cyan) 48%, transparent);
 }
 
 .hero-route-two {
-  stroke: color-mix(in srgb, var(--gp-purple) 50%, transparent);
+  stroke: color-mix(in srgb, var(--gp-purple) 38%, transparent);
 }
 
 .hero-route-highlight {
-  stroke-width: 1.9;
+  stroke-width: 1.55;
   stroke-dasharray: 120 1250;
-  filter: drop-shadow(0 0 6px currentColor);
+  filter: drop-shadow(0 0 4px currentColor);
 }
 
 .hero-route-highlight-one {
@@ -632,26 +634,31 @@ function resetFilters() {
 .hero-orbit {
   position: absolute;
   z-index: 2;
-  top: calc(var(--hero-visual-height) / 2);
-  left: 78%;
+  top: 52%;
+  right: -84px;
+  bottom: auto;
+  left: auto;
   display: block;
-  width: clamp(154px, 18vw, 220px);
+  width: 176px;
   aspect-ratio: 1;
-  opacity: 0.58;
-  transform: translate(-50%, -50%);
+  opacity: 0.46;
+  transform: translateY(-50%);
 }
 
 .hero-orbit::before {
   position: absolute;
-  inset: 24%;
+  inset: -34% 8% -34% -42%;
+  opacity: 0.78;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    color-mix(in srgb, var(--gp-cyan) 30%, transparent),
-    color-mix(in srgb, var(--gp-blue) 16%, transparent) 42%,
-    transparent 72%
+    color-mix(in srgb, var(--gp-cyan) 42%, transparent) 0 12%,
+    color-mix(in srgb, var(--gp-blue) 28%, transparent) 32%,
+    color-mix(in srgb, var(--gp-purple) 18%, transparent) 56%,
+    transparent 78%
   );
-  filter: blur(10px);
+  filter: blur(22px);
+  animation: hero-orbit-aura-pulse 5.6s ease-in-out infinite;
   content: "";
 }
 
@@ -659,6 +666,7 @@ function resetFilters() {
   position: absolute;
   display: block;
   border-radius: 50%;
+  opacity: 0.62;
   background: conic-gradient(
     from 12deg,
     transparent 0deg 28deg,
@@ -693,12 +701,12 @@ function resetFilters() {
 
 .hero-orbit-core {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 38%;
+  left: 28%;
   display: block;
-  width: 42px;
-  height: 42px;
-  border: 1px solid color-mix(in srgb, var(--gp-cyan) 44%, transparent);
+  width: 30px;
+  height: 30px;
+  border: 1px solid color-mix(in srgb, var(--gp-cyan) 62%, transparent);
   border-radius: 50%;
   background: radial-gradient(
     circle,
@@ -708,8 +716,9 @@ function resetFilters() {
     transparent 70%
   );
   box-shadow:
-    0 0 12px color-mix(in srgb, var(--gp-cyan) 42%, transparent),
-    0 0 32px color-mix(in srgb, var(--gp-blue) 24%, transparent);
+    0 0 10px color-mix(in srgb, var(--gp-cyan) 70%, transparent),
+    0 0 30px color-mix(in srgb, var(--gp-blue) 46%, transparent),
+    0 0 68px color-mix(in srgb, var(--gp-purple) 24%, transparent);
   transform: translate(-50%, -50%);
   animation: hero-orbit-core-pulse 4.8s ease-in-out infinite;
 }
@@ -730,6 +739,13 @@ function resetFilters() {
 .hero-copy {
   position: relative;
   z-index: 2;
+}
+
+@keyframes hero-orbit-aura-pulse {
+  50% {
+    opacity: 0.98;
+    transform: scale(1.12);
+  }
 }
 
 @keyframes hero-orbit-spin-one {
@@ -1632,7 +1648,7 @@ h1 {
 }
 
 :global(html[data-theme="dark"] .hero-orbit) {
-  opacity: 0.84;
+  opacity: 0.62;
 }
 
 :global(html[data-theme="dark"] .hero-orbit-core) {
@@ -1735,14 +1751,14 @@ h1 {
 
 @media (max-width: 680px) {
   .navigation-hub {
-    --hero-visual-height: 118px;
+    --hero-visual-height: 98px;
     padding-bottom: 48px;
   }
 
   .hub-hero {
-    min-height: 118px;
+    min-height: 98px;
     margin-bottom: 0;
-    padding: 16px 14px;
+    padding: 13px 14px;
     border-radius: 24px 24px 0 0;
   }
 
@@ -1771,13 +1787,17 @@ h1 {
   }
 
   .hero-orbit {
-    left: 82%;
-    width: 138px;
-    opacity: 0.42;
+    top: 54px;
+    right: -58px;
+    bottom: auto;
+    left: auto;
+    width: 132px;
+    opacity: 0.34;
+    transform: translateY(-50%);
   }
 
   :global(html[data-theme="dark"] .hero-orbit) {
-    opacity: 0.58;
+    opacity: 0.38;
   }
 
   .hero-orbit-ring-one {
@@ -1790,8 +1810,10 @@ h1 {
   }
 
   .hero-orbit-core {
-    width: 34px;
-    height: 34px;
+    top: 38%;
+    left: 28%;
+    width: 24px;
+    height: 24px;
   }
 
   .hero-route-highlight {
