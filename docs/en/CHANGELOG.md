@@ -1,3 +1,10 @@
+## 🔖 Release v2.5.0 (2026-09-04)
+
+### ✨ Features
+
+* **navigation:** add feature filters and long-label handling ([e71f032](https://github.com/EmirioBomb/GearPress/commit/e71f032cf50f3d8b31575165bac819c9d6d5baba))
+* **site:** add navigation hub and refine visual effects ([a39bf84](https://github.com/EmirioBomb/GearPress/commit/a39bf84d7f8551f61cc8c21e8addf5947d7cab85))
+
 ## 🔖 Release v2.4.0 (2026-09-01)
 
 ### ✨ Features
