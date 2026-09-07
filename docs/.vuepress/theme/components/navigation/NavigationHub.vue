@@ -322,7 +322,18 @@ const query = ref("")
 const searchInput = ref<HTMLInputElement>()
 const isSearchFocused = ref(false)
 const mobileFiltersOpen = ref(false)
-const categoryOrder: NavigationCategory[] = ["productivity", "development", "ai", "design", "utilities", "knowledge"]
+const categoryOrder: NavigationCategory[] = [
+  "productivity",
+  "development",
+  "ai",
+  "design",
+  "utilities",
+  "knowledge",
+  "communication",
+  "media",
+  "network",
+  "gaming",
+]
 
 function localize(text: LocalizedText) {
   return text[locale.value]
@@ -635,20 +646,20 @@ function resetFilters() {
   position: absolute;
   z-index: 2;
   top: 52%;
-  right: -84px;
+  right: -72px;
   bottom: auto;
   left: auto;
   display: block;
-  width: 176px;
+  width: 194px;
   aspect-ratio: 1;
-  opacity: 0.46;
+  opacity: 0.62;
   transform: translateY(-50%);
 }
 
 .hero-orbit::before {
   position: absolute;
-  inset: -34% 8% -34% -42%;
-  opacity: 0.78;
+  inset: -48% 0 -48% -68%;
+  opacity: 0.96;
   border-radius: 50%;
   background: radial-gradient(
     circle,
@@ -657,7 +668,7 @@ function resetFilters() {
     color-mix(in srgb, var(--gp-purple) 18%, transparent) 56%,
     transparent 78%
   );
-  filter: blur(22px);
+  filter: blur(28px);
   animation: hero-orbit-aura-pulse 5.6s ease-in-out infinite;
   content: "";
 }
@@ -701,11 +712,11 @@ function resetFilters() {
 
 .hero-orbit-core {
   position: absolute;
-  top: 38%;
-  left: 28%;
+  top: 36%;
+  left: 23%;
   display: block;
-  width: 30px;
-  height: 30px;
+  width: 42px;
+  height: 42px;
   border: 1px solid color-mix(in srgb, var(--gp-cyan) 62%, transparent);
   border-radius: 50%;
   background: radial-gradient(
@@ -716,9 +727,9 @@ function resetFilters() {
     transparent 70%
   );
   box-shadow:
-    0 0 10px color-mix(in srgb, var(--gp-cyan) 70%, transparent),
-    0 0 30px color-mix(in srgb, var(--gp-blue) 46%, transparent),
-    0 0 68px color-mix(in srgb, var(--gp-purple) 24%, transparent);
+    0 0 14px color-mix(in srgb, var(--gp-cyan) 78%, transparent),
+    0 0 42px color-mix(in srgb, var(--gp-blue) 54%, transparent),
+    0 0 92px color-mix(in srgb, var(--gp-purple) 30%, transparent);
   transform: translate(-50%, -50%);
   animation: hero-orbit-core-pulse 4.8s ease-in-out infinite;
 }
@@ -1788,16 +1799,16 @@ h1 {
 
   .hero-orbit {
     top: 54px;
-    right: -58px;
+    right: -48px;
     bottom: auto;
     left: auto;
-    width: 132px;
-    opacity: 0.34;
+    width: 146px;
+    opacity: 0.46;
     transform: translateY(-50%);
   }
 
   :global(html[data-theme="dark"] .hero-orbit) {
-    opacity: 0.38;
+    opacity: 0.46;
   }
 
   .hero-orbit-ring-one {
@@ -1812,8 +1823,8 @@ h1 {
   .hero-orbit-core {
     top: 38%;
     left: 28%;
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
   }
 
   .hero-route-highlight {
