@@ -30,7 +30,7 @@
         </span>
       </div>
       <header class="hub-hero">
-        <div class="hero-copy">
+        <div class="hero-copy" :class="`is-${locale}`">
           <h1>{{ copy.title }}</h1>
           <p class="intro">{{ copy.intro }}</p>
         </div>
@@ -200,10 +200,10 @@
 
         <section v-if="filteredItems.length" class="card-field">
           <a
-            v-for="item in filteredItems"
+            v-for="item in displayedItems"
             :key="item.id"
             class="nav-card"
-            :class="item.featured ? `is-${item.featured}` : undefined"
+            :class="isDefaultOverview && item.featured ? `is-${item.featured}` : undefined"
             :style="{ '--item-accent': item.accent }"
             :href="item.url"
             target="_blank"
@@ -446,6 +446,22 @@ const filteredItems = computed(() => {
 
     return matchesPlatform && matchesCategory && matchesFeatures(item) && (!term || searchable.includes(term))
   })
+})
+
+const isDefaultOverview = computed(() => {
+  return activePlatform.value === "all"
+    && activeCategory.value === "all"
+    && activeFeatures.value.length === 0
+    && !query.value.trim()
+})
+
+const displayedItems = computed(() => {
+  if (!isDefaultOverview.value) return filteredItems.value
+
+  return filteredItems.value
+    .map((item, index) => ({ item, index }))
+    .sort((a, b) => (b.item.priority ?? 0) - (a.item.priority ?? 0) || a.index - b.index)
+    .map(({ item }) => item)
 })
 
 const hasActiveFilters = computed(() => {
@@ -872,6 +888,13 @@ h1 {
   line-height: 1.02;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.hero-copy.is-zh h1 {
+  font-size: clamp(26px, 2.8vw, 34px);
+  font-weight: 740;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .intro {
@@ -1441,7 +1464,17 @@ h1 {
   background: var(--gp-home-card-bg);
   box-shadow: var(--gp-home-card-shadow);
   isolation: isolate;
-  transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+  transition: background 240ms ease, border-color 240ms ease, box-shadow 240ms ease, transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.nav-card::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--item-accent) 9%, transparent), transparent 45%);
+  content: "";
+  opacity: 0;
+  transition: opacity 240ms ease;
 }
 
 .nav-card.is-wide {
@@ -1460,23 +1493,31 @@ h1 {
   width: 190px;
   height: 190px;
   border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--item-accent) 25%, transparent), transparent 68%);
-  opacity: 0.75;
-  transition: opacity 220ms ease, transform 300ms ease;
+  background: radial-gradient(circle, color-mix(in srgb, var(--item-accent) 17%, transparent), transparent 68%);
+  opacity: 0.52;
+  transition: opacity 240ms ease, transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .nav-card:hover,
 .nav-card:focus-visible {
   color: var(--vp-c-text-1);
-  border-color: color-mix(in srgb, var(--item-accent) 58%, var(--gp-home-card-border));
-  box-shadow: 0 18px 42px color-mix(in srgb, var(--item-accent) 17%, transparent);
-  transform: translateY(-5px);
+  border-color: color-mix(in srgb, var(--item-accent) 38%, var(--gp-home-card-border));
+  background: color-mix(in srgb, var(--item-accent) 5%, var(--gp-home-card-bg));
+  box-shadow:
+    0 13px 30px rgb(2 7 16 / 0.34),
+    0 6px 16px color-mix(in srgb, var(--item-accent) 9%, transparent);
+  transform: translateY(-2px);
+}
+
+.nav-card:hover::after,
+.nav-card:focus-visible::after {
+  opacity: 1;
 }
 
 .nav-card:hover .card-aura,
 .nav-card:focus-visible .card-aura {
-  opacity: 1;
-  transform: scale(1.25);
+  opacity: 0.8;
+  transform: scale(1.15);
 }
 
 .card-topline,
@@ -1509,6 +1550,15 @@ h1 {
   border: 1px solid color-mix(in srgb, var(--item-accent) 34%, transparent);
   border-radius: 11px;
   background: color-mix(in srgb, var(--item-accent) 12%, var(--gp-surface-bg-elv));
+  transition: border-color 220ms ease, background 220ms ease, box-shadow 220ms ease, transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.nav-card:hover .app-icon,
+.nav-card:focus-visible .app-icon {
+  border-color: color-mix(in srgb, var(--item-accent) 50%, transparent);
+  background: color-mix(in srgb, var(--item-accent) 17%, var(--gp-surface-bg-elv));
+  box-shadow: 0 5px 13px color-mix(in srgb, var(--item-accent) 13%, transparent);
+  transform: scale(1.045) rotate(-1.5deg);
 }
 
 .app-icon img {
@@ -1524,9 +1574,10 @@ h1 {
   transition: color 180ms ease, transform 180ms ease;
 }
 
-.nav-card:hover .open-icon {
+.nav-card:hover .open-icon,
+.nav-card:focus-visible .open-icon {
   color: var(--item-accent);
-  transform: translate(3px, -3px);
+  transform: translate(2px, -2px);
 }
 
 .card-content {
@@ -1742,7 +1793,25 @@ h1 {
 }
 
 :global(html[data-theme="dark"] .nav-card) {
-  border-color: color-mix(in srgb, var(--gp-blue) 16%, var(--gp-home-card-border));
+  border-color: color-mix(in srgb, var(--gp-blue) 14%, var(--gp-home-card-border));
+  background: rgb(22 32 50 / 0.94);
+  box-shadow:
+    0 8px 24px rgb(2 7 16 / 0.3),
+    inset 0 1px 0 rgb(205 232 255 / 0.035);
+}
+
+:global(html[data-theme="dark"] .nav-card:hover),
+:global(html[data-theme="dark"] .nav-card:focus-visible) {
+  border-color: color-mix(in srgb, var(--item-accent) 36%, var(--gp-home-card-border));
+  background: color-mix(in srgb, var(--item-accent) 4%, rgb(25 36 55 / 0.97));
+  box-shadow:
+    0 14px 32px rgb(2 7 16 / 0.4),
+    0 5px 15px color-mix(in srgb, var(--item-accent) 8%, transparent),
+    inset 0 1px 0 rgb(205 232 255 / 0.045);
+}
+
+:global(html[data-theme="dark"] .nav-card::after) {
+  background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--item-accent) 8%, transparent), transparent 46%);
 }
 
 :global(html[data-theme="dark"] .system-filter-item:not(.active)),
@@ -2107,9 +2176,22 @@ h1 {
   .active-filter-bar,
   .active-filter-chips button,
   .nav-card,
+  .nav-card::after,
   .card-aura,
+  .app-icon,
   .open-icon {
     transition: none;
+  }
+
+  .nav-card:hover,
+  .nav-card:focus-visible,
+  .nav-card:hover .card-aura,
+  .nav-card:focus-visible .card-aura,
+  .nav-card:hover .app-icon,
+  .nav-card:focus-visible .app-icon,
+  .nav-card:hover .open-icon,
+  .nav-card:focus-visible .open-icon {
+    transform: none;
   }
 
   .hero-aurora,
