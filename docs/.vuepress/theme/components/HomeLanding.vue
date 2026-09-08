@@ -285,7 +285,7 @@ onBeforeUnmount(() => {
   <main class="gear-home">
     <section class="gear-home-identity" aria-labelledby="gear-home-title">
       <div class="gear-home-logo-orbit">
-        <img class="gear-home-logo" :src="withBase('/logo.svg')" alt="" aria-hidden="true" no-view>
+        <img class="gear-home-logo is-static" :src="withBase('/logo.svg')" alt="" aria-hidden="true" no-view>
       </div>
       <h1 id="gear-home-title"><span>GearPress</span></h1>
       <p class="gear-home-casual-line">{{ current.casualLine }}</p>
@@ -376,6 +376,11 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.is-static {
+  pointer-events: none;
+  user-select: none;
+}
+
 :global(.gear-home-page .vp-home-custom) {
   width: 100%;
   padding: 0;

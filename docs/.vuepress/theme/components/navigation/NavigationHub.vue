@@ -211,7 +211,17 @@
           >
             <span class="card-aura" aria-hidden="true" />
             <span class="card-topline">
-              <span class="app-icon"><Icon :icon="item.icon" /></span>
+              <span class="app-icon">
+                <img
+                  v-if="item.iconUrl && !failedIconUrls.has(item.iconUrl)"
+                  :src="item.iconUrl"
+                  class="is-static"
+                  :alt="item.name"
+                  no-view
+                  @error="markIconAsFailed(item.iconUrl)"
+                >
+                <Icon v-else :icon="item.icon" aria-hidden="true" />
+              </span>
               <Icon icon="lucide:arrow-up-right" class="open-icon" />
             </span>
 
@@ -322,6 +332,7 @@ const query = ref("")
 const searchInput = ref<HTMLInputElement>()
 const isSearchFocused = ref(false)
 const mobileFiltersOpen = ref(false)
+const failedIconUrls = ref(new Set<string>())
 const categoryOrder: NavigationCategory[] = [
   "productivity",
   "development",
@@ -346,6 +357,11 @@ function platformIcon(platform: NavigationPlatform) {
 function platformName(platform: NavigationPlatform) {
   const filter = platformFilters.find(item => item.id === platform)
   return filter ? localize(filter.label) : platform
+}
+
+function markIconAsFailed(url: string | undefined) {
+  if (!url) return
+  failedIconUrls.value = new Set(failedIconUrls.value).add(url)
 }
 
 function platformCount(platform: NavigationPlatform | "all") {
@@ -479,6 +495,11 @@ function resetFilters() {
 </script>
 
 <style scoped>
+.is-static {
+  pointer-events: none;
+  user-select: none;
+}
+
 :global(.navigation-hub-page .vp-home-custom) {
   width: 100%;
   padding-top: 16px;
@@ -1482,11 +1503,18 @@ h1 {
   width: 38px;
   height: 38px;
   place-items: center;
+  overflow: hidden;
   color: var(--item-accent);
   font-size: 23px;
   border: 1px solid color-mix(in srgb, var(--item-accent) 34%, transparent);
   border-radius: 11px;
   background: color-mix(in srgb, var(--item-accent) 12%, var(--gp-surface-bg-elv));
+}
+
+.app-icon img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 .open-icon {
