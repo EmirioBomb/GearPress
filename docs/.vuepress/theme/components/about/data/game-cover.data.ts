@@ -11,7 +11,7 @@ export const gamesData: GameItem[] = [
   // BANDAI Namco Tales Series
   {
     name: "Tales of Phantasia",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/top.png",
+    link: "/game-covers/top.webp",
     href: "https://tales-ch.jp/titles/top/",
     description: "悲しみの涙を剣に変えて少年はいま 時間を超える･･････",
     tags: ["JRPG", "JPN"],
@@ -19,7 +19,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Destiny",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/tod.png",
+    link: "/game-covers/tod.webp",
     href: "https://tales-ch.jp/titles/tod/",
     description: "運命という名のRPG",
     tags: ["JRPG", "JPN"],
@@ -27,7 +27,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Eternia",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/toe.png",
+    link: "/game-covers/toe.webp",
     href: "https://tales-ch.jp/titles/toe/",
     description: "変われる強さ 変わらぬ想い",
     tags: ["JRPG", "JPN"],
@@ -35,7 +35,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Destiny 2",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/tod2.png",
+    link: "/game-covers/tod2.webp",
     href: "https://tales-ch.jp/titles/tod2/",
     description: "時を超え、運命は次なる英雄を生んだ",
     tags: ["JRPG", "JPN"],
@@ -43,7 +43,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Symphonia",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/tos.png",
+    link: "/game-covers/tos.webp",
     href: "https://tales-ch.jp/titles/tos/",
     description: "世界は救われる。彼女を失えば",
     tags: ["JRPG", "JPN"],
@@ -51,7 +51,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Rebirth",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/tor.png",
+    link: "/game-covers/tor.webp",
     href: "https://tales-ch.jp/titles/tor/",
     description: "ふたつの種族が織り成す再誕の物語",
     tags: ["JRPG", "JPN"],
@@ -59,7 +59,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Legendia",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/tol.png",
+    link: "/game-covers/tol.webp",
     href: "https://tales-ch.jp/titles/tol/",
     description: "信じる思い。そのすべてを力に変えて",
     tags: ["JRPG", "JPN"],
@@ -67,7 +67,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of the Abyss",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/tota.png",
+    link: "/game-covers/tota.webp",
     href: "https://tales-ch.jp/titles/toa/",
     description: "何のために生まれて来たのか 何のために生きているのか",
     tags: ["JRPG", "JPN"],
@@ -75,7 +75,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Symphonia: Dawn of the New World",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/tos-ratatosk.png",
+    link: "/game-covers/tos-ratatosk.webp",
     href: "https://tales-ch.jp/titles/tosratatosk/",
     description: "契約により与えられた戦う力。ただ君を 守りたかった―――",
     tags: ["JRPG", "JPN"],
@@ -83,7 +83,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Vesperia",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/tov.png",
+    link: "/game-covers/tov.webp",
     href: "https://tales-ch.jp/titles/tov/",
     description: "それぞれの「正義」が動き出す",
     tags: ["JRPG", "JPN"],
@@ -91,7 +91,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Graces",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/togf.png",
+    link: "/game-covers/togf.webp",
     href: "https://tales-ch.jp/titles/tog/",
     description: "守りたい人たちがいる。だから 強く 優しくなれる",
     tags: ["JRPG", "JPN"],
@@ -99,7 +99,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Xillia",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/tox.png",
+    link: "/game-covers/tox.webp",
     href: "https://tales-ch.jp/titles/tox/",
     description: "それぞれの想いが重なるとき 揺るぎなき信念が未来を切り開く",
     tags: ["JRPG", "JPN"],
@@ -107,7 +107,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Xillia 2",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/tox2.png",
+    link: "/game-covers/tox2.webp",
     href: "https://tales-ch.jp/titles/tox2/",
     description: "少女のために 世界を壊す覚悟はあるか？",
     tags: ["JRPG", "JPN"],
@@ -115,7 +115,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Zestiria",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/toz.png",
+    link: "/game-covers/toz.webp",
     href: "https://tales-ch.jp/titles/toz/",
     description: "伝承は いつしか「希望」になる",
     tags: ["JRPG", "JPN"],
@@ -123,7 +123,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Berseria",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/tob.png",
+    link: "/game-covers/tob.webp",
     href: "https://tales-ch.jp/titles/tob/",
     description: "君が君らしく生きるためのRPG",
     tags: ["JRPG", "JPN"],
@@ -131,7 +131,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Tales of Arise",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/toa.png",
+    link: "/game-covers/toa.webp",
     href: "https://tales-ch.jp/titles/toarise/",
     description: "心の黎明を告げるRPG",
     tags: ["JRPG", "JPN"],
@@ -141,21 +141,21 @@ export const gamesData: GameItem[] = [
   // G.U.N.D.A.M
   {
     name: "SD Gundam G Generation F",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/ggf.png",
+    link: "/game-covers/ggf.webp",
     description: "ガンダムの軌跡、その集大成――",
     tags: ["SRPG", "JPN"],
     platform: ["streamline-logos:playstation-logo-block"]
   },
   {
     name: "SD Gundam G Generation Spirits",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/ggs.png",
+    link: "/game-covers/ggs.webp",
     description: "宇宙世紀、その魂がここに集う――",
     tags: ["SRPG", "JPN"],
     platform: ["streamline-logos:playstation-logo-block"]
   },
   {
     name: "SD Gundam G Generation Genesis",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/ggg.png",
+    link: "/game-covers/ggg.webp",
     href: "https://ggg.ggame.jp/",
     description: "歴代ガンダム、ここに集結――",
     tags: ["SRPG", "JPN"],
@@ -163,7 +163,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "SD Gundam G Generation Cross Rays",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/ggcr.png",
+    link: "/game-covers/ggcr.webp",
     href: "https://ggcr.ggame.jp/",
     description: "創世記を経て、４つの新世紀が交差する――",
     tags: ["SRPG", "JPN"],
@@ -171,7 +171,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "SD Gundam G Generation Eternal",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/gge.jpg",
+    link: "/game-covers/gge.webp",
     href: "https://gget.ggame.jp/jp/",
     description: "歴代ガンダム作品の物語を追体験するシミュレーションゲーム",
     tags: ["SRPG", "JPN"],
@@ -181,7 +181,7 @@ export const gamesData: GameItem[] = [
   // Final Fantasy Series
   {
     name: "Final Fantasy X",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/ffx.png",
+    link: "/game-covers/ffx.webp",
     href: "https://www.jp.square-enix.com/ffx_x-2HD/",
     description: "祈りが紡ぐ、運命を超える旅",
     tags: ["SRPG", "JPN"],
@@ -189,7 +189,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Final Fantasy XIII",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/ffxiii.png",
+    link: "/game-covers/ffxiii.webp",
     href: "https://www.square-enix-games.com/en_EU/games/final-fantasy-xiii",
     description: "ルシに刻まれた運命、その終焉と始まり",
     tags: ["SRPG", "JPN"],
@@ -197,7 +197,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Final Fantasy XIII-2",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/ffxiii2.png",
+    link: "/game-covers/ffxiii2.webp",
     href: "https://www.square-enix-games.com/en_EU/games/final-fantasy-xiii-2",
     description: "時を超えて交差する、もう一つの運命",
     tags: ["SRPG", "JPN"],
@@ -205,7 +205,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Final Fantasy XIII: Lightning Returns",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/ffxiii3.png",
+    link: "/game-covers/ffxiii3.webp",
     href: "https://www.square-enix-games.com/en_EU/games/lightning-returns-final-fantasy-xiii",
     description: "終末の13日間、光が導く最後の旅",
     tags: ["SRPG", "JPN"],
@@ -213,7 +213,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Final Fantasy XV",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/ffxv.png",
+    link: "/game-covers/ffxv.webp",
     href: "https://www.square-enix-games.com/en_EU/games/final-fantasy-xv",
     description: "運命に抗う王と仲間たちの物語",
     tags: ["SRPG", "JPN"],
@@ -221,7 +221,7 @@ export const gamesData: GameItem[] = [
   },
   {
     name: "Final Fantasy XVI",
-    link: "https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/game-cover/ffxvi.png",
+    link: "/game-covers/ffxvi.webp",
     href: "https://na.finalfantasyxvi.com/",
     description: "魂に刻まれた戦火が、世界を揺るがす",
     tags: ["SRPG", "JPN"],

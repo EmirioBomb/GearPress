@@ -29,7 +29,7 @@
         >
           <img
             class="cover"
-            :src="game.link"
+            :src="withBase(game.link)"
             :alt="game.name"
             loading="lazy"
             decoding="async"
@@ -79,6 +79,7 @@ import { Swiper, SwiperSlide } from "swiper/vue"
 import type { Swiper as SwiperInstance } from "swiper"
 import { Autoplay, EffectCoverflow } from "swiper/modules"
 import { Icon } from "@iconify/vue"
+import { withBase } from "vuepress/client"
 
 import "swiper/css"
 import "swiper/css/effect-coverflow"
@@ -157,7 +158,7 @@ function onImgError(e: Event) {
   }
 
   img.dataset.fallback = "true"
-  img.src = "/game-cover-fallback.svg"
+  img.src = withBase("/game-cover-fallback.svg")
 }
 </script>
 
