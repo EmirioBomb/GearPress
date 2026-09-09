@@ -1,3 +1,23 @@
+## 🔖 Release v2.6.0 (2026-09-09)
+
+### ✨ Features
+
+* **about:** localize game covers ([0e7cfb0](https://github.com/EmirioBomb/GearPress/commit/0e7cfb0e75a294924514abd71c58831a5f2194fe))
+* **navbar:** simplify navigation links ([a89a6fd](https://github.com/EmirioBomb/GearPress/commit/a89a6fdfd79a33b0cf8295f33d2014e28114846a))
+* **navigation:** expand curated destinations ([e23ff2d](https://github.com/EmirioBomb/GearPress/commit/e23ff2d439e505c9a7accd02e51462e79f6274d2))
+* **navigation:** refine layout and expand resources ([c50efce](https://github.com/EmirioBomb/GearPress/commit/c50efceabe88c9edd5d0fe4d5eafec52cc7a937f))
+* **navigation:** refine responsive hub and icon assets ([83ef0ca](https://github.com/EmirioBomb/GearPress/commit/83ef0ca9a35ec264157cce1340a2a98009ddac2f))
+* **navigation:** unify hero and platform filters ([df47f69](https://github.com/EmirioBomb/GearPress/commit/df47f696d0711a831873cdb6bafaaabce46b37ff))
+* **navigation:** use local navigation icons ([6358a1c](https://github.com/EmirioBomb/GearPress/commit/6358a1cfaadbec59dc3edf29fc3a5935945dc1fb))
+
+### 🐛 Bug Fixes
+
+* **navigation:** prioritize official app icons ([1334c59](https://github.com/EmirioBomb/GearPress/commit/1334c59f743fcc1e60da8f99aeca56d036731ad6))
+
+### ♻️ Code Refactoring
+
+* **navigation:** refine edge glow composition ([46d7813](https://github.com/EmirioBomb/GearPress/commit/46d78138eeb18c1735b466839c082d0764d2be86))
+
 ## 🔖 Release v2.5.0 (2026-09-04)
 
 ### ✨ Features
