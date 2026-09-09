@@ -213,12 +213,16 @@
             <span class="card-topline">
               <span class="app-icon">
                 <img
-                  v-if="item.iconUrl && !failedIconUrls.has(item.iconUrl)"
-                  :src="item.iconUrl"
+                  v-if="item.iconSourceUrl && !failedIconIds.has(item.id)"
+                  :src="navigationIconUrl(item)"
                   class="is-static"
                   :alt="item.name"
+                  width="24"
+                  height="24"
+                  loading="lazy"
+                  decoding="async"
                   no-view
-                  @error="markIconAsFailed(item.iconUrl)"
+                  @error="markIconAsFailed(item.id)"
                 >
                 <Icon v-else :icon="item.icon" aria-hidden="true" />
               </span>
@@ -264,6 +268,7 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue"
 import { computed, ref, watch } from "vue"
+import { withBase } from "vuepress/client"
 import { useData } from "vuepress-theme-plume/composables"
 
 import {
@@ -332,7 +337,7 @@ const query = ref("")
 const searchInput = ref<HTMLInputElement>()
 const isSearchFocused = ref(false)
 const mobileFiltersOpen = ref(false)
-const failedIconUrls = ref(new Set<string>())
+const failedIconIds = ref(new Set<string>())
 const categoryOrder: NavigationCategory[] = [
   "productivity",
   "development",
@@ -359,9 +364,12 @@ function platformName(platform: NavigationPlatform) {
   return filter ? localize(filter.label) : platform
 }
 
-function markIconAsFailed(url: string | undefined) {
-  if (!url) return
-  failedIconUrls.value = new Set(failedIconUrls.value).add(url)
+function navigationIconUrl(item: NavigationItem) {
+  return withBase(`/navigation-icons/${item.id}.webp`)
+}
+
+function markIconAsFailed(id: string) {
+  failedIconIds.value = new Set(failedIconIds.value).add(id)
 }
 
 function platformCount(platform: NavigationPlatform | "all") {
