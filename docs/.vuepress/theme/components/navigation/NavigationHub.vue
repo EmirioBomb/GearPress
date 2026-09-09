@@ -36,7 +36,17 @@
         </div>
       </header>
 
-      <div class="filter-dock">
+      <div
+        ref="filterDockSlot"
+        class="filter-dock-slot"
+        :style="filterDockSlotStyle"
+      >
+        <div
+          ref="filterDock"
+          class="filter-dock"
+          :class="{ 'is-fixed': isFilterDockFixed }"
+          :style="filterDockStyle"
+        >
       <label class="command-search" :class="{ focused: isSearchFocused }">
         <Icon icon="lucide:search" class="search-icon" />
         <input
@@ -48,6 +58,7 @@
           @focus="isSearchFocused = true"
           @blur="isSearchFocused = false"
         >
+        <kbd class="search-shortcut" aria-hidden="true">Alt /</kbd>
         <button v-if="query" type="button" :aria-label="copy.clear" @click="clearSearch">
           <Icon icon="lucide:x" />
         </button>
@@ -88,8 +99,9 @@
           <span>{{ localize(filter.label) }}</span>
           <small class="count-badge">{{ platformCount(filter.id) }}</small>
         </button>
-      </section>
-    </div>
+        </section>
+        </div>
+      </div>
     </section>
 
     <div class="navigation-content">
@@ -267,7 +279,7 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue"
-import { computed, ref, watch } from "vue"
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue"
 import { withBase } from "vuepress/client"
 import { useData } from "vuepress-theme-plume/composables"
 
@@ -335,6 +347,11 @@ const activeCategory = ref<NavigationCategory | "all">("all")
 const activeFeatures = ref<NavigationFeature[]>([])
 const query = ref("")
 const searchInput = ref<HTMLInputElement>()
+const filterDock = ref<HTMLElement>()
+const filterDockSlot = ref<HTMLElement>()
+const filterDockSlotStyle = ref<Record<string, string>>({})
+const filterDockStyle = ref<Record<string, string>>({})
+const isFilterDockFixed = ref(false)
 const isSearchFocused = ref(false)
 const mobileFiltersOpen = ref(false)
 const failedIconIds = ref(new Set<string>())
@@ -503,6 +520,96 @@ const resultSummary = computed(() => {
   return locale.value === "zh"
     ? `共 ${filteredItems.value.length} 项`
     : `${filteredItems.value.length} ${filteredItems.value.length === 1 ? "item" : "items"}`
+})
+
+let filterDockFrame: number | undefined
+let filterDockResizeObserver: ResizeObserver | undefined
+
+function filterDockTopOffset() {
+  const value = filterDockSlot.value
+    ? getComputedStyle(filterDockSlot.value).getPropertyValue("--filter-dock-top")
+    : "0"
+
+  return Number.parseFloat(value) || 0
+}
+
+function updateFilterDockPosition() {
+  const dock = filterDock.value
+  const slot = filterDockSlot.value
+  if (!dock || !slot) return
+
+  const top = filterDockTopOffset()
+  const slotRect = slot.getBoundingClientRect()
+  const shouldFix = slotRect.top <= top
+
+  if (!shouldFix) {
+    isFilterDockFixed.value = false
+    filterDockStyle.value = {}
+    filterDockSlotStyle.value = {}
+    return
+  }
+
+  filterDockSlotStyle.value = {
+    height: `${dock.offsetHeight}px`,
+  }
+  filterDockStyle.value = {
+    position: "fixed",
+    top: `${top}px`,
+    left: `${slotRect.left}px`,
+    width: `${slotRect.width}px`,
+  }
+  isFilterDockFixed.value = true
+}
+
+function scheduleFilterDockUpdate() {
+  if (filterDockFrame !== undefined) return
+
+  filterDockFrame = window.requestAnimationFrame(() => {
+    filterDockFrame = undefined
+    updateFilterDockPosition()
+  })
+}
+
+onMounted(() => {
+  window.addEventListener("scroll", scheduleFilterDockUpdate, { passive: true })
+  window.addEventListener("resize", scheduleFilterDockUpdate)
+  filterDockResizeObserver = new ResizeObserver(scheduleFilterDockUpdate)
+  if (filterDock.value) filterDockResizeObserver.observe(filterDock.value)
+  scheduleFilterDockUpdate()
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", scheduleFilterDockUpdate)
+  window.removeEventListener("resize", scheduleFilterDockUpdate)
+  filterDockResizeObserver?.disconnect()
+  if (filterDockFrame !== undefined) window.cancelAnimationFrame(filterDockFrame)
+})
+
+function isEditingTarget(event: KeyboardEvent) {
+  const target = event.target
+  if (!(target instanceof HTMLElement)) return false
+
+  return target.isContentEditable
+    || target.tagName === "INPUT"
+    || target.tagName === "SELECT"
+    || target.tagName === "TEXTAREA"
+}
+
+function onNavigationSearchShortcut(event: KeyboardEvent) {
+  if (event.code !== "Slash" || !event.altKey || event.ctrlKey || event.metaKey) return
+  if (isEditingTarget(event) && event.target !== searchInput.value) return
+
+  event.preventDefault()
+  event.stopPropagation()
+  searchInput.value?.focus()
+}
+
+onMounted(() => {
+  window.addEventListener("keydown", onNavigationSearchShortcut, true)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", onNavigationSearchShortcut, true)
 })
 
 function clearSearch() {
@@ -690,8 +797,8 @@ function resetFilters() {
 .hero-orbit {
   position: absolute;
   z-index: 2;
-  top: 52%;
-  right: -72px;
+  top: 50%;
+  right: -97px;
   bottom: auto;
   left: auto;
   display: block;
@@ -703,7 +810,7 @@ function resetFilters() {
 
 .hero-orbit::before {
   position: absolute;
-  inset: -48% 0 -48% -68%;
+  inset: -48%;
   opacity: 0.96;
   border-radius: 50%;
   background: radial-gradient(
@@ -757,8 +864,8 @@ function resetFilters() {
 
 .hero-orbit-core {
   position: absolute;
-  top: 36%;
-  left: 23%;
+  top: 50%;
+  left: 50%;
   display: block;
   width: 42px;
   height: 42px;
@@ -855,10 +962,13 @@ function resetFilters() {
   }
 }
 
+.filter-dock-slot {
+  min-width: 0;
+}
+
 .filter-dock {
-  position: sticky;
+  position: relative;
   z-index: 20;
-  top: var(--filter-dock-top);
   display: grid;
   grid-template-columns: minmax(230px, 0.42fr) minmax(0, 1fr);
   min-height: var(--filter-dock-height);
@@ -871,6 +981,16 @@ function resetFilters() {
   border-radius: 0 0 calc(var(--hub-radius) + 8px) calc(var(--hub-radius) + 8px);
   background: transparent;
   box-shadow: none;
+}
+
+@media (min-width: 681px) {
+  .filter-dock.is-fixed {
+    background: var(--gp-surface-bg-elv);
+  }
+
+  .filter-dock.is-fixed .command-search {
+    background: var(--gp-surface-bg-elv);
+  }
 }
 
 .mobile-filter-toggle {
@@ -890,29 +1010,22 @@ h1 {
   color: transparent;
   background: var(--gp-gradient-readable);
   background-clip: text;
-  font-size: clamp(28px, 3.2vw, 38px);
-  font-weight: 780;
-  letter-spacing: -0.055em;
-  line-height: 1.02;
+  font-size: clamp(28px, 3.2vw, 36px);
+  font-weight: 760;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-.hero-copy.is-zh h1 {
-  font-size: clamp(26px, 2.8vw, 34px);
-  font-weight: 740;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
 }
 
 .intro {
   display: -webkit-box;
   max-width: 660px;
-  margin: 6px 0 0;
+  margin: 8px 0 0;
   overflow: hidden;
   color: var(--gp-home-muted);
   font-size: clamp(12px, 1.2vw, 13px);
-  line-height: 1.45;
+  line-height: 1.55;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
@@ -927,7 +1040,7 @@ h1 {
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   gap: 8px;
   align-items: center;
   width: 100%;
@@ -1002,6 +1115,23 @@ h1 {
 .command-search input::-webkit-search-cancel-button {
   display: none;
   appearance: none;
+}
+
+.search-shortcut {
+  display: inline-flex;
+  min-width: 36px;
+  height: 22px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  color: var(--vp-c-text-3);
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1;
+  border: 1px solid var(--gp-home-card-border);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--gp-surface-bg-soft) 82%, transparent);
 }
 
 .command-search button {
@@ -1452,7 +1582,7 @@ h1 {
   display: grid;
   grid-auto-flow: dense;
   grid-auto-rows: minmax(195px, auto);
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 12px;
 }
 
@@ -1491,6 +1621,14 @@ h1 {
 
 .nav-card.is-tall {
   grid-row: span 2;
+}
+
+@media (min-width: 681px) and (max-width: 959px) {
+  .nav-card.is-wide,
+  .nav-card.is-tall {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
 }
 
 .card-aura {
@@ -1827,12 +1965,6 @@ h1 {
   color: var(--gp-home-muted);
 }
 
-@media (max-width: 1200px) {
-  .card-field {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 959px) {
   .navigation-hub {
     --filter-dock-top: 0px;
@@ -1856,12 +1988,6 @@ h1 {
   .system-filter-item {
     min-width: 106px;
     flex: 1 0 auto;
-  }
-}
-
-@media (max-width: 920px) {
-  .card-field {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -1903,8 +2029,8 @@ h1 {
   }
 
   .hero-orbit {
-    top: 54px;
-    right: -48px;
+    top: 50%;
+    right: -73px;
     bottom: auto;
     left: auto;
     width: 146px;
@@ -1926,8 +2052,8 @@ h1 {
   }
 
   .hero-orbit-core {
-    top: 38%;
-    left: 28%;
+    top: 50%;
+    left: 50%;
     width: 32px;
     height: 32px;
   }
@@ -1953,9 +2079,9 @@ h1 {
   }
 
   .command-search {
-    position: sticky;
-    z-index: 20;
-    top: var(--filter-dock-top);
+    position: relative;
+    z-index: auto;
+    top: auto;
     margin-bottom: 0;
     border-color: color-mix(in srgb, var(--gp-active-border) 56%, var(--gp-home-card-border));
     background: color-mix(in srgb, var(--gp-surface-bg-elv) 94%, transparent);
@@ -1964,6 +2090,10 @@ h1 {
       0 0 0 1px color-mix(in srgb, var(--gp-cyan) 6%, transparent);
     backdrop-filter: blur(18px) saturate(1.12);
     -webkit-backdrop-filter: blur(18px) saturate(1.12);
+  }
+
+  .search-shortcut {
+    display: none;
   }
 
   .mobile-filter-toggle {
