@@ -57,16 +57,6 @@
                 {{ game.name }}
               </div>
 
-              <div v-if="game.platform?.length" class="platforms">
-                <Icon
-                  v-for="p in game.platform"
-                  :key="p"
-                  :icon="p"
-                  class="platform-icon"
-                  aria-hidden="true"
-                />
-              </div>
-
               <div v-if="game.tags?.length" class="tags">
                 <span
                   v-for="tag in game.tags"
@@ -75,6 +65,16 @@
                 >
                   {{ tag }}
                 </span>
+              </div>
+
+              <div v-if="game.platform?.length" class="platforms">
+                <Icon
+                  v-for="p in game.platform"
+                  :key="p"
+                  :icon="p"
+                  class="platform-icon"
+                  aria-hidden="true"
+                />
               </div>
 
               <div v-if="game.description" class="desc">
@@ -336,7 +336,21 @@ function onImgError(e: Event) {
   background: linear-gradient(145deg, #143d50, #252a5c 54%, #3c1d68);
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
 
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, opacity 0.35s ease, filter 0.35s ease;
+}
+
+:deep(.swiper-slide:not(.swiper-slide-active)) .card {
+  opacity: 0.82;
+  filter: saturate(0.92);
+}
+
+:deep(.swiper-slide-active) .card {
+  opacity: 1;
+  filter: saturate(1.04);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 72%, transparent),
+    0 0 20px color-mix(in srgb, var(--gp-cyan) 24%, transparent),
+    0 22px 54px rgb(0 0 0 / 0.42);
 }
 
 .card:hover,
@@ -397,20 +411,29 @@ function onImgError(e: Event) {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.01em;
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+:deep(.swiper-slide-active) .title {
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.92);
 }
 
 .platforms {
   display: flex;
   gap: 6px;
-  margin-top: 6px;
+  margin-top: 5px;
 }
 
 .platform-icon {
   width: 14px;
   height: 14px;
-  opacity: 0.9;
+  opacity: 0.78;
+}
+
+:deep(.swiper-slide-active) .platform-icon {
+  opacity: 0.92;
 }
 
 .tags {
@@ -443,8 +466,9 @@ function onImgError(e: Event) {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   margin-top: 6px;
-  font-size: 11px;
-  opacity: 0.82;
+  font-size: 10.5px;
+  line-height: 1.45;
+  opacity: 0.74;
 }
 
 @media (prefers-reduced-motion: reduce) {
