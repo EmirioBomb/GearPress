@@ -4,18 +4,69 @@
     role="region"
     :aria-label="title ?? 'Game covers'"
   >
-    <p v-if="title" class="section-label">{{ title }}</p>
+    <div class="coverflow-header">
+      <p v-if="title" class="section-label">{{ title }}</p>
+
+      <div
+        ref="seriesMenu"
+        class="series-filter"
+        @keydown.escape="closeSeriesMenu"
+      >
+        <button
+          type="button"
+          class="series-trigger"
+          :aria-expanded="isSeriesMenuOpen"
+          aria-haspopup="menu"
+          aria-controls="series-menu"
+          @click="toggleSeriesMenu"
+        >
+          <span class="series-trigger-label">{{ activeSeriesOption.label }}</span>
+          <span class="series-trigger-count">{{ activeSeriesOption.count }}</span>
+          <span class="series-trigger-chevron" aria-hidden="true" />
+        </button>
+
+        <Transition name="series-menu">
+          <div
+            v-if="isSeriesMenuOpen"
+            id="series-menu"
+            class="series-menu"
+            role="menu"
+            :aria-label="seriesSelectLabel"
+          >
+            <button
+              v-for="option in seriesOptions"
+              :key="option.id"
+              type="button"
+              class="series-menu-option"
+              :class="{ active: activeSeries === option.id }"
+              role="menuitemradio"
+              :aria-checked="activeSeries === option.id"
+              @click="selectSeries(option.id)"
+            >
+              <span class="series-menu-check" aria-hidden="true">{{ activeSeries === option.id ? "✓" : "" }}</span>
+              <span class="series-menu-label">{{ option.label }}</span>
+              <span class="series-menu-count">{{ option.count }}</span>
+            </button>
+          </div>
+        </Transition>
+      </div>
+
+    </div>
+
     <div
       class="coverflow-stage"
       @focusin="pauseAutoplay"
       @focusout="resumeAutoplay"
     >
       <Swiper
+        :key="swiperKey"
         class="coverflow"
         effect="coverflow"
         grab-cursor
         centered-slides
-        loop
+        :loop="enableLoop"
+        :rewind="enableRewind"
+        :initial-slide="initialSlide"
         keyboard
         :slides-per-view="'auto'"
         :coverflow-effect="coverflow"
@@ -26,8 +77,8 @@
         @swiper="onSwiper"
       >
         <SwiperSlide
-          v-for="(game, index) in items"
-          :key="game.name"
+          v-for="(game, index) in filteredItems"
+          :key="`${activeSeries}-${game.name}`"
           class="slide"
         >
           <component
@@ -108,7 +159,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue"
+import { computed, onBeforeUnmount, onMounted, ref } from "vue"
 import { usePreferredReducedMotion } from "@vueuse/core"
 import { Swiper, SwiperSlide } from "swiper/vue"
 import type { Swiper as SwiperInstance } from "swiper"
@@ -116,21 +167,17 @@ import { Autoplay, EffectCoverflow, Keyboard } from "swiper/modules"
 import { Icon } from "@iconify/vue"
 import { withBase } from "vuepress/client"
 
+import type { GameItem, GameSeries } from "./data/game-cover.data"
+
 import "swiper/css"
 import "swiper/css/effect-coverflow"
 
-export interface GameItem {
-  name: string
-  link: string
-  href?: string
-  description?: string
-  tags?: string[]
-  platform?: string[]
-  imageFit?: "cover" | "contain"
-  imagePosition?: string
-}
+export type { GameItem, GameSeries }
 
 type GameCoverLocale = "zh-CN" | "en"
+type SeriesFilterId = "all" | GameSeries
+
+const SERIES_ORDER: GameSeries[] = ["tales", "gundam", "final-fantasy"]
 
 const props = defineProps<{
   items: GameItem[]
@@ -141,8 +188,14 @@ const props = defineProps<{
 const modules = [Autoplay, EffectCoverflow, Keyboard]
 const prefersReducedMotion = usePreferredReducedMotion()
 const swiper = ref<SwiperInstance>()
-const previousLabel = computed(() => props.locale === "en" ? "Previous" : "上一张")
-const nextLabel = computed(() => props.locale === "en" ? "Next" : "下一张")
+const seriesMenu = ref<HTMLElement>()
+const isSeriesMenuOpen = ref(false)
+const activeSeries = ref<SeriesFilterId>("all")
+
+const isEnglish = computed(() => props.locale === "en")
+const previousLabel = computed(() => isEnglish.value ? "Previous" : "上一张")
+const nextLabel = computed(() => isEnglish.value ? "Next" : "下一张")
+const seriesSelectLabel = computed(() => isEnglish.value ? "Game series" : "游戏系列")
 
 const coverflow = {
   rotate: 18,
@@ -162,12 +215,119 @@ const autoplay = computed(() => {
   }
 })
 
+function resolveSeries(game: GameItem): GameSeries | null {
+  if (game.series) return game.series
+
+  const name = game.name
+  if (/^Tales of\b/i.test(name)) return "tales"
+  if (/\bSD Gundam\b/i.test(name) || /\bGundam\b/i.test(name)) return "gundam"
+  if (/\bFinal Fantasy\b/i.test(name)) return "final-fantasy"
+  return null
+}
+
+function seriesLabel(id: SeriesFilterId): string {
+  if (id === "all") return isEnglish.value ? "All" : "全部"
+
+  const labels: Record<GameSeries, { zh: string; en: string }> = {
+    tales: { zh: "传说", en: "TalesOf" },
+    gundam: { zh: "高达", en: "Gundam" },
+    "final-fantasy": { zh: "最终幻想", en: "Final Fantasy" },
+  }
+
+  return isEnglish.value ? labels[id].en : labels[id].zh
+}
+
+const classifiedItems = computed(() =>
+  props.items.map(game => ({
+    game,
+    series: resolveSeries(game),
+  })),
+)
+
+const seriesCounts = computed(() => {
+  const counts: Record<SeriesFilterId, number> = {
+    all: props.items.length,
+    tales: 0,
+    gundam: 0,
+    "final-fantasy": 0,
+  }
+
+  for (const item of classifiedItems.value) {
+    if (!item.series) continue
+    counts[item.series] += 1
+  }
+
+  return counts
+})
+
+const availableSeries = computed(() =>
+  SERIES_ORDER.filter(series => seriesCounts.value[series] > 0),
+)
+
+const seriesOptions = computed(() => [
+  {
+    id: "all" as const,
+    label: seriesLabel("all"),
+    count: seriesCounts.value.all,
+  },
+  ...availableSeries.value.map(series => ({
+    id: series,
+    label: seriesLabel(series),
+    count: seriesCounts.value[series],
+  })),
+])
+
+const activeSeriesOption = computed(() =>
+  seriesOptions.value.find(option => option.id === activeSeries.value)!,
+)
+
+const filteredItems = computed(() => {
+  if (activeSeries.value === "all") return props.items
+
+  return classifiedItems.value
+    .filter(item => item.series === activeSeries.value)
+    .map(item => item.game)
+})
+
+const initialSlide = computed(() => Math.floor(filteredItems.value.length / 2))
+const enableLoop = computed(() => filteredItems.value.length > 6)
+const enableRewind = computed(() => filteredItems.value.length > 1 && !enableLoop.value)
+const swiperKey = computed(() => `${activeSeries.value}-${filteredItems.value.length}`)
+
+function toggleSeriesMenu() {
+  isSeriesMenuOpen.value = !isSeriesMenuOpen.value
+}
+
+function closeSeriesMenu() {
+  isSeriesMenuOpen.value = false
+}
+
+function selectSeries(series: SeriesFilterId) {
+  setSeries(series)
+  closeSeriesMenu()
+}
+
+function onDocumentPointerDown(event: PointerEvent) {
+  if (!seriesMenu.value?.contains(event.target as Node)) {
+    closeSeriesMenu()
+  }
+}
+
+onMounted(() => document.addEventListener("pointerdown", onDocumentPointerDown))
+onBeforeUnmount(() => document.removeEventListener("pointerdown", onDocumentPointerDown))
+
+function setSeries(series: SeriesFilterId) {
+  if (activeSeries.value === series) return
+  activeSeries.value = series
+  swiper.value = undefined
+}
+
 function onSwiper(instance: SwiperInstance) {
   swiper.value = instance
 }
 
 function pauseAutoplay() {
-  swiper.value?.autoplay.pause()
+  swiper.value?.autoplay?.pause()
 }
 
 function resumeAutoplay(event: FocusEvent) {
@@ -181,7 +341,7 @@ function resumeAutoplay(event: FocusEvent) {
   ) return
 
   if (prefersReducedMotion.value !== "reduce") {
-    swiper.value?.autoplay.resume()
+    swiper.value?.autoplay?.resume()
   }
 }
 
@@ -225,7 +385,7 @@ function onImgError(e: Event) {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 12px;
+  gap: 10px;
 
   box-sizing: border-box;
   padding: 16px;
@@ -240,6 +400,14 @@ function onImgError(e: Event) {
   box-shadow: var(--gp-home-card-shadow);
 }
 
+.coverflow-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
 .section-label {
   flex: none;
   margin: 0;
@@ -248,6 +416,186 @@ function onImgError(e: Event) {
   font-weight: 700;
   letter-spacing: 0.18em;
   line-height: 1.4;
+}
+
+.series-filter {
+  position: relative;
+  z-index: 4;
+  flex: none;
+  margin-left: auto;
+}
+
+.series-trigger {
+  display: inline-flex;
+  min-width: 118px;
+  height: 32px;
+  box-sizing: border-box;
+  gap: 7px;
+  align-items: center;
+  padding: 0 9px 0 11px;
+  color: var(--vp-c-text-1);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  border: 1px solid color-mix(in srgb, var(--gp-blue) 35%, var(--gp-home-card-border));
+  border-radius: 9px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--gp-blue) 13%, transparent), transparent 74%),
+    color-mix(in srgb, var(--gp-surface-bg-elv) 88%, transparent);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%);
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.series-trigger:hover,
+.series-trigger[aria-expanded="true"] {
+  border-color: color-mix(in srgb, var(--gp-cyan) 62%, var(--gp-home-card-border));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--gp-blue) 23%, transparent), transparent 74%),
+    color-mix(in srgb, var(--gp-surface-bg-elv) 92%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 10%),
+    0 0 14px color-mix(in srgb, var(--gp-active-glow) 24%, transparent);
+}
+
+.series-trigger:focus-visible,
+.series-menu-option:focus-visible {
+  outline: 2px solid var(--gp-cyan);
+  outline-offset: 2px;
+}
+
+.series-trigger-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.series-trigger-count {
+  display: inline-flex;
+  min-width: 20px;
+  height: 18px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  padding: 0 5px;
+  color: var(--vp-c-text-1);
+  font-size: 10px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid color-mix(in srgb, var(--gp-cyan) 38%, var(--gp-home-card-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--gp-blue) 18%, var(--gp-surface-bg-elv));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 7%);
+}
+
+.series-trigger-chevron {
+  width: 7px;
+  height: 7px;
+  margin: -3px 2px 0 0;
+  border-right: 1.5px solid var(--gp-cyan);
+  border-bottom: 1.5px solid var(--gp-cyan);
+  transform: rotate(45deg);
+  transition: transform 160ms ease, margin 160ms ease;
+}
+
+.series-trigger[aria-expanded="true"] .series-trigger-chevron {
+  margin-top: 3px;
+  transform: rotate(225deg);
+}
+
+.series-menu {
+  position: absolute;
+  top: calc(100% + 7px);
+  right: 0;
+  display: grid;
+  width: max(180px, 100%);
+  padding: 5px;
+  border: 1px solid color-mix(in srgb, var(--gp-cyan) 28%, var(--gp-home-card-border));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--gp-surface-bg-elv) 96%, #0a1020);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 8%),
+    0 14px 32px rgb(0 0 0 / 34%);
+  backdrop-filter: blur(16px);
+}
+
+.series-menu-option {
+  display: grid;
+  grid-template-columns: 15px minmax(0, 1fr) auto;
+  gap: 7px;
+  align-items: center;
+  min-height: 31px;
+  padding: 0 8px;
+  color: var(--vp-c-text-2);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: left;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: color 140ms ease, background 140ms ease;
+}
+
+.series-menu-option:hover {
+  color: var(--vp-c-text-1);
+  background: color-mix(in srgb, var(--gp-blue) 13%, transparent);
+}
+
+.series-menu-option.active {
+  color: var(--vp-c-text-1);
+  font-weight: 750;
+  background: var(--gp-gradient-active);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gp-active-border) 60%, transparent);
+}
+
+.series-menu-check {
+  color: var(--gp-cyan);
+  font-weight: 800;
+}
+
+.series-menu-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.series-menu-count {
+  display: inline-flex;
+  min-width: 19px;
+  height: 17px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  color: var(--vp-c-text-2);
+  font-size: 9px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid color-mix(in srgb, var(--gp-blue) 28%, var(--gp-home-card-border));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--gp-blue) 10%, var(--gp-surface-bg-elv));
+}
+
+.series-menu-option.active .series-menu-count {
+  color: var(--vp-c-text-1);
+  border-color: color-mix(in srgb, var(--gp-cyan) 55%, var(--gp-home-card-border));
+  background: color-mix(in srgb, var(--gp-cyan) 17%, var(--gp-surface-bg-elv));
+}
+
+.series-menu-enter-active,
+.series-menu-leave-active {
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.series-menu-enter-from,
+.series-menu-leave-to {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
 }
 
 .coverflow-stage {
@@ -348,8 +696,8 @@ function onImgError(e: Event) {
   opacity: 1;
   filter: saturate(1.04);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 72%, transparent),
-    0 0 20px color-mix(in srgb, var(--gp-cyan) 24%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 86%, transparent),
+    0 0 24px color-mix(in srgb, var(--gp-cyan) 27%, transparent),
     0 22px 54px rgb(0 0 0 / 0.42);
 }
 
@@ -357,6 +705,14 @@ function onImgError(e: Event) {
 .card:focus-visible {
   transform: translateY(-6px);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+}
+
+:deep(.swiper-slide-active) .card:hover,
+:deep(.swiper-slide-active) .card:focus-visible {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 86%, transparent),
+    0 0 24px color-mix(in srgb, var(--gp-cyan) 27%, transparent),
+    0 24px 60px rgb(0 0 0 / 0.44);
 }
 
 .card:focus-visible {
@@ -474,7 +830,9 @@ function onImgError(e: Event) {
 @media (prefers-reduced-motion: reduce) {
   .card,
   .cover,
-  .coverflow-button {
+  .coverflow-button,
+  .series-trigger,
+  .series-menu-option {
     transition: none;
   }
 
@@ -488,6 +846,25 @@ function onImgError(e: Event) {
 @media (max-width: 640px) {
   .coverflow-shell {
     padding: 12px;
+  }
+
+  .coverflow-header {
+    gap: 8px;
+  }
+
+  .series-filter {
+    flex: 0 1 auto;
+  }
+
+  .series-trigger {
+    min-width: 112px;
+    height: 30px;
+    padding-left: 9px;
+    font-size: 10px;
+  }
+
+  .series-menu {
+    width: max(170px, 100%);
   }
 
   .slide {
