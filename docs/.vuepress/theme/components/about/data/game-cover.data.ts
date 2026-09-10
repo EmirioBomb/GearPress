@@ -151,8 +151,6 @@ export const gamesData: GameItem[] = [
   {
     name: "SD Gundam G Generation Spirits",
     link: "/game-covers/ggs.webp",
-    imageFit: "contain",
-    imagePosition: "center",
     description: "宇宙世紀、その魂がここに集う――",
     tags: ["SRPG", "JPN"],
     platform: ["streamline-logos:playstation-logo-block"]
@@ -176,8 +174,6 @@ export const gamesData: GameItem[] = [
   {
     name: "SD Gundam G Generation Eternal",
     link: "/game-covers/gge.webp",
-    imageFit: "contain",
-    imagePosition: "center",
     href: "https://gget.ggame.jp/jp/",
     description: "歴代ガンダム作品の物語を追体験するシミュレーションゲーム",
     tags: ["SRPG", "JPN"],
