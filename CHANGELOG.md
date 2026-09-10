@@ -1,3 +1,9 @@
+## 🔖 Release v2.7.1 (2026-09-10)
+
+### 🐛 Bug Fixes
+
+* **about:** regenerate game covers ([0a544a5](https://github.com/EmirioBomb/GearPress/commit/0a544a5d732c374b80811f9a2173d7edbaaadec8))
+
 ## 🔖 Release v2.7.0 (2026-09-10)
 
 ### ✨ Features
