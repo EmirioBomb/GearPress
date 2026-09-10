@@ -1,0 +1,3 @@
+Sitemap: https://emiriobomb.github.io/GearPress/GearPress/sitemap.xml
+User-agent:*
+Disallow:
