@@ -14,6 +14,7 @@
   <a href="https://github.com/EmirioBomb">
     <img src="https://img.shields.io/badge/author-EmirioBomb-7096C2?style=flat-square&labelColor=0D1B2A" alt="作者 EmirioBomb">
   </a>
+   <img alt="version" src="https://img.shields.io/badge/version-v2.7.0-7096C2?style=flat-square&labelColor=0D1B2A">
   <a href="https://emiriobomb.github.io/GearPress/">
     <img src="https://img.shields.io/badge/HomePage-GearPress-7096C2?style=flat-square&labelColor=0D1B2A" alt="访问 GearPress">
   </a>
