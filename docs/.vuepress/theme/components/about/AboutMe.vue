@@ -24,6 +24,7 @@
       <GameCoverSwiper
         :items="gamesData"
         :title="isEnglish ? 'Games' : '游戏封面'"
+        :locale="isEnglish ? 'en' : 'zh-CN'"
       />
     </section>
   </div>

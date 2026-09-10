@@ -41,6 +41,10 @@
               :alt="game.name"
               width="640"
               height="960"
+              :style="{
+                objectFit: game.imageFit ?? 'cover',
+                objectPosition: game.imagePosition ?? 'center',
+              }"
               :loading="index === 0 ? 'eager' : 'lazy'"
               decoding="async"
               @error="onImgError"
@@ -84,7 +88,8 @@
       <button
         class="coverflow-button coverflow-button-prev"
         type="button"
-        aria-label="Previous game cover"
+        :aria-label="previousLabel"
+        :title="previousLabel"
         @click="slidePrev"
       >
         <span aria-hidden="true">‹</span>
@@ -92,7 +97,8 @@
       <button
         class="coverflow-button coverflow-button-next"
         type="button"
-        aria-label="Next game cover"
+        :aria-label="nextLabel"
+        :title="nextLabel"
         @click="slideNext"
       >
         <span aria-hidden="true">›</span>
@@ -120,13 +126,23 @@ export interface GameItem {
   description?: string
   tags?: string[]
   platform?: string[]
+  imageFit?: "cover" | "contain"
+  imagePosition?: string
 }
 
-defineProps<{ items: GameItem[]; title?: string }>()
+type GameCoverLocale = "zh-CN" | "en"
+
+const props = defineProps<{
+  items: GameItem[]
+  title?: string
+  locale?: GameCoverLocale
+}>()
 
 const modules = [Autoplay, EffectCoverflow, Keyboard]
 const prefersReducedMotion = usePreferredReducedMotion()
 const swiper = ref<SwiperInstance>()
+const previousLabel = computed(() => props.locale === "en" ? "Previous" : "上一张")
+const nextLabel = computed(() => props.locale === "en" ? "Next" : "下一张")
 
 const coverflow = {
   rotate: 18,
@@ -405,10 +421,19 @@ function onImgError(e: Event) {
 }
 
 .tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 3px 8px;
+  border: 1px solid rgb(255 255 255 / 58%);
+  border-radius: 999px;
+  color: #fff;
+  background: rgb(255 255 255 / 18%);
   font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.14);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-shadow: 0 1px 6px rgb(0 0 0 / 55%);
   backdrop-filter: blur(6px);
 }
 
