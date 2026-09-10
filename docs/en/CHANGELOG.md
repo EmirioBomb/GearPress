@@ -1,3 +1,25 @@
+## 🔖 Release v2.7.0 (2026-09-10)
+
+### ✨ Features
+
+* **about:** improve game cover carousel ([aa501cb](https://github.com/EmirioBomb/GearPress/commit/aa501cb8a417403fe0d34f11c731583bd61532ab))
+* **about:** refine game cover metadata ([7dd9471](https://github.com/EmirioBomb/GearPress/commit/7dd9471b77bc035825ab976b74aa456b22c8fe6f))
+* add game cover series filter ([3cf52c5](https://github.com/EmirioBomb/GearPress/commit/3cf52c5b819854776cffcdbe11be78120b1d857f))
+* expand navigation resources ([79209d7](https://github.com/EmirioBomb/GearPress/commit/79209d70a59ec4e79b0c65e1182871724368fa03))
+
+### 🐛 Bug Fixes
+
+* **about:** crop Gundam covers to card ratio ([1302633](https://github.com/EmirioBomb/GearPress/commit/130263377b2ea02b2c72dc9ed78bba61417e0f94))
+* **about:** re-encode game covers ([13482c4](https://github.com/EmirioBomb/GearPress/commit/13482c450b5ca7cae68becdfda73aaeed8da9e95))
+
+### 📝 Documentation
+
+* polish personal blog readme ([f90612b](https://github.com/EmirioBomb/GearPress/commit/f90612bcff106e3f949c212d9d749e8c2e82febf))
+
+### 🎨 Style
+
+* refine game cover card hierarchy ([85ea765](https://github.com/EmirioBomb/GearPress/commit/85ea76534f39b9c6e053495c786f002d02c69176))
+
 ## 🔖 Release v2.6.0 (2026-09-09)
 
 ### ✨ Features
