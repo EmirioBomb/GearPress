@@ -67,6 +67,7 @@
         :loop="enableLoop"
         :rewind="enableRewind"
         :initial-slide="initialSlide"
+        :speed="520"
         keyboard
         :slides-per-view="'auto'"
         :coverflow-effect="coverflow"
@@ -198,10 +199,10 @@ const nextLabel = computed(() => isEnglish.value ? "Next" : "下一张")
 const seriesSelectLabel = computed(() => isEnglish.value ? "Game series" : "游戏系列")
 
 const coverflow = {
-  rotate: 18,
+  rotate: 12,
   stretch: 0,
-  depth: 180,
-  modifier: 1.1,
+  depth: 110,
+  modifier: 1,
   slideShadows: false
 }
 
@@ -613,6 +614,7 @@ function onImgError(e: Event) {
 
 :deep(.swiper-wrapper) {
   align-items: center;
+  transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 :deep(.swiper-slide) {
@@ -683,18 +685,17 @@ function onImgError(e: Event) {
   text-decoration: none;
   background: linear-gradient(145deg, #143d50, #252a5c 54%, #3c1d68);
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+  will-change: transform, opacity;
 
-  transition: transform 0.35s ease, box-shadow 0.35s ease, opacity 0.35s ease, filter 0.35s ease;
+  transition: transform 0.52s cubic-bezier(0.22, 0.61, 0.36, 1), opacity 0.52s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 :deep(.swiper-slide:not(.swiper-slide-active)) .card {
   opacity: 0.82;
-  filter: saturate(0.92);
 }
 
 :deep(.swiper-slide-active) .card {
   opacity: 1;
-  filter: saturate(1.04);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--gp-cyan) 86%, transparent),
     0 0 24px color-mix(in srgb, var(--gp-cyan) 27%, transparent),
