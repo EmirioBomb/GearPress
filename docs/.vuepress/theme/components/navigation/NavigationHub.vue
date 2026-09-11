@@ -215,7 +215,10 @@
             v-for="item in displayedItems"
             :key="item.id"
             class="nav-card"
-            :class="isDefaultOverview && item.featured ? `is-${item.featured}` : undefined"
+            :class="[
+              isDefaultOverview && item.featured ? `is-${item.featured}` : undefined,
+              cardRankClass(item),
+            ]"
             :style="{ '--item-accent': item.accent }"
             :href="item.url"
             target="_blank"
@@ -223,20 +226,30 @@
           >
             <span class="card-aura" aria-hidden="true" />
             <span class="card-topline">
-              <span class="app-icon">
-                <img
-                  v-if="item.iconSourceUrl && !failedIconIds.has(item.id)"
-                  :src="navigationIconUrl(item)"
-                  class="is-static"
-                  :alt="item.name"
-                  width="24"
-                  height="24"
-                  loading="lazy"
-                  decoding="async"
-                  no-view
-                  @error="markIconAsFailed(item.id)"
+              <span class="card-leading">
+                <span class="app-icon">
+                  <img
+                    v-if="item.iconSourceUrl && !failedIconIds.has(item.id)"
+                    :src="navigationIconUrl(item)"
+                    class="is-static"
+                    :alt="item.name"
+                    width="24"
+                    height="24"
+                    loading="lazy"
+                    decoding="async"
+                    no-view
+                    @error="markIconAsFailed(item.id)"
+                  >
+                  <Icon v-else :icon="item.icon" aria-hidden="true" />
+                </span>
+                <span
+                  v-if="cardRank(item) > 0"
+                  class="ranking-badge"
+                  role="img"
+                  :aria-label="rankLabel(cardRank(item))"
                 >
-                <Icon v-else :icon="item.icon" aria-hidden="true" />
+                  {{ rankMark(cardRank(item)) }} <small>#{{ cardRank(item) }}</small>
+                </span>
               </span>
               <Icon icon="lucide:arrow-up-right" class="open-icon" />
             </span>
@@ -489,6 +502,31 @@ const displayedItems = computed(() => {
     .sort((a, b) => (b.item.priority ?? 0) - (a.item.priority ?? 0) || a.index - b.index)
     .map(({ item }) => item)
 })
+
+function cardRank(item: NavigationItem) {
+  if (!isDefaultOverview.value) return 0
+  const rank = displayedItems.value.findIndex(displayedItem => displayedItem.id === item.id) + 1
+  return rank <= 3 ? rank : 0
+}
+
+function cardRankClass(item: NavigationItem) {
+  const rank = cardRank(item)
+  if (rank === 1) return "rank-gold"
+  if (rank === 2) return "rank-silver"
+  if (rank === 3) return "rank-bronze"
+  return undefined
+}
+
+function rankMark(rank: number) {
+  if (rank === 1) return "🥇"
+  if (rank === 2) return "🥈"
+  return "🥉"
+}
+
+function rankLabel(rank: number) {
+  if (locale.value === "zh") return `第 ${rank} 名`
+  return `Rank ${rank}`
+}
 
 const hasActiveFilters = computed(() => {
   return activePlatform.value !== defaultPlatform
@@ -1606,6 +1644,162 @@ h1 {
   transition: background 240ms ease, border-color 240ms ease, box-shadow 240ms ease, transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+.nav-card > :not(.card-aura):not(.ranking-badge) {
+  position: relative;
+  z-index: 1;
+}
+
+.nav-card.rank-gold,
+.nav-card.rank-silver,
+.nav-card.rank-bronze {
+  --rank-color: #f5b942;
+  overflow: visible;
+}
+
+.nav-card.rank-silver {
+  --rank-color: #aeb8c7;
+}
+
+.nav-card.rank-bronze {
+  --rank-color: #b87333;
+}
+
+.nav-card.rank-gold::before,
+.nav-card.rank-silver::before,
+.nav-card.rank-bronze::before {
+  position: absolute;
+  z-index: 0;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg 66deg,
+    color-mix(in srgb, var(--rank-color) 30%, transparent) 74deg,
+    color-mix(in srgb, var(--rank-color) 92%, white) 79deg,
+    color-mix(in srgb, var(--rank-color) 36%, transparent) 84deg,
+    transparent 94deg 212deg,
+    color-mix(in srgb, var(--rank-color) 24%, transparent) 222deg,
+    color-mix(in srgb, var(--rank-color) 68%, transparent) 229deg,
+    transparent 240deg 360deg
+  );
+  content: "";
+  opacity: 0.92;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  filter: drop-shadow(0 0 4px color-mix(in srgb, var(--rank-color) 68%, transparent));
+  animation: ranking-orbit 10s linear infinite;
+}
+
+.nav-card.rank-silver::before {
+  animation-duration: 12s;
+}
+
+.nav-card.rank-bronze::before {
+  animation-duration: 14s;
+}
+
+@keyframes ranking-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.nav-card.rank-gold {
+  border-color: color-mix(in srgb, #f5b942 32%, var(--gp-home-card-border));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, #f5b942 24%, transparent),
+    0 0 14px color-mix(in srgb, #f5b942 34%, transparent),
+    0 0 36px color-mix(in srgb, #f5b942 16%, transparent),
+    var(--gp-home-card-shadow);
+}
+
+.nav-card.rank-silver {
+  border-color: color-mix(in srgb, #aeb8c7 32%, var(--gp-home-card-border));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, #aeb8c7 22%, transparent),
+    0 0 13px color-mix(in srgb, #aeb8c7 31%, transparent),
+    0 0 32px color-mix(in srgb, #aeb8c7 14%, transparent),
+    var(--gp-home-card-shadow);
+}
+
+.nav-card.rank-bronze {
+  border-color: color-mix(in srgb, #b87333 34%, var(--gp-home-card-border));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, #b87333 24%, transparent),
+    0 0 14px color-mix(in srgb, #b87333 34%, transparent),
+    0 0 36px color-mix(in srgb, #b87333 16%, transparent),
+    var(--gp-home-card-shadow);
+}
+
+.nav-card.rank-gold .card-aura,
+.nav-card.rank-silver .card-aura,
+.nav-card.rank-bronze .card-aura {
+  z-index: 0;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--rank-color) 34%, transparent),
+    color-mix(in srgb, var(--rank-color) 16%, transparent) 42%,
+    transparent 72%
+  );
+  filter: blur(8px);
+  animation: ranking-aura-pulse 4.8s ease-in-out infinite;
+}
+
+.nav-card.rank-silver .card-aura {
+  animation-duration: 5.8s;
+}
+
+.nav-card.rank-bronze .card-aura {
+  animation-duration: 6.8s;
+}
+
+@keyframes ranking-aura-pulse {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: scale(0.96);
+  }
+
+  50% {
+    opacity: 0.78;
+    transform: scale(1.1);
+  }
+}
+
+.card-leading {
+  display: flex;
+  min-width: 0;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.ranking-badge {
+  display: inline-flex;
+  flex: none;
+  gap: 4px;
+  align-items: center;
+  padding: 4px 7px;
+  color: var(--rank-color);
+  font-size: 13px;
+  line-height: 1;
+  border: 1px solid color-mix(in srgb, var(--rank-color) 38%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--rank-color) 9%, var(--gp-surface-bg-elv));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--rank-color) 13%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.ranking-badge small {
+  color: color-mix(in srgb, var(--rank-color) 74%, var(--vp-c-text-1));
+  font-size: 9px;
+  font-weight: 800;
+}
+
 .nav-card::after {
   position: absolute;
   z-index: -1;
@@ -2333,6 +2527,12 @@ h1 {
     transform: none;
   }
 
+  .nav-card.rank-gold::before,
+  .nav-card.rank-silver::before,
+  .nav-card.rank-bronze::before,
+  .nav-card.rank-gold .card-aura,
+  .nav-card.rank-silver .card-aura,
+  .nav-card.rank-bronze .card-aura,
   .hero-aurora,
   .hero-route-highlight,
   .hero-orbit-ring,
