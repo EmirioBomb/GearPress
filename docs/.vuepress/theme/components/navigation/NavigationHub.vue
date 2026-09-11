@@ -342,7 +342,8 @@ const content = {
 }
 
 const copy = computed(() => content[locale.value])
-const activePlatform = ref<NavigationPlatform | "all">("all")
+const defaultPlatform: NavigationPlatform = "web"
+const activePlatform = ref<NavigationPlatform | "all">(defaultPlatform)
 const activeCategory = ref<NavigationCategory | "all">("all")
 const activeFeatures = ref<NavigationFeature[]>([])
 const query = ref("")
@@ -474,7 +475,7 @@ const filteredItems = computed(() => {
 })
 
 const isDefaultOverview = computed(() => {
-  return activePlatform.value === "all"
+  return activePlatform.value === defaultPlatform
     && activeCategory.value === "all"
     && activeFeatures.value.length === 0
     && !query.value.trim()
@@ -490,14 +491,14 @@ const displayedItems = computed(() => {
 })
 
 const hasActiveFilters = computed(() => {
-  return activePlatform.value !== "all"
+  return activePlatform.value !== defaultPlatform
     || activeCategory.value !== "all"
     || activeFeatures.value.length > 0
     || Boolean(query.value.trim())
 })
 
 const activeFilterCount = computed(() => {
-  return Number(activePlatform.value !== "all")
+  return Number(activePlatform.value !== defaultPlatform)
     + Number(activeCategory.value !== "all")
     + activeFeatures.value.length
     + Number(Boolean(query.value.trim()))
@@ -618,7 +619,7 @@ function clearSearch() {
 }
 
 function resetFilters() {
-  activePlatform.value = "all"
+  activePlatform.value = defaultPlatform
   activeCategory.value = "all"
   activeFeatures.value = []
   query.value = ""

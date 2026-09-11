@@ -105,7 +105,6 @@ export const navigationItems: NavigationItem[] = [
     localFirst: true,
     accent: "#4aa7ff",
     priority: 85,
-    featured: "tall",
   },
   {
     id: "obsidian",
@@ -130,7 +129,7 @@ export const navigationItems: NavigationItem[] = [
     category: "ai",
     tags: ["Assistant", "Multimodal"],
     accent: "#10a37f",
-    priority: 100,
+    priority: 110,
     featured: "wide",
   },
   {
@@ -259,6 +258,7 @@ export const navigationItems: NavigationItem[] = [
     category: "ai",
     tags: ["API", "Benchmark"],
     accent: "#27b3ff",
+    priority: 109,
   },
   {
     id: "cursor-byok",
@@ -311,6 +311,7 @@ export const navigationItems: NavigationItem[] = [
     category: "ai",
     tags: ["Models", "Datasets"],
     accent: "#ffcc4d",
+    priority: 107,
   },
   {
     id: "ui-ux-pro-max",
@@ -997,6 +998,7 @@ export const navigationItems: NavigationItem[] = [
     category: "ai",
     tags: ["AI API", "Verification"],
     accent: "#0ea5e9",
+    priority: 108,
   },
   {
     id: "discoverhub",
@@ -1009,6 +1011,7 @@ export const navigationItems: NavigationItem[] = [
     category: "knowledge",
     tags: ["Discovery", "Community"],
     accent: "#f97316",
+    priority: 101,
   },
   {
     id: "huntscreens",
@@ -1396,6 +1399,7 @@ export const navigationItems: NavigationItem[] = [
     category: "gaming",
     tags: ["Steam", "Database"],
     accent: "#1b9fff",
+    priority: 103,
   },
   {
     id: "rpcs3",
@@ -1449,6 +1453,7 @@ export const navigationItems: NavigationItem[] = [
     category: "network",
     tags: ["VPS", "Guide"],
     accent: "#6366f1",
+    priority: 105,
   },
   {
     id: "Github hosts",
