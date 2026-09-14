@@ -11,3 +11,5 @@
 *.woff2 binary
 
 *.webp binary
+
+docs/.vuepress/** linguist-documentation=false

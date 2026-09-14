@@ -10,10 +10,11 @@ Use this Skill with the repository-wide rules in `AGENTS.md`. Treat `.releaserc.
 ## Workflow
 
 1. Inspect the complete diff and identify its purpose.
-2. Choose one configured type and an optional concise scope.
-3. Write an imperative English subject and add a Body only when it adds essential context.
-4. Add only the project-approved Contributor trailers for people or Agents that materially contributed to the current commit.
-5. Check the release impact against `.releaserc.json`.
+2. Identify the human author and each Agent that materially contributed to the current commit. Before preparing the commit, report each contributor together with the files or changes they contributed.
+3. Choose one configured type and an optional concise scope.
+4. Write an imperative English subject and add a Body only when it adds essential context.
+5. Add only the project-approved Contributor trailers corresponding to the identified material contributors.
+6. Check the release impact against `.releaserc.json` and verify the final commit metadata before committing.
 
 ## Format
 
@@ -55,7 +56,13 @@ Use `docs` for documentation-only corrections and `fix` when application code co
 
 ## Contributor attribution
 
-Add a Trailer only when the person or Agent materially contributed code, documentation, configuration, or design included in the commit. Do not attribute an Agent that only suggested an idea, generated the message, reviewed the diff, or ran validation. Keep the human who creates and integrates the commit as the primary Git author.
+- Keep the human who creates and integrates the commit as the primary Git author.
+- Report the human author and every material contributor before preparing the commit, including the files or changes each contributor made.
+- Add a trailer only for a person or Agent that materially contributed code, documentation, configuration, or design included in the current commit.
+- Do not add a trailer for an Agent that only explored, suggested an idea, generated the message, reviewed the diff, ran validation, or otherwise did not materially contribute.
+- Do not add every Agent used during the task. Add only the contributors identified for this commit.
+- The trailer identity must match the Agent that actually performed the work. When working in Cursor, use the Cursor identity; use Codex, Copilot, or Claude only when that Agent actually performed the work. Do not infer identity from the selected model, available skills, or repository instructions.
+- If the source of an existing change or the Agent identity is uncertain, do not guess; omit the trailer for that contribution.
 
 Use these project-approved trailers exactly:
 
@@ -66,7 +73,7 @@ Co-authored-by: Claude <noreply@anthropic.com>
 Co-authored-by: Codex <noreply@openai.com>
 ```
 
-Add each applicable Trailer once, at the end of the message after one blank line. Verify the display name and GitHub-associated email before attributing any other person or Agent.
+Add each applicable trailer once, at the end of the message after one blank line. Before committing, verify that every trailer corresponds to a reported material contributor and that the author and committer metadata are correct.
 
 ## Examples
 
