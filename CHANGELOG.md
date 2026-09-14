@@ -1,3 +1,14 @@
+## 🔖 Release v2.8.0 (2026-09-14)
+
+### ✨ Features
+
+* **navigation:** add ranked card visual effects ([1669048](https://github.com/EmirioBomb/GearPress/commit/1669048a08e77bd57b74429b8e02448ecf83d5d5))
+* **navigation:** prioritize common websites ([3c166c0](https://github.com/EmirioBomb/GearPress/commit/3c166c018e6de2c71fad7d5adca0190493830fff))
+
+### 🔧 Chores
+
+* **agent:** define focused GearPress Agent guidance ([f835a00](https://github.com/EmirioBomb/GearPress/commit/f835a00756c9d12b9e79e9521c6ec45ef6502c47))
+
 ## 🔖 Release v2.7.1 (2026-09-10)
 
 ### 🐛 Bug Fixes
