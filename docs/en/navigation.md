@@ -1,5 +1,5 @@
 ---
-title: Apps & Websites
+title: Navigation
 pageLayout: home
 pageClass: navigation-hub-page
 footer: false
