@@ -154,6 +154,18 @@
       </aside>
 
       <div class="card-area">
+        <div class="card-toolbar">
+          <label class="sort-control">
+            <Icon icon="lucide:arrow-up-down" aria-hidden="true" />
+            <span>{{ copy.sortLabel }}</span>
+            <select v-model="activeSort" :aria-label="copy.sortLabel">
+              <option value="recommended">{{ copy.sortRecommended }}</option>
+              <option value="nameAsc">{{ copy.sortNameAsc }}</option>
+              <option value="nameDesc">{{ copy.sortNameDesc }}</option>
+            </select>
+          </label>
+        </div>
+
         <section v-if="hasActiveFilters" class="active-filter-bar" :aria-label="copy.activeFilters">
           <span class="active-filter-summary">
             <Icon icon="lucide:list-filter" aria-hidden="true" />
@@ -216,7 +228,7 @@
             :key="item.id"
             class="nav-card"
             :class="[
-              isDefaultOverview && item.featured ? `is-${item.featured}` : undefined,
+              isRankedOverview && item.featured ? `is-${item.featured}` : undefined,
               cardRankClass(item),
             ]"
             :style="{ '--item-accent': item.accent }"
@@ -225,6 +237,7 @@
             rel="noopener noreferrer"
           >
             <span class="card-aura" aria-hidden="true" />
+            <span v-if="cardRank(item) > 0" class="rank-sheen" aria-hidden="true" />
             <span class="card-topline">
               <span class="card-leading">
                 <span class="app-icon">
@@ -232,7 +245,7 @@
                     v-if="item.iconSourceUrl && !failedIconIds.has(item.id)"
                     :src="navigationIconUrl(item)"
                     class="is-static"
-                    :alt="item.name"
+                    alt=""
                     width="24"
                     height="24"
                     loading="lazy"
@@ -326,6 +339,10 @@ const content = {
     activeFilters: "当前筛选",
     removeFilter: "移除筛选",
     clearAll: "清除全部",
+    sortLabel: "排序",
+    sortRecommended: "推荐",
+    sortNameAsc: "名称 A–Z",
+    sortNameDesc: "名称 Z–A",
     allCategories: "全部",
     clear: "清空搜索",
     emptyTitle: "这条轨道暂时没有坐标",
@@ -346,6 +363,10 @@ const content = {
     activeFilters: "Active filters",
     removeFilter: "Remove filter",
     clearAll: "Clear all",
+    sortLabel: "Sort",
+    sortRecommended: "Recommended",
+    sortNameAsc: "Name A–Z",
+    sortNameDesc: "Name Z–A",
     allCategories: "All",
     clear: "Clear search",
     emptyTitle: "No destinations on this orbit",
@@ -355,10 +376,13 @@ const content = {
 }
 
 const copy = computed(() => content[locale.value])
+type NavigationSort = "recommended" | "nameAsc" | "nameDesc"
+
 const defaultPlatform: NavigationPlatform = "web"
 const activePlatform = ref<NavigationPlatform | "all">(defaultPlatform)
 const activeCategory = ref<NavigationCategory | "all">("all")
 const activeFeatures = ref<NavigationFeature[]>([])
+const activeSort = ref<NavigationSort>("recommended")
 const query = ref("")
 const searchInput = ref<HTMLInputElement>()
 const filterDock = ref<HTMLElement>()
@@ -494,17 +518,36 @@ const isDefaultOverview = computed(() => {
     && !query.value.trim()
 })
 
+const isRankedOverview = computed(() => {
+  return isDefaultOverview.value && activeSort.value === "recommended"
+})
+
+const nameCollator = computed(() => {
+  return new Intl.Collator(locale.value === "zh" ? "zh-CN" : "en", {
+    numeric: true,
+    sensitivity: "base",
+  })
+})
+
 const displayedItems = computed(() => {
+  const indexedItems = filteredItems.value.map((item, index) => ({ item, index }))
+
+  if (activeSort.value === "nameAsc" || activeSort.value === "nameDesc") {
+    const direction = activeSort.value === "nameAsc" ? 1 : -1
+    return indexedItems
+      .sort((a, b) => direction * nameCollator.value.compare(a.item.name, b.item.name) || a.index - b.index)
+      .map(({ item }) => item)
+  }
+
   if (!isDefaultOverview.value) return filteredItems.value
 
-  return filteredItems.value
-    .map((item, index) => ({ item, index }))
+  return indexedItems
     .sort((a, b) => (b.item.priority ?? 0) - (a.item.priority ?? 0) || a.index - b.index)
     .map(({ item }) => item)
 })
 
 function cardRank(item: NavigationItem) {
-  if (!isDefaultOverview.value) return 0
+  if (!isRankedOverview.value) return 0
   const rank = displayedItems.value.findIndex(displayedItem => displayedItem.id === item.id) + 1
   return rank <= 3 ? rank : 0
 }
@@ -1351,6 +1394,57 @@ h1 {
   min-width: 0;
 }
 
+.card-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.sort-control {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  color: var(--vp-c-text-2);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sort-control > svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  color: var(--gp-icon-highlight);
+}
+
+.sort-control select {
+  min-width: 126px;
+  height: 34px;
+  box-sizing: border-box;
+  padding: 0 30px 0 10px;
+  color: var(--vp-c-text-1);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid color-mix(in srgb, var(--gp-blue) 26%, var(--gp-home-card-border));
+  border-radius: 10px;
+  outline: 0;
+  background: color-mix(in srgb, var(--gp-surface-bg-elv) 88%, transparent);
+  box-shadow: 0 4px 12px rgb(42 67 89 / 0.07);
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.sort-control select:hover {
+  border-color: color-mix(in srgb, var(--gp-cyan) 42%, var(--gp-home-card-border));
+}
+
+.sort-control select:focus-visible {
+  border-color: var(--gp-cyan);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gp-cyan) 22%, transparent);
+  transform: translateY(-1px);
+}
+
 .active-filter-bar {
   display: flex;
   min-width: 0;
@@ -1644,7 +1738,7 @@ h1 {
   transition: background 240ms ease, border-color 240ms ease, box-shadow 240ms ease, transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.nav-card > :not(.card-aura):not(.ranking-badge) {
+.nav-card > :not(.card-aura):not(.rank-sheen):not(.ranking-badge) {
   position: relative;
   z-index: 1;
 }
@@ -1657,7 +1751,10 @@ h1 {
 }
 
 .nav-card.rank-silver {
-  --rank-color: #aeb8c7;
+  --rank-color: #b7c7dc;
+  background:
+    linear-gradient(135deg, rgb(240 248 255 / 0.14), transparent 32%, rgb(141 164 194 / 0.10) 72%, transparent),
+    var(--gp-home-card-bg);
 }
 
 .nav-card.rank-bronze {
@@ -1695,7 +1792,8 @@ h1 {
 }
 
 .nav-card.rank-silver::before {
-  animation-duration: 12s;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--rank-color) 86%, transparent));
+  animation-duration: 10.5s;
 }
 
 .nav-card.rank-bronze::before {
@@ -1718,11 +1816,11 @@ h1 {
 }
 
 .nav-card.rank-silver {
-  border-color: color-mix(in srgb, #aeb8c7 32%, var(--gp-home-card-border));
+  border-color: color-mix(in srgb, #b7c7dc 58%, var(--gp-home-card-border));
   box-shadow:
-    0 0 0 1px color-mix(in srgb, #aeb8c7 22%, transparent),
-    0 0 13px color-mix(in srgb, #aeb8c7 31%, transparent),
-    0 0 32px color-mix(in srgb, #aeb8c7 14%, transparent),
+    0 0 0 1px color-mix(in srgb, #e6f0ff 52%, transparent),
+    0 0 18px color-mix(in srgb, #b7c7dc 58%, transparent),
+    0 0 48px color-mix(in srgb, #91a9c7 29%, transparent),
     var(--gp-home-card-shadow);
 }
 
@@ -1750,7 +1848,72 @@ h1 {
 }
 
 .nav-card.rank-silver .card-aura {
-  animation-duration: 5.8s;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--rank-color) 60%, transparent),
+    color-mix(in srgb, var(--rank-color) 28%, transparent) 42%,
+    transparent 72%
+  );
+  filter: blur(7px);
+  animation-duration: 5s;
+}
+
+.rank-sheen {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.rank-sheen::before {
+  position: absolute;
+  top: -42%;
+  left: -52%;
+  width: 52%;
+  height: 190%;
+  opacity: 0.58;
+  background: linear-gradient(
+    105deg,
+    transparent 0 32%,
+    color-mix(in srgb, var(--rank-color) 10%, transparent) 39%,
+    color-mix(in srgb, white 72%, var(--rank-color)) 47%,
+    color-mix(in srgb, var(--rank-color) 62%, transparent) 53%,
+    color-mix(in srgb, white 12%, transparent) 61%,
+    transparent 68% 100%
+  );
+  content: "";
+  transform: skewX(-18deg);
+  filter: blur(1px);
+  animation: rank-sheen-sweep 5.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.nav-card.rank-gold .rank-sheen::before {
+  opacity: 0.64;
+  animation-duration: 5.4s;
+}
+
+.nav-card.rank-silver .rank-sheen::before {
+  opacity: 0.72;
+  animation-duration: 4.8s;
+}
+
+.nav-card.rank-bronze .rank-sheen::before {
+  opacity: 0.48;
+  animation-duration: 6.2s;
+}
+
+@keyframes rank-sheen-sweep {
+  0%,
+  24% {
+    transform: translateX(0) skewX(-18deg);
+  }
+
+  62%,
+  100% {
+    transform: translateX(420%) skewX(-18deg);
+  }
 }
 
 .nav-card.rank-bronze .card-aura {
@@ -2464,6 +2627,20 @@ h1 {
     padding: 9px;
   }
 
+  .card-toolbar {
+    justify-content: stretch;
+  }
+
+  .sort-control {
+    width: 100%;
+  }
+
+  .sort-control select {
+    min-width: 0;
+    flex: 1;
+    margin-left: auto;
+  }
+
   .active-filter-summary {
     justify-content: space-between;
   }
@@ -2508,6 +2685,7 @@ h1 {
   .category-rail button::before,
   .active-filter-bar,
   .active-filter-chips button,
+  .sort-control select,
   .nav-card,
   .nav-card::after,
   .card-aura,
@@ -2530,6 +2708,7 @@ h1 {
   .nav-card.rank-gold::before,
   .nav-card.rank-silver::before,
   .nav-card.rank-bronze::before,
+  .rank-sheen::before,
   .nav-card.rank-gold .card-aura,
   .nav-card.rank-silver .card-aura,
   .nav-card.rank-bronze .card-aura,
