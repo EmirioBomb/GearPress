@@ -1,3 +1,17 @@
+## 🔖 Release v2.9.0 (2026-09-17)
+
+### ✨ Features
+
+* **navigation:** expand catalog and add sorting controls ([15614f0](https://github.com/EmirioBomb/GearPress/commit/15614f0ad349c728a1278a3d596e9b2bddeb278c))
+
+### 📝 Documentation
+
+* **content:** localize navigation and blog titles ([50f054b](https://github.com/EmirioBomb/GearPress/commit/50f054b7bffea0ccbb0346404d8d469bcf22332a))
+
+### 🔧 Chores
+
+* **repo:** clarify agent attribution and language metadata ([1df295c](https://github.com/EmirioBomb/GearPress/commit/1df295c66ea91ea53046ce250d9b2041833be8ec))
+
 ## 🔖 Release v2.8.0 (2026-09-14)
 
 ### ✨ Features
