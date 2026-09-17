@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 900" role="img" aria-labelledby="title description">
+  <title id="title">Game cover unavailable</title>
+  <desc id="description">A fallback image shown when a game cover cannot be loaded.</desc>
+  <defs>
+    <linearGradient id="surface" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#16364a"/>
+      <stop offset="0.52" stop-color="#252a5c"/>
+      <stop offset="1" stop-color="#3c1d68"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="900" fill="url(#surface)"/>
+  <path d="M0 650C140 560 255 760 600 590V900H0Z" fill="#070b15" fill-opacity=".38"/>
+  <g fill="none" stroke="#a7efff" stroke-linecap="round" stroke-width="16" opacity=".8">
+    <path d="M245 400h110c42 0 76 34 76 76v42c0 42-34 76-76 76H245c-42 0-76-34-76-76v-42c0-42 34-76 76-76Z"/>
+    <path d="M210 490h52M236 464v52M350 482h1M385 525h1"/>
+  </g>
+  <text x="300" y="690" fill="#fff" font-family="system-ui, sans-serif" font-size="24" font-weight="700" letter-spacing="4" text-anchor="middle">COVER UNAVAILABLE</text>
+</svg>
