@@ -24,6 +24,8 @@ export interface LocalizedText {
 export interface NavigationItem {
   id: string
   name: string
+  /** Latin-script key used to interleave non-Latin names in alphabetical sorting. */
+  sortName?: string
   description: LocalizedText
   url: string
   icon: string
@@ -250,6 +252,7 @@ export const navigationItems: NavigationItem[] = [
   {
     id: "hvoyai",
     name: "禾维 AI",
+    sortName: "hewei ai",
     description: { zh: "检测 Claude、GPT 与 Gemini API，并对中转服务进行实测比较。", en: "Test Claude, GPT, and Gemini APIs and compare relay providers with live measurements." },
     url: "https://www.hvoyai.com/",
     icon: "lucide:scan-search",
@@ -1272,6 +1275,7 @@ export const navigationItems: NavigationItem[] = [
   {
     id: "aliyun-maven",
     name: "阿里云 Maven",
+    sortName: "aliyun maven",
     description: { zh: "搜索和浏览 Java 开发常用的 Maven 依赖与仓库信息。", en: "Search and browse Maven dependencies and repository information for Java development." },
     url: "https://maven.aliyun.com/mvn/search",
     icon: "simple-icons:alibabacloud",

@@ -535,7 +535,12 @@ const displayedItems = computed(() => {
   if (activeSort.value === "nameAsc" || activeSort.value === "nameDesc") {
     const direction = activeSort.value === "nameAsc" ? 1 : -1
     return indexedItems
-      .sort((a, b) => direction * nameCollator.value.compare(a.item.name, b.item.name) || a.index - b.index)
+      .sort((a, b) =>
+        direction * nameCollator.value.compare(
+          a.item.sortName ?? a.item.name,
+          b.item.sortName ?? b.item.name,
+        ) || a.index - b.index,
+      )
       .map(({ item }) => item)
   }
 
