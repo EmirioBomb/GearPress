@@ -1618,8 +1618,8 @@ h1 {
 }
 
 .navigation-sort {
-  --gp-select-min-width: 136px;
-  --gp-select-menu-min-width: 156px;
+  --gp-select-min-width: 120px;
+  --gp-select-menu-min-width: 148px;
 }
 
 .active-filter-bar {
@@ -2884,29 +2884,50 @@ h1 {
   }
 
   .card-toolbar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
     gap: 8px;
+    align-items: stretch;
     justify-content: stretch;
   }
 
   .view-switch {
-    align-self: stretch;
+    height: 44px;
+    box-sizing: border-box;
+    align-self: auto;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--gp-blue) 24%, var(--gp-home-card-border)),
+      0 4px 12px rgb(42 67 89 / 0.07);
   }
 
   .view-switch button {
-    height: 100%;
-    min-height: 28px;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
   }
 
   .sort-control {
+    display: block;
     min-width: 0;
-    flex: 1;
     width: auto;
   }
 
+  .sort-control > svg,
+  .sort-control > span {
+    display: none;
+  }
+
   .navigation-sort {
+    --gp-select-min-width: 0;
+    --gp-select-trigger-height: 44px;
+
+    width: 100%;
     min-width: 0;
-    flex: 1;
-    margin-left: auto;
+    margin-left: 0;
   }
 
   .active-filter-summary {
