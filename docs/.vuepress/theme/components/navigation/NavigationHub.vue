@@ -87,17 +87,19 @@
 
       <section id="mobile-platform-filters" class="system-filter" :aria-label="copy.platformLabel">
         <button
-          v-for="filter in platformFilters"
+          v-for="filter in platformFilterOptions"
           :key="filter.id"
           type="button"
           class="system-filter-item"
           :class="{ active: activePlatform === filter.id }"
+          :aria-label="filterCountLabel(localize(filter.label), filter.count)"
           :aria-pressed="activePlatform === filter.id"
+          :disabled="filter.count === 0 && activePlatform !== filter.id"
           @click="activePlatform = filter.id"
         >
           <Icon :icon="filter.icon" class="system-filter-icon" aria-hidden="true" />
           <span>{{ localize(filter.label) }}</span>
-          <small class="count-badge">{{ platformCount(filter.id) }}</small>
+          <small class="count-badge">{{ filter.count }}</small>
         </button>
         </section>
         </div>
@@ -112,24 +114,28 @@
             <button
               type="button"
               :class="{ active: activeCategory === 'all' }"
+              :aria-label="filterCountLabel(copy.allCategories, allCategoryCount)"
               :aria-pressed="activeCategory === 'all'"
+              :disabled="allCategoryCount === 0 && activeCategory !== 'all'"
               :title="copy.allCategories"
               @click="activeCategory = 'all'"
             >
               <span class="filter-label">{{ copy.allCategories }}</span>
-              <small class="count-badge">{{ categoryCount("all") }}</small>
+              <small class="count-badge">{{ allCategoryCount }}</small>
             </button>
             <button
-              v-for="category in availableCategories"
-              :key="category"
+              v-for="category in categoryFilterOptions"
+              :key="category.id"
               type="button"
-              :class="{ active: activeCategory === category }"
-              :aria-pressed="activeCategory === category"
-              :title="localize(categoryLabels[category])"
-              @click="activeCategory = category"
+              :class="{ active: activeCategory === category.id }"
+              :aria-label="filterCountLabel(localize(category.label), category.count)"
+              :aria-pressed="activeCategory === category.id"
+              :disabled="category.count === 0 && activeCategory !== category.id"
+              :title="localize(category.label)"
+              @click="activeCategory = category.id"
             >
-              <span class="filter-label">{{ localize(categoryLabels[category]) }}</span>
-              <small class="count-badge">{{ categoryCount(category) }}</small>
+              <span class="filter-label">{{ localize(category.label) }}</span>
+              <small class="count-badge">{{ category.count }}</small>
             </button>
           </div>
         </div>
@@ -138,16 +144,18 @@
           <div class="category-rail-title">{{ copy.featureTitle }}</div>
           <div class="category-rail-list feature-filter-list">
             <button
-              v-for="feature in featureFilters"
+              v-for="feature in featureFilterOptions"
               :key="feature.id"
               type="button"
               :class="{ active: isFeatureActive(feature.id) }"
+              :aria-label="filterCountLabel(localize(feature.label), feature.count)"
               :aria-pressed="isFeatureActive(feature.id)"
+              :disabled="feature.count === 0 && !isFeatureActive(feature.id)"
               :title="localize(feature.label)"
               @click="toggleFeature(feature.id)"
             >
               <span class="filter-label">{{ localize(feature.label) }}</span>
-              <small class="count-badge">{{ featureCount(feature.id) }}</small>
+              <small class="count-badge">{{ feature.count }}</small>
             </button>
           </div>
         </div>
@@ -305,7 +313,7 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue"
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue"
+import { computed, onBeforeUnmount, onMounted, ref } from "vue"
 import { withBase } from "vuepress/client"
 import { useData } from "vuepress-theme-plume/composables"
 
@@ -419,6 +427,11 @@ function platformName(platform: NavigationPlatform) {
   return filter ? localize(filter.label) : platform
 }
 
+function filterCountLabel(label: string, count: number) {
+  if (locale.value === "zh") return `${label}，${count} 项结果`
+  return `${label}, ${count} ${count === 1 ? "result" : "results"}`
+}
+
 function navigationIconUrl(item: NavigationItem) {
   return withBase(`/navigation-icons/${item.id}.webp`)
 }
@@ -427,25 +440,107 @@ function markIconAsFailed(id: string) {
   failedIconIds.value = new Set(failedIconIds.value).add(id)
 }
 
-function platformCount(platform: NavigationPlatform | "all") {
-  if (platform === "all") return navigationItems.length
-  return navigationItems.filter(item => item.platforms.includes(platform)).length
-}
-
-function itemsForActivePlatform() {
-  return activePlatform.value === "all"
-    ? navigationItems
-    : navigationItems.filter(item => item.platforms.includes(activePlatform.value))
-}
-
 function itemHasFeature(item: NavigationItem, feature: NavigationFeature) {
   if (feature === "openSource") return Boolean(item.openSource)
   if (feature === "crossPlatform") return item.platforms.length >= 3
   return Boolean(item.localFirst)
 }
 
-function matchesFeatures(item: NavigationItem, features = activeFeatures.value) {
+function matchesFeatures(item: NavigationItem, features: readonly NavigationFeature[]) {
   return features.every(feature => itemHasFeature(item, feature))
+}
+
+const searchCompactionPattern = /[\p{P}\p{S}\s]+/gu
+
+function normalizeSearchText(value: string) {
+  return value.normalize("NFKC").toLocaleLowerCase(locale.value)
+}
+
+function compactSearchText(value: string) {
+  return normalizeSearchText(value).replace(searchCompactionPattern, "")
+}
+
+function navigationItemHostname(item: NavigationItem) {
+  try {
+    return new URL(item.url).hostname.replace(/^www\./, "")
+  }
+  catch {
+    return ""
+  }
+}
+
+function itemMatchesQuery(item: NavigationItem, searchQuery: string) {
+  const normalizedQuery = normalizeSearchText(searchQuery.trim())
+  if (!normalizedQuery) return true
+
+  const matchingFeatureLabels = featureFilters
+    .filter(feature => itemHasFeature(item, feature.id))
+    .flatMap(feature => [feature.label.zh, feature.label.en])
+  const searchable = [
+    item.id,
+    item.name,
+    item.sortName ?? "",
+    ...(item.aliases ?? []),
+    item.url,
+    navigationItemHostname(item),
+    item.description.zh,
+    item.description.en,
+    categoryLabels[item.category].zh,
+    categoryLabels[item.category].en,
+    ...matchingFeatureLabels,
+    ...item.tags,
+  ].join(" ")
+
+  const compactQuery = compactSearchText(normalizedQuery)
+
+  return normalizeSearchText(searchable).includes(normalizedQuery)
+    || (Boolean(compactQuery) && compactSearchText(searchable).includes(compactQuery))
+}
+
+interface NavigationFilterState {
+  platform: NavigationPlatform | "all"
+  category: NavigationCategory | "all"
+  features: readonly NavigationFeature[]
+  searchQuery: string
+}
+
+function itemMatchesFilters(item: NavigationItem, filters: NavigationFilterState) {
+  const matchesPlatform = filters.platform === "all" || item.platforms.includes(filters.platform)
+  const matchesCategory = filters.category === "all" || item.category === filters.category
+
+  return matchesPlatform
+    && matchesCategory
+    && matchesFeatures(item, filters.features)
+    && itemMatchesQuery(item, filters.searchQuery)
+}
+
+function platformCount(platform: NavigationPlatform | "all") {
+  return navigationItems.filter(item => itemMatchesFilters(item, {
+    platform,
+    category: activeCategory.value,
+    features: activeFeatures.value,
+    searchQuery: query.value,
+  })).length
+}
+
+function categoryCount(category: NavigationCategory | "all") {
+  return navigationItems.filter(item => itemMatchesFilters(item, {
+    platform: activePlatform.value,
+    category,
+    features: activeFeatures.value,
+    searchQuery: query.value,
+  })).length
+}
+
+function featureCount(feature: NavigationFeature) {
+  const otherFeatures = activeFeatures.value.filter(item => item !== feature)
+
+  return navigationItems.filter(item => itemMatchesFilters(item, {
+    platform: activePlatform.value,
+    category: activeCategory.value,
+    features: [...otherFeatures, feature],
+    searchQuery: query.value,
+  })).length
 }
 
 function isFeatureActive(feature: NavigationFeature) {
@@ -462,53 +557,35 @@ function removeFeature(feature: NavigationFeature) {
   activeFeatures.value = activeFeatures.value.filter(item => item !== feature)
 }
 
-function categoryCount(category: NavigationCategory | "all") {
-  const source = itemsForActivePlatform().filter(item => matchesFeatures(item))
-  return category === "all" ? source.length : source.filter(item => item.category === category).length
-}
+const platformFilterOptions = computed(() => {
+  return platformFilters.map(filter => ({ ...filter, count: platformCount(filter.id) }))
+})
 
-function featureCount(feature: NavigationFeature) {
-  const otherFeatures = activeFeatures.value.filter(item => item !== feature)
+const allCategoryCount = computed(() => categoryCount("all"))
 
-  return itemsForActivePlatform().filter((item) => {
-    const matchesCategory = activeCategory.value === "all" || item.category === activeCategory.value
-    return matchesCategory && matchesFeatures(item, otherFeatures) && itemHasFeature(item, feature)
-  }).length
-}
+const categoryFilterOptions = computed(() => {
+  return categoryOrder.map(category => ({
+    id: category,
+    label: categoryLabels[category],
+    count: categoryCount(category),
+  }))
+})
+
+const featureFilterOptions = computed(() => {
+  return featureFilters.map(feature => ({ ...feature, count: featureCount(feature.id) }))
+})
 
 const activeFeatureFilters = computed(() => {
   return featureFilters.filter(feature => isFeatureActive(feature.id))
 })
 
-const availableCategories = computed(() => {
-  const platformItems = itemsForActivePlatform()
-  return categoryOrder.filter(category => platformItems.some(item => item.category === category))
-})
-
-watch(activePlatform, () => {
-  if (activeCategory.value !== "all" && !availableCategories.value.includes(activeCategory.value))
-    activeCategory.value = "all"
-})
-
 const filteredItems = computed(() => {
-  const term = query.value.trim().toLocaleLowerCase(locale.value)
-
-  return navigationItems.filter((item) => {
-    const matchesPlatform = activePlatform.value === "all" || item.platforms.includes(activePlatform.value)
-    const matchesCategory = activeCategory.value === "all" || item.category === activeCategory.value
-    const matchingFeatureLabels = featureFilters
-      .filter(feature => itemHasFeature(item, feature.id))
-      .map(feature => localize(feature.label))
-    const searchable = [
-      item.name,
-      localize(item.description),
-      localize(categoryLabels[item.category]),
-      ...matchingFeatureLabels,
-      ...item.tags,
-    ].join(" ").toLocaleLowerCase(locale.value)
-
-    return matchesPlatform && matchesCategory && matchesFeatures(item) && (!term || searchable.includes(term))
-  })
+  return navigationItems.filter(item => itemMatchesFilters(item, {
+    platform: activePlatform.value,
+    category: activeCategory.value,
+    features: activeFeatures.value,
+    searchQuery: query.value,
+  }))
 })
 
 const isDefaultOverview = computed(() => {
@@ -1285,7 +1362,7 @@ h1 {
   transition: color 160ms ease;
 }
 
-.system-filter-item:hover {
+.system-filter-item:not(:disabled):hover {
   color: var(--vp-c-text-1);
   border-color: color-mix(in srgb, var(--gp-cyan) 34%, var(--gp-home-card-border));
   background: color-mix(in srgb, var(--gp-blue) 10%, transparent);
@@ -1293,7 +1370,7 @@ h1 {
   transform: translateY(-1px);
 }
 
-.system-filter-item:hover .system-filter-icon,
+.system-filter-item:not(:disabled):hover .system-filter-icon,
 .system-filter-item.active .system-filter-icon {
   color: var(--gp-icon-highlight);
 }
@@ -1352,6 +1429,12 @@ h1 {
   outline-offset: 2px;
 }
 
+.system-filter-item:disabled,
+.category-rail button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
 .count-badge {
   display: inline-flex;
   min-width: 22px;
@@ -1371,9 +1454,9 @@ h1 {
   background: color-mix(in srgb, var(--gp-blue) 12%, var(--gp-surface-bg-elv));
 }
 
-.system-filter-item:hover .count-badge,
+.system-filter-item:not(:disabled):hover .count-badge,
 .system-filter-item.active .count-badge,
-.category-rail button:hover .count-badge,
+.category-rail button:not(:disabled):hover .count-badge,
 .category-rail button.active .count-badge {
   color: var(--vp-c-text-1);
   border-color: color-mix(in srgb, var(--gp-blue) 48%, var(--gp-home-card-border));
@@ -1653,13 +1736,13 @@ h1 {
   transition: width 160ms ease, height 160ms ease, background 160ms ease, box-shadow 160ms ease;
 }
 
-.category-rail button:hover {
+.category-rail button:not(:disabled):hover {
   color: var(--vp-c-text-1);
   background: color-mix(in srgb, var(--gp-blue) 5%, transparent);
   transform: translateX(2px);
 }
 
-.category-rail button:hover::before {
+.category-rail button:not(:disabled):hover::before {
   background: var(--gp-cyan);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--gp-cyan) 11%, transparent);
 }
@@ -2615,7 +2698,7 @@ h1 {
     transform: none;
   }
 
-  .category-rail button:hover {
+  .category-rail button:not(:disabled):hover {
     transform: translateY(-1px);
   }
 

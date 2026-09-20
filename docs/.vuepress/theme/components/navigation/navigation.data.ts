@@ -26,6 +26,8 @@ export interface NavigationItem {
   name: string
   /** Latin-script key used to interleave non-Latin names in alphabetical sorting. */
   sortName?: string
+  /** Alternative names and common abbreviations used by navigation search. */
+  aliases?: string[]
   description: LocalizedText
   url: string
   icon: string
@@ -162,6 +164,7 @@ export const navigationItems: NavigationItem[] = [
   {
     id: "vscode",
     name: "Visual Studio Code",
+    aliases: ["VS Code", "VSCode"],
     description: { zh: "轻量、可扩展并支持多平台的代码编辑器。", en: "A lightweight, extensible code editor available across platforms." },
     url: "https://code.visualstudio.com/",
     icon: "devicon:vscode",
@@ -594,6 +597,7 @@ export const navigationItems: NavigationItem[] = [
   {
     id: "massgrave",
     name: "Microsoft Activation Scripts",
+    aliases: ["MAS"],
     description: { zh: "提供 Windows 与 Office 激活脚本及相关技术文档；使用前应确认授权合规。", en: "Windows and Office activation scripts and technical documentation; verify licensing compliance before use." },
     url: "https://massgrave.dev/",
     icon: "lucide:key-round",
