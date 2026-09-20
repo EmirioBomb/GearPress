@@ -163,6 +163,29 @@
 
       <div class="card-area">
         <div class="card-toolbar">
+          <div class="view-switch" role="group" :aria-label="copy.viewLabel">
+            <button
+              type="button"
+              :class="{ active: activeView === 'grid' }"
+              :aria-label="copy.gridView"
+              :aria-pressed="activeView === 'grid'"
+              :title="copy.gridView"
+              @click="setActiveView('grid')"
+            >
+              <Icon icon="lucide:grid-2x2" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              :class="{ active: activeView === 'list' }"
+              :aria-label="copy.listView"
+              :aria-pressed="activeView === 'list'"
+              :title="copy.listView"
+              @click="setActiveView('list')"
+            >
+              <Icon icon="lucide:rows-3" aria-hidden="true" />
+            </button>
+          </div>
+
           <label class="sort-control">
             <Icon icon="lucide:arrow-up-down" aria-hidden="true" />
             <span>{{ copy.sortLabel }}</span>
@@ -230,7 +253,11 @@
           </span>
         </section>
 
-        <section v-if="filteredItems.length" class="card-field">
+        <section
+          v-if="filteredItems.length"
+          class="card-field"
+          :class="{ 'is-list-view': activeView === 'list' }"
+        >
           <a
             v-for="item in displayedItems"
             :key="item.id"
@@ -351,6 +378,9 @@ const content = {
     sortRecommended: "推荐",
     sortNameAsc: "名称 A–Z",
     sortNameDesc: "名称 Z–A",
+    viewLabel: "切换导航视图",
+    gridView: "卡片视图",
+    listView: "列表视图",
     allCategories: "全部",
     clear: "清空搜索",
     emptyTitle: "这条轨道暂时没有坐标",
@@ -375,6 +405,9 @@ const content = {
     sortRecommended: "Recommended",
     sortNameAsc: "Name A–Z",
     sortNameDesc: "Name Z–A",
+    viewLabel: "Switch navigation view",
+    gridView: "Card view",
+    listView: "List view",
     allCategories: "All",
     clear: "Clear search",
     emptyTitle: "No destinations on this orbit",
@@ -385,12 +418,15 @@ const content = {
 
 const copy = computed(() => content[locale.value])
 type NavigationSort = "recommended" | "nameAsc" | "nameDesc"
+type NavigationView = "grid" | "list"
 
+const navigationViewStorageKey = "gearpress-navigation-view"
 const defaultPlatform: NavigationPlatform = "web"
 const activePlatform = ref<NavigationPlatform | "all">(defaultPlatform)
 const activeCategory = ref<NavigationCategory | "all">("all")
 const activeFeatures = ref<NavigationFeature[]>([])
 const activeSort = ref<NavigationSort>("recommended")
+const activeView = ref<NavigationView>("grid")
 const query = ref("")
 const searchInput = ref<HTMLInputElement>()
 const filterDock = ref<HTMLElement>()
@@ -732,7 +768,30 @@ function scheduleFilterDockUpdate() {
   })
 }
 
+function setActiveView(view: NavigationView) {
+  activeView.value = view
+  if (typeof window === "undefined") return
+
+  try {
+    window.localStorage.setItem(navigationViewStorageKey, view)
+  }
+  catch {
+    // Keep the in-memory preference when storage is unavailable.
+  }
+}
+
+function restoreActiveView() {
+  try {
+    const storedView = window.localStorage.getItem(navigationViewStorageKey)
+    if (storedView === "grid" || storedView === "list") activeView.value = storedView
+  }
+  catch {
+    // Use the default grid view when storage is unavailable.
+  }
+}
+
 onMounted(() => {
+  restoreActiveView()
   window.addEventListener("scroll", scheduleFilterDockUpdate, { passive: true })
   window.addEventListener("resize", scheduleFilterDockUpdate)
   filterDockResizeObserver = new ResizeObserver(scheduleFilterDockUpdate)
@@ -1483,9 +1542,56 @@ h1 {
 
 .card-toolbar {
   display: flex;
+  gap: 8px;
   align-items: center;
   justify-content: flex-end;
   margin-bottom: 10px;
+}
+
+.view-switch {
+  display: inline-flex;
+  flex: none;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid color-mix(in srgb, var(--gp-blue) 24%, var(--gp-home-card-border));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--gp-surface-bg-elv) 88%, transparent);
+  box-shadow: 0 4px 12px rgb(42 67 89 / 0.07);
+}
+
+.view-switch button {
+  display: grid;
+  width: 28px;
+  height: 26px;
+  padding: 0;
+  place-items: center;
+  color: var(--vp-c-text-3);
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  cursor: pointer;
+  transition: color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.view-switch button:hover {
+  color: var(--vp-c-text-1);
+  background: color-mix(in srgb, var(--gp-blue) 8%, transparent);
+}
+
+.view-switch button.active {
+  color: var(--gp-icon-highlight);
+  background: var(--gp-gradient-active);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gp-active-border) 64%, transparent);
+}
+
+.view-switch button:focus-visible {
+  outline: 2px solid var(--gp-cyan);
+  outline-offset: 2px;
+}
+
+.view-switch svg {
+  width: 14px;
+  height: 14px;
 }
 
 .sort-control {
@@ -1805,6 +1911,81 @@ h1 {
   gap: 12px;
 }
 
+.card-field.is-list-view {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.is-list-view .nav-card,
+.is-list-view .nav-card.is-wide,
+.is-list-view .nav-card.is-tall {
+  display: grid;
+  grid-template-areas: "top content footer";
+  grid-template-columns: auto minmax(0, 1fr) minmax(120px, auto);
+  grid-column: span 1;
+  grid-row: span 1;
+  min-height: 88px;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 40px 12px 12px;
+}
+
+.is-list-view .card-topline {
+  position: static;
+  grid-area: top;
+}
+
+.is-list-view .open-icon {
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  right: 14px;
+}
+
+.is-list-view .card-content {
+  grid-area: content;
+  margin: 0;
+}
+
+.is-list-view .card-meta-row {
+  justify-content: flex-start;
+  margin-bottom: 3px;
+}
+
+.is-list-view .card-content strong {
+  display: block;
+  min-height: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.is-list-view .card-description {
+  display: block;
+  margin-top: 3px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.is-list-view .card-footer {
+  grid-area: footer;
+  justify-content: flex-end;
+  margin-top: 0;
+}
+
+.is-list-view .tags {
+  justify-content: flex-end;
+}
+
+.is-list-view .card-aura {
+  top: -88px;
+  right: -42px;
+  width: 170px;
+  height: 170px;
+}
+
 .nav-card {
   position: relative;
   display: flex;
@@ -2085,6 +2266,7 @@ h1 {
   border-radius: 50%;
   background: radial-gradient(circle, color-mix(in srgb, var(--item-accent) 17%, transparent), transparent 68%);
   opacity: 0.52;
+  pointer-events: none;
   transition: opacity 240ms ease, transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -2718,11 +2900,23 @@ h1 {
   }
 
   .card-toolbar {
+    gap: 8px;
     justify-content: stretch;
   }
 
+  .view-switch {
+    align-self: stretch;
+  }
+
+  .view-switch button {
+    height: 100%;
+    min-height: 28px;
+  }
+
   .sort-control {
-    width: 100%;
+    min-width: 0;
+    flex: 1;
+    width: auto;
   }
 
   .sort-control select {
@@ -2760,6 +2954,30 @@ h1 {
     min-height: 180px;
   }
 
+  .card-field.is-list-view .nav-card,
+  .card-field.is-list-view .nav-card.is-wide,
+  .card-field.is-list-view .nav-card.is-tall {
+    grid-template-areas:
+      "top content"
+      "footer footer";
+    grid-template-columns: auto minmax(0, 1fr);
+    min-height: 0;
+    gap: 9px 11px;
+    padding: 11px 36px 11px 11px;
+  }
+
+  .is-list-view .card-footer,
+  .is-list-view .tags {
+    justify-content: flex-start;
+  }
+
+  .is-list-view .card-description {
+    display: -webkit-box;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
   .is-tall .card-description {
     font-size: 12px;
     -webkit-line-clamp: 2;
@@ -2775,6 +2993,7 @@ h1 {
   .category-rail button::before,
   .active-filter-bar,
   .active-filter-chips button,
+  .view-switch button,
   .sort-control select,
   .nav-card,
   .nav-card::after,
