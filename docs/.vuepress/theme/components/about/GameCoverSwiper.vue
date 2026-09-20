@@ -7,49 +7,13 @@
     <div class="coverflow-header">
       <p v-if="title" class="section-label">{{ title }}</p>
 
-      <div
-        ref="seriesMenu"
+      <SelectMenu
+        :model-value="activeSeries"
         class="series-filter"
-        @keydown.escape="closeSeriesMenu"
-      >
-        <button
-          type="button"
-          class="series-trigger"
-          :aria-expanded="isSeriesMenuOpen"
-          aria-haspopup="menu"
-          aria-controls="series-menu"
-          @click="toggleSeriesMenu"
-        >
-          <span class="series-trigger-label">{{ activeSeriesOption.label }}</span>
-          <span class="series-trigger-count">{{ activeSeriesOption.count }}</span>
-          <span class="series-trigger-chevron" aria-hidden="true" />
-        </button>
-
-        <Transition name="series-menu">
-          <div
-            v-if="isSeriesMenuOpen"
-            id="series-menu"
-            class="series-menu"
-            role="menu"
-            :aria-label="seriesSelectLabel"
-          >
-            <button
-              v-for="option in seriesOptions"
-              :key="option.id"
-              type="button"
-              class="series-menu-option"
-              :class="{ active: activeSeries === option.id }"
-              role="menuitemradio"
-              :aria-checked="activeSeries === option.id"
-              @click="selectSeries(option.id)"
-            >
-              <span class="series-menu-check" aria-hidden="true">{{ activeSeries === option.id ? "✓" : "" }}</span>
-              <span class="series-menu-label">{{ option.label }}</span>
-              <span class="series-menu-count">{{ option.count }}</span>
-            </button>
-          </div>
-        </Transition>
-      </div>
+        :options="seriesOptions"
+        :aria-label="seriesSelectLabel"
+        @update:model-value="setSeries"
+      />
 
     </div>
 
@@ -160,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue"
+import { computed, ref } from "vue"
 import { usePreferredReducedMotion } from "@vueuse/core"
 import { Swiper, SwiperSlide } from "swiper/vue"
 import type { Swiper as SwiperInstance } from "swiper"
@@ -168,6 +132,7 @@ import { Autoplay, EffectCoverflow, Keyboard } from "swiper/modules"
 import { Icon } from "@iconify/vue"
 import { withBase } from "vuepress/client"
 
+import SelectMenu from "../SelectMenu.vue"
 import type { GameItem, GameSeries } from "./data/game-cover.data"
 
 import "swiper/css"
@@ -189,8 +154,6 @@ const props = defineProps<{
 const modules = [Autoplay, EffectCoverflow, Keyboard]
 const prefersReducedMotion = usePreferredReducedMotion()
 const swiper = ref<SwiperInstance>()
-const seriesMenu = ref<HTMLElement>()
-const isSeriesMenuOpen = ref(false)
 const activeSeries = ref<SeriesFilterId>("all")
 
 const isEnglish = computed(() => props.locale === "en")
@@ -267,20 +230,16 @@ const availableSeries = computed(() =>
 
 const seriesOptions = computed(() => [
   {
-    id: "all" as const,
+    value: "all",
     label: seriesLabel("all"),
     count: seriesCounts.value.all,
   },
   ...availableSeries.value.map(series => ({
-    id: series,
+    value: series,
     label: seriesLabel(series),
     count: seriesCounts.value[series],
   })),
 ])
-
-const activeSeriesOption = computed(() =>
-  seriesOptions.value.find(option => option.id === activeSeries.value)!,
-)
 
 const filteredItems = computed(() => {
   if (activeSeries.value === "all") return props.items
@@ -295,31 +254,12 @@ const enableLoop = computed(() => filteredItems.value.length > 6)
 const enableRewind = computed(() => filteredItems.value.length > 1 && !enableLoop.value)
 const swiperKey = computed(() => `${activeSeries.value}-${filteredItems.value.length}`)
 
-function toggleSeriesMenu() {
-  isSeriesMenuOpen.value = !isSeriesMenuOpen.value
-}
+function setSeries(series: string) {
+  if (series !== "all" && !SERIES_ORDER.includes(series as GameSeries)) return
 
-function closeSeriesMenu() {
-  isSeriesMenuOpen.value = false
-}
-
-function selectSeries(series: SeriesFilterId) {
-  setSeries(series)
-  closeSeriesMenu()
-}
-
-function onDocumentPointerDown(event: PointerEvent) {
-  if (!seriesMenu.value?.contains(event.target as Node)) {
-    closeSeriesMenu()
-  }
-}
-
-onMounted(() => document.addEventListener("pointerdown", onDocumentPointerDown))
-onBeforeUnmount(() => document.removeEventListener("pointerdown", onDocumentPointerDown))
-
-function setSeries(series: SeriesFilterId) {
-  if (activeSeries.value === series) return
-  activeSeries.value = series
+  const nextSeries = series as SeriesFilterId
+  if (activeSeries.value === nextSeries) return
+  activeSeries.value = nextSeries
   swiper.value = undefined
 }
 
@@ -420,183 +360,11 @@ function onImgError(e: Event) {
 }
 
 .series-filter {
-  position: relative;
-  z-index: 4;
+  --gp-select-min-width: 118px;
+  --gp-select-menu-min-width: 180px;
+
   flex: none;
   margin-left: auto;
-}
-
-.series-trigger {
-  display: inline-flex;
-  min-width: 118px;
-  height: 32px;
-  box-sizing: border-box;
-  gap: 7px;
-  align-items: center;
-  padding: 0 9px 0 11px;
-  color: var(--vp-c-text-1);
-  font: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  border: 1px solid color-mix(in srgb, var(--gp-blue) 35%, var(--gp-home-card-border));
-  border-radius: 9px;
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--gp-blue) 13%, transparent), transparent 74%),
-    color-mix(in srgb, var(--gp-surface-bg-elv) 88%, transparent);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 6%);
-  cursor: pointer;
-  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
-}
-
-.series-trigger:hover,
-.series-trigger[aria-expanded="true"] {
-  border-color: color-mix(in srgb, var(--gp-cyan) 62%, var(--gp-home-card-border));
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--gp-blue) 23%, transparent), transparent 74%),
-    color-mix(in srgb, var(--gp-surface-bg-elv) 92%, transparent);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 10%),
-    0 0 14px color-mix(in srgb, var(--gp-active-glow) 24%, transparent);
-}
-
-.series-trigger:focus-visible,
-.series-menu-option:focus-visible {
-  outline: 2px solid var(--gp-cyan);
-  outline-offset: 2px;
-}
-
-.series-trigger-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.series-trigger-count {
-  display: inline-flex;
-  min-width: 20px;
-  height: 18px;
-  box-sizing: border-box;
-  align-items: center;
-  justify-content: center;
-  margin-left: auto;
-  padding: 0 5px;
-  color: var(--vp-c-text-1);
-  font-size: 10px;
-  font-weight: 750;
-  font-variant-numeric: tabular-nums;
-  border: 1px solid color-mix(in srgb, var(--gp-cyan) 38%, var(--gp-home-card-border));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--gp-blue) 18%, var(--gp-surface-bg-elv));
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 7%);
-}
-
-.series-trigger-chevron {
-  width: 7px;
-  height: 7px;
-  margin: -3px 2px 0 0;
-  border-right: 1.5px solid var(--gp-cyan);
-  border-bottom: 1.5px solid var(--gp-cyan);
-  transform: rotate(45deg);
-  transition: transform 160ms ease, margin 160ms ease;
-}
-
-.series-trigger[aria-expanded="true"] .series-trigger-chevron {
-  margin-top: 3px;
-  transform: rotate(225deg);
-}
-
-.series-menu {
-  position: absolute;
-  top: calc(100% + 7px);
-  right: 0;
-  display: grid;
-  width: max(180px, 100%);
-  padding: 5px;
-  border: 1px solid color-mix(in srgb, var(--gp-cyan) 28%, var(--gp-home-card-border));
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--gp-surface-bg-elv) 96%, #0a1020);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 8%),
-    0 14px 32px rgb(0 0 0 / 34%);
-  backdrop-filter: blur(16px);
-}
-
-.series-menu-option {
-  display: grid;
-  grid-template-columns: 15px minmax(0, 1fr) auto;
-  gap: 7px;
-  align-items: center;
-  min-height: 31px;
-  padding: 0 8px;
-  color: var(--vp-c-text-2);
-  font: inherit;
-  font-size: 11px;
-  font-weight: 600;
-  text-align: left;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  cursor: pointer;
-  transition: color 140ms ease, background 140ms ease;
-}
-
-.series-menu-option:hover {
-  color: var(--vp-c-text-1);
-  background: color-mix(in srgb, var(--gp-blue) 13%, transparent);
-}
-
-.series-menu-option.active {
-  color: var(--vp-c-text-1);
-  font-weight: 750;
-  background: var(--gp-gradient-active);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gp-active-border) 60%, transparent);
-}
-
-.series-menu-check {
-  color: var(--gp-cyan);
-  font-weight: 800;
-}
-
-.series-menu-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.series-menu-count {
-  display: inline-flex;
-  min-width: 19px;
-  height: 17px;
-  box-sizing: border-box;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-  color: var(--vp-c-text-2);
-  font-size: 9px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  border: 1px solid color-mix(in srgb, var(--gp-blue) 28%, var(--gp-home-card-border));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--gp-blue) 10%, var(--gp-surface-bg-elv));
-}
-
-.series-menu-option.active .series-menu-count {
-  color: var(--vp-c-text-1);
-  border-color: color-mix(in srgb, var(--gp-cyan) 55%, var(--gp-home-card-border));
-  background: color-mix(in srgb, var(--gp-cyan) 17%, var(--gp-surface-bg-elv));
-}
-
-.series-menu-enter-active,
-.series-menu-leave-active {
-  transition: opacity 140ms ease, transform 140ms ease;
-}
-
-.series-menu-enter-from,
-.series-menu-leave-to {
-  opacity: 0;
-  transform: translateY(-4px) scale(0.98);
 }
 
 .coverflow-stage {
@@ -831,9 +599,7 @@ function onImgError(e: Event) {
 @media (prefers-reduced-motion: reduce) {
   .card,
   .cover,
-  .coverflow-button,
-  .series-trigger,
-  .series-menu-option {
+  .coverflow-button {
     transition: none;
   }
 
@@ -854,18 +620,10 @@ function onImgError(e: Event) {
   }
 
   .series-filter {
+    --gp-select-min-width: 112px;
+    --gp-select-menu-min-width: 170px;
+
     flex: 0 1 auto;
-  }
-
-  .series-trigger {
-    min-width: 112px;
-    height: 30px;
-    padding-left: 9px;
-    font-size: 10px;
-  }
-
-  .series-menu {
-    width: max(170px, 100%);
   }
 
   .slide {

@@ -186,15 +186,16 @@
             </button>
           </div>
 
-          <label class="sort-control">
+          <div class="sort-control">
             <Icon icon="lucide:arrow-up-down" aria-hidden="true" />
             <span>{{ copy.sortLabel }}</span>
-            <select v-model="activeSort" :aria-label="copy.sortLabel">
-              <option value="recommended">{{ copy.sortRecommended }}</option>
-              <option value="nameAsc">{{ copy.sortNameAsc }}</option>
-              <option value="nameDesc">{{ copy.sortNameDesc }}</option>
-            </select>
-          </label>
+            <SelectMenu
+              v-model="activeSort"
+              class="navigation-sort"
+              :options="sortOptions"
+              :aria-label="copy.sortLabel"
+            />
+          </div>
         </div>
 
         <section v-if="hasActiveFilters" class="active-filter-bar" :aria-label="copy.activeFilters">
@@ -344,6 +345,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue"
 import { withBase } from "vuepress/client"
 import { useData } from "vuepress-theme-plume/composables"
 
+import SelectMenu from "../SelectMenu.vue"
 import {
   categoryLabels,
   featureFilters,
@@ -417,6 +419,11 @@ const content = {
 }
 
 const copy = computed(() => content[locale.value])
+const sortOptions = computed(() => [
+  { value: "recommended", label: copy.value.sortRecommended },
+  { value: "nameAsc", label: copy.value.sortNameAsc },
+  { value: "nameDesc", label: copy.value.sortNameDesc },
+])
 type NavigationSort = "recommended" | "nameAsc" | "nameDesc"
 type NavigationView = "grid" | "list"
 
@@ -1610,32 +1617,9 @@ h1 {
   color: var(--gp-icon-highlight);
 }
 
-.sort-control select {
-  min-width: 126px;
-  height: 34px;
-  box-sizing: border-box;
-  padding: 0 30px 0 10px;
-  color: var(--vp-c-text-1);
-  font: inherit;
-  font-size: 11px;
-  font-weight: 700;
-  border: 1px solid color-mix(in srgb, var(--gp-blue) 26%, var(--gp-home-card-border));
-  border-radius: 10px;
-  outline: 0;
-  background: color-mix(in srgb, var(--gp-surface-bg-elv) 88%, transparent);
-  box-shadow: 0 4px 12px rgb(42 67 89 / 0.07);
-  cursor: pointer;
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
-}
-
-.sort-control select:hover {
-  border-color: color-mix(in srgb, var(--gp-cyan) 42%, var(--gp-home-card-border));
-}
-
-.sort-control select:focus-visible {
-  border-color: var(--gp-cyan);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gp-cyan) 22%, transparent);
-  transform: translateY(-1px);
+.navigation-sort {
+  --gp-select-min-width: 136px;
+  --gp-select-menu-min-width: 156px;
 }
 
 .active-filter-bar {
@@ -2919,7 +2903,7 @@ h1 {
     width: auto;
   }
 
-  .sort-control select {
+  .navigation-sort {
     min-width: 0;
     flex: 1;
     margin-left: auto;
@@ -2994,7 +2978,6 @@ h1 {
   .active-filter-bar,
   .active-filter-chips button,
   .view-switch button,
-  .sort-control select,
   .nav-card,
   .nav-card::after,
   .card-aura,
