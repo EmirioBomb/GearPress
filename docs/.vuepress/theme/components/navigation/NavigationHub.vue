@@ -544,8 +544,6 @@ const displayedItems = computed(() => {
       .map(({ item }) => item)
   }
 
-  if (!isDefaultOverview.value) return filteredItems.value
-
   return indexedItems
     .sort((a, b) => (b.item.priority ?? 0) - (a.item.priority ?? 0) || a.index - b.index)
     .map(({ item }) => item)
@@ -708,6 +706,7 @@ function resetFilters() {
   activePlatform.value = defaultPlatform
   activeCategory.value = "all"
   activeFeatures.value = []
+  activeSort.value = "recommended"
   query.value = ""
 }
 </script>
@@ -1718,7 +1717,6 @@ h1 {
 
 .card-field {
   display: grid;
-  grid-auto-flow: dense;
   grid-auto-rows: minmax(195px, auto);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 12px;
@@ -2109,10 +2107,14 @@ h1 {
 }
 
 .card-content strong {
+  display: -webkit-box;
+  min-height: calc(18px * 1.3 * 2);
   overflow: hidden;
   font-size: 18px;
+  line-height: 1.3;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .card-description {
