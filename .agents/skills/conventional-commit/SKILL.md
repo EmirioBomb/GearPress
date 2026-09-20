@@ -14,7 +14,7 @@ Use this Skill with the repository-wide rules in `AGENTS.md`. Treat `.releaserc.
 3. Choose one configured type and an optional concise scope.
 4. Write an imperative English subject and add a Body only when it adds essential context.
 5. Add only the project-approved Contributor trailers corresponding to the identified material contributors.
-6. Check the release impact against `.releaserc.json` and verify the final commit metadata before committing.
+6. Check the release impact against `.releaserc.json`, inspect the exact message before committing, and verify the resulting commit object before reporting success.
 
 ## Format
 
@@ -53,6 +53,33 @@ Use `docs` for documentation-only corrections and `fix` when application code co
 - Use real line breaks; never write the literal `\n` sequence.
 - Keep each item focused on one result, and do not repeat the subject in the Body.
 - Leave one blank line between the subject and Body and one blank line between the Body and Footer.
+
+## Message construction and verification
+
+Treat the commit message as literal text, not as an escaped string.
+
+1. Construct multiline messages with real line-feed characters. Prefer a message file, heredoc, or separate `git commit -m` arguments. Never use a quoted `\n` sequence as a line separator.
+2. Before committing, inspect the exact message and staged changes:
+
+```sh
+sed -n 'l' <message-file>
+git diff --cached --check
+```
+
+3. After committing, inspect the actual commit object:
+
+```sh
+commit="$(git rev-parse HEAD)"
+git show -s --format=%B "$commit" | sed -n 'l'
+git show -s --format=%B "$commit" | git interpret-trailers --parse
+git show -s --format='%H%n%an <%ae>%n%cn <%ce>%n%s%n%b' "$commit"
+```
+
+Verify the intended line boundaries, subject, Body, author, committer, and applicable trailers. An empty parsed-trailer result is valid only when no trailer was intended.
+
+If a pre-commit check finds a quoted `\n` sequence being used as a line separator, reconstruct the message with real line-feed characters and repeat the checks automatically. Commit only after all pre-commit checks pass; do not require the user to regenerate or repair the message.
+
+If a post-commit check fails or cannot be completed, report the exact condition and do not claim success. Do not amend or rewrite the commit unless the user explicitly authorizes it.
 
 ## Contributor attribution
 
