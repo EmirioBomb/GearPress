@@ -360,8 +360,10 @@ function onImgError(e: Event) {
 }
 
 .series-filter {
-  --gp-select-min-width: 118px;
-  --gp-select-menu-min-width: 180px;
+  --gp-select-min-width: 120px;
+  --gp-select-menu-min-width: 148px;
+  --gp-select-trigger-height: 32px;
+  --gp-select-option-height: 31px;
 
   flex: none;
   margin-left: auto;
@@ -621,7 +623,7 @@ function onImgError(e: Event) {
 
   .series-filter {
     --gp-select-min-width: 112px;
-    --gp-select-menu-min-width: 170px;
+    --gp-select-menu-min-width: 148px;
 
     flex: 0 1 auto;
   }

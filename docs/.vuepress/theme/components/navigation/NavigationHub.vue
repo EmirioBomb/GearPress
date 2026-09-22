@@ -1618,8 +1618,9 @@ h1 {
 }
 
 .navigation-sort {
-  --gp-select-min-width: 120px;
+  --gp-select-min-width: 126px;
   --gp-select-menu-min-width: 148px;
+  --gp-select-option-height: 32px;
 }
 
 .active-filter-bar {
@@ -2924,6 +2925,7 @@ h1 {
   .navigation-sort {
     --gp-select-min-width: 0;
     --gp-select-trigger-height: 44px;
+    --gp-select-option-height: 44px;
 
     width: 100%;
     min-width: 0;
