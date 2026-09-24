@@ -78,6 +78,19 @@ const zhDoc = defineCollection({
       ]
     },
     {
+      text: 'Linux',
+      collapsed: false,
+      icon: 'mdi:linux',
+      prefix: 'linux',
+      items: [
+        {
+          text: '命令速查',
+          icon: 'lucide:book-open-text',
+          link: '/notes/linux/commands/'
+        },
+      ]
+    },
+    {
       text: '网络服务',
       collapsed: false,
       icon: 'mdi:network-outline',
@@ -172,6 +185,19 @@ const enDoc = defineCollection({
           text: 'iTerm2',
           icon: 'simple-icons:iterm2',
           link: '/en/notes/macos/iterm/'
+        },
+      ]
+    },
+    {
+      text: 'Linux',
+      collapsed: false,
+      icon: 'mdi:linux',
+      prefix: 'linux',
+      items: [
+        {
+          text: 'Command Reference',
+          icon: 'lucide:book-open-text',
+          link: '/en/notes/linux/commands/'
         },
       ]
     },

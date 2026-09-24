@@ -13,8 +13,10 @@ import { viteBundler } from '@vuepress/bundler-vite'
 import { defineUserConfig } from 'vuepress'
 import { plumeTheme } from 'vuepress-theme-plume'
 
+const base = '/GearPress/'
+
 export default defineUserConfig({
-  base: '/GearPress/',
+  base,
   lang: 'zh-CN',
   locales: {
     '/': {
@@ -31,7 +33,7 @@ export default defineUserConfig({
 
   head: [
     // 配置站点图标
-    ['link', { rel: 'icon', type: 'image/png', href: 'favicon.png' }],
+    ['link', { rel: 'icon', type: 'image/png', href: `${base}favicon.png` }],
   ],
 
   bundler: viteBundler(),

@@ -31,6 +31,17 @@ export const zhNavbar = defineNavbarConfig([
           }
         ]
       },
+      {
+        text: 'Linux',
+        icon: 'mdi:linux',
+        items: [
+          {
+            text: '命令速查',
+            icon: 'lucide:book-open-text',
+            link: '/notes/linux/commands/'
+          },
+        ]
+      },
       { 
         text: '网络',
         icon: 'mdi:network-outline', 
@@ -90,6 +101,17 @@ export const enNavbar = defineNavbarConfig([
             icon: 'simple-icons:iterm2',
             link: '/en/notes/macos/iterm/'
           }
+        ]
+      },
+      {
+        text: 'Linux',
+        icon: 'mdi:linux',
+        items: [
+          {
+            text: 'Command Reference',
+            icon: 'lucide:book-open-text',
+            link: '/en/notes/linux/commands/'
+          },
         ]
       },
       { 

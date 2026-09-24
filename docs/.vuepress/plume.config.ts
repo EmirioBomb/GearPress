@@ -28,7 +28,7 @@ export default defineThemeConfig({
   ],
   navbarSocialInclude: ['github', 'x'], // 允许显示在导航栏的 social 社交链接
   // aside: true, // 页内侧边栏， 默认显示在右侧
-  outline: [2, 6], // 页内大纲， 默认显示 h2 - h6
+  outline: [2], // 页内大纲仅显示二级分类标题，避免命令列表过长
 
   /**
    * 文章版权信息
