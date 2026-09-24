@@ -1,3 +1,25 @@
+## 🔖 Release v2.10.0 (2026-09-21)
+
+### ✨ Features
+
+* **navigation:** add card and list views ([8d2540b](https://github.com/EmirioBomb/GearPress/commit/8d2540bf7222da3cab854f5611626fd8588d30e2))
+* **navigation:** enhance search and facet counts ([7b2567b](https://github.com/EmirioBomb/GearPress/commit/7b2567b3f9483dc33796cb53eac69d9468632e38))
+* **ui:** add accessible themed select menus ([e7d0bd2](https://github.com/EmirioBomb/GearPress/commit/e7d0bd233b120ff3d1195149525d1ef90c0759d6))
+
+### 🐛 Bug Fixes
+
+* **navigation:** align sorting reset and card reading order ([928121f](https://github.com/EmirioBomb/GearPress/commit/928121f327c51f19c6dc8811a510fadf28b3db1f))
+* **navigation:** interleave Chinese names in alphabetical sorting ([5dedf7d](https://github.com/EmirioBomb/GearPress/commit/5dedf7da4e35e47c78ea0fa648215169576ed8c2))
+
+### 🔧 Chores
+
+* **agents:** strengthen navigation catalog validation ([832c839](https://github.com/EmirioBomb/GearPress/commit/832c83918728699d915e95274681b6777a0d0cf6))
+* **agents:** verify commit message construction ([f052c2c](https://github.com/EmirioBomb/GearPress/commit/f052c2c22468be1ca965fe64790a6f75c5d6b06e))
+
+### 🎨 Style
+
+* **css:** align navigation toolbar controls ([5bec44e](https://github.com/EmirioBomb/GearPress/commit/5bec44e5d9158d1b4cbfda7f626135d7c8ac8844))
+
 ## 🔖 Release v2.9.0 (2026-09-17)
 
 ### ✨ Features
