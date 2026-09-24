@@ -1,3 +1,13 @@
+## 🔖 Release v2.10.1 (2026-09-24)
+
+### 📝 Documentation
+
+* **content:** expand Linux command reference ([5f518b6](https://github.com/EmirioBomb/GearPress/commit/5f518b6ef0dd7583ccf7d534ca576cbc55bd414d))
+
+### 🎨 Style
+
+* **css:** tune select control sizing ([4c3e495](https://github.com/EmirioBomb/GearPress/commit/4c3e4954b95dbf8eed6f2920dde1248efd984b44))
+
 ## 🔖 Release v2.10.0 (2026-09-21)
 
 ### ✨ Features
