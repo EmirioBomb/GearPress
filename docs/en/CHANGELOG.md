@@ -1,3 +1,17 @@
+## 🔖 Release v2.11.0 (2026-10-23)
+
+### ✨ Features
+
+* **navigation:** add social and video website cards ([72d4d2e](https://github.com/EmirioBomb/GearPress/commit/72d4d2ecc6adc3d80f7a6a69cafd01e69396f874))
+
+### 🐛 Bug Fixes
+
+* **navigation:** keep sort menu below sticky filters ([67bf54b](https://github.com/EmirioBomb/GearPress/commit/67bf54bbe6f11f3cc75006d093be807a40501f1d))
+
+### 🔧 Chores
+
+* **site:** use root path as VuePress base ([b632443](https://github.com/EmirioBomb/GearPress/commit/b6324434dfdb8d6a3f2207afac474eaf2b33a0d9))
+
 ## 🔖 Release v2.10.1 (2026-09-24)
 
 ### 📝 Documentation
