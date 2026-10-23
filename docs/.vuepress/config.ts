@@ -13,7 +13,7 @@ import { viteBundler } from '@vuepress/bundler-vite'
 import { defineUserConfig } from 'vuepress'
 import { plumeTheme } from 'vuepress-theme-plume'
 
-const base = '/GearPress/'
+const base = '/'
 
 export default defineUserConfig({
   base,
