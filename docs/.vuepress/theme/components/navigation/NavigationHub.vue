@@ -1618,6 +1618,7 @@ h1 {
 }
 
 .navigation-sort {
+  --gp-select-z-index: 10;
   --gp-select-min-width: 126px;
   --gp-select-menu-min-width: 148px;
   --gp-select-option-height: 32px;
