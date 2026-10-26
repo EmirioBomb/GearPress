@@ -1,41 +1,7 @@
 <template>
   <main class="navigation-hub" :class="{ 'mobile-filters-open': mobileFiltersOpen }">
+    <h1 class="navigation-title">{{ copy.title }}</h1>
     <section class="navigation-panel">
-      <div class="hero-visual" aria-hidden="true">
-        <span class="hero-aurora hero-aurora-cyan" />
-        <span class="hero-aurora hero-aurora-blue" />
-        <span class="hero-aurora hero-aurora-purple" />
-        <svg class="hero-routes" viewBox="0 0 1200 160" preserveAspectRatio="none">
-          <path
-            class="hero-route hero-route-one"
-            d="M-80 118 C 150 42, 330 126, 540 78 S 820 18, 1040 44 S 1190 70, 1280 38"
-          />
-          <path
-            class="hero-route-highlight hero-route-highlight-one"
-            d="M-80 118 C 150 42, 330 126, 540 78 S 820 18, 1040 44 S 1190 70, 1280 38"
-          />
-          <path
-            class="hero-route hero-route-two"
-            d="M-60 34 C 170 92, 350 18, 570 58 S 820 118, 1010 96 S 1160 70, 1270 112"
-          />
-          <path
-            class="hero-route-highlight hero-route-highlight-two"
-            d="M-60 34 C 170 92, 350 18, 570 58 S 820 118, 1010 96 S 1160 70, 1270 112"
-          />
-        </svg>
-        <span class="hero-orbit">
-          <span class="hero-orbit-ring hero-orbit-ring-one" />
-          <span class="hero-orbit-ring hero-orbit-ring-two" />
-          <span class="hero-orbit-core" />
-        </span>
-      </div>
-      <header class="hub-hero">
-        <div class="hero-copy" :class="`is-${locale}`">
-          <h1>{{ copy.title }}</h1>
-          <p class="intro">{{ copy.intro }}</p>
-        </div>
-      </header>
-
       <div
         ref="filterDockSlot"
         class="filter-dock-slot"
@@ -320,11 +286,6 @@
               <span class="card-description">{{ localize(item.description) }}</span>
             </span>
 
-            <span class="card-footer">
-              <span class="tags">
-                <small v-for="tag in item.tags.slice(0, 2)" :key="tag">{{ tag }}</small>
-              </span>
-            </span>
           </a>
         </section>
 
@@ -363,8 +324,7 @@ const locale = computed<"zh" | "en">(() => lang.value.startsWith("en") ? "en" : 
 
 const content = {
   zh: {
-    title: "一切从这里开始",
-    intro: "这里收录了我日常最常使用的应用与网站。",
+    title: "导航",
     searchPlaceholder: "搜索应用、网站或分类…",
     searchLabel: "搜索导航项目",
     platformLabel: "按平台筛选",
@@ -390,8 +350,7 @@ const content = {
     reset: "重置筛选",
   },
   en: {
-    title: "Everything you need, just a click away",
-    intro: "A collection of the apps and websites I use most often every day.",
+    title: "Navigation",
     searchPlaceholder: "Search apps, websites, or categories…",
     searchLabel: "Search navigation items",
     platformLabel: "Filter by platform",
@@ -881,13 +840,6 @@ function resetFilters() {
   --hub-radius: 24px;
   --filter-dock-top: 64px;
   --filter-dock-height: 54px;
-  --hero-visual-height: 92px;
-  --nav-panel-gradient: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--gp-surface-bg-elv) 94%, transparent),
-    color-mix(in srgb, var(--gp-home-card-bg) 88%, transparent) 52%,
-    color-mix(in srgb, var(--gp-purple) 7%, var(--gp-home-card-bg))
-  );
   box-sizing: border-box;
   width: min(100%, 1440px);
   margin: 0 auto;
@@ -896,299 +848,7 @@ function resetFilters() {
 }
 
 .navigation-panel {
-  position: relative;
-  margin-bottom: 18px;
-  border: 1px solid var(--gp-home-card-border);
-  border-radius: calc(var(--hub-radius) + 8px);
-  background: var(--nav-panel-gradient);
-  box-shadow: 0 10px 22px color-mix(in srgb, var(--gp-blue) 9%, transparent);
-}
-
-.hub-hero {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  min-height: 92px;
-  box-sizing: border-box;
-  align-items: center;
-  padding: 11px clamp(20px, 3vw, 38px);
-  overflow: hidden;
-  border: 0;
-  border-radius: calc(var(--hub-radius) + 8px) calc(var(--hub-radius) + 8px) 0 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-.hero-visual {
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  overflow: hidden;
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.hero-visual::after {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--gp-home-card-bg) 55%, transparent), transparent 64%);
-  content: "";
-}
-
-.hero-aurora {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(38px);
-  opacity: 0.18;
-  will-change: transform;
-}
-
-.hero-aurora-cyan {
-  top: -94px;
-  left: -4%;
-  width: 48%;
-  height: 230px;
-  background: radial-gradient(ellipse, var(--gp-cyan), transparent 68%);
-  animation: hero-aurora-cyan-drift 18s ease-in-out infinite alternate;
-}
-
-.hero-aurora-blue {
-  top: -132px;
-  left: 31%;
-  width: 54%;
-  height: 280px;
-  background: radial-gradient(ellipse, var(--gp-blue), transparent 68%);
-  opacity: 0.16;
-  animation: hero-aurora-blue-drift 22s ease-in-out infinite alternate;
-}
-
-.hero-aurora-purple {
-  right: -7%;
-  bottom: -132px;
-  width: 48%;
-  height: 270px;
-  background: radial-gradient(ellipse, var(--gp-purple), transparent 68%);
-  opacity: 0.15;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0 58%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0 58%, transparent 100%);
-  animation: hero-aurora-purple-drift 20s ease-in-out infinite alternate;
-}
-
-.hero-routes {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  width: 100%;
-  height: var(--hero-visual-height);
-  overflow: visible;
-  opacity: 0.68;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0 64%, rgb(0 0 0 / 0.72) 84%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0 64%, rgb(0 0 0 / 0.72) 84%, transparent 100%);
-}
-
-.hero-route,
-.hero-route-highlight {
-  fill: none;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-}
-
-.hero-route {
-  stroke-width: 0.65;
-}
-
-.hero-route-one {
-  stroke: color-mix(in srgb, var(--gp-cyan) 48%, transparent);
-}
-
-.hero-route-two {
-  stroke: color-mix(in srgb, var(--gp-purple) 38%, transparent);
-}
-
-.hero-route-highlight {
-  stroke-width: 1.55;
-  stroke-dasharray: 120 1250;
-  filter: drop-shadow(0 0 4px currentColor);
-}
-
-.hero-route-highlight-one {
-  color: var(--gp-cyan);
-  stroke: color-mix(in srgb, var(--gp-cyan) 94%, white);
-  animation: hero-route-flow 7s linear infinite;
-}
-
-.hero-route-highlight-two {
-  color: var(--gp-purple);
-  stroke: color-mix(in srgb, var(--gp-purple) 88%, white);
-  animation: hero-route-flow 9s linear -4s infinite reverse;
-}
-
-.hero-orbit {
-  position: absolute;
-  z-index: 2;
-  top: 50%;
-  right: -97px;
-  bottom: auto;
-  left: auto;
-  display: block;
-  width: 194px;
-  aspect-ratio: 1;
-  opacity: 0.62;
-  transform: translateY(-50%);
-}
-
-.hero-orbit::before {
-  position: absolute;
-  inset: -48%;
-  opacity: 0.96;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--gp-cyan) 42%, transparent) 0 12%,
-    color-mix(in srgb, var(--gp-blue) 28%, transparent) 32%,
-    color-mix(in srgb, var(--gp-purple) 18%, transparent) 56%,
-    transparent 78%
-  );
-  filter: blur(28px);
-  animation: hero-orbit-aura-pulse 5.6s ease-in-out infinite;
-  content: "";
-}
-
-.hero-orbit-ring {
-  position: absolute;
-  display: block;
-  border-radius: 50%;
-  opacity: 0.62;
-  background: conic-gradient(
-    from 12deg,
-    transparent 0deg 28deg,
-    color-mix(in srgb, var(--gp-cyan) 76%, transparent) 46deg,
-    color-mix(in srgb, #eaffff 72%, transparent) 58deg,
-    color-mix(in srgb, var(--gp-blue) 56%, transparent) 75deg,
-    transparent 94deg 202deg,
-    color-mix(in srgb, var(--gp-purple) 52%, transparent) 222deg,
-    color-mix(in srgb, var(--gp-blue) 42%, transparent) 246deg,
-    transparent 269deg 360deg
-  );
-  will-change: transform;
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
-  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
-}
-
-.hero-orbit-ring-one {
-  top: 29%;
-  left: 0;
-  width: 100%;
-  height: 42%;
-  animation: hero-orbit-spin-one 14s linear infinite;
-}
-
-.hero-orbit-ring-two {
-  top: 19%;
-  left: 16%;
-  width: 68%;
-  height: 62%;
-  animation: hero-orbit-spin-two 10s linear infinite reverse;
-}
-
-.hero-orbit-core {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: block;
-  width: 42px;
-  height: 42px;
-  border: 1px solid color-mix(in srgb, var(--gp-cyan) 62%, transparent);
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    #f4feff 0 5%,
-    color-mix(in srgb, var(--gp-cyan) 88%, white) 11%,
-    color-mix(in srgb, var(--gp-blue) 54%, transparent) 34%,
-    transparent 70%
-  );
-  box-shadow:
-    0 0 14px color-mix(in srgb, var(--gp-cyan) 78%, transparent),
-    0 0 42px color-mix(in srgb, var(--gp-blue) 54%, transparent),
-    0 0 92px color-mix(in srgb, var(--gp-purple) 30%, transparent);
-  transform: translate(-50%, -50%);
-  animation: hero-orbit-core-pulse 4.8s ease-in-out infinite;
-}
-
-.hero-orbit-core::after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #f7ffff;
-  box-shadow: 0 0 8px var(--gp-cyan);
-  content: "";
-  transform: translate(-50%, -50%);
-}
-
-.hero-copy {
-  position: relative;
-  z-index: 2;
-}
-
-@keyframes hero-orbit-aura-pulse {
-  50% {
-    opacity: 0.98;
-    transform: scale(1.12);
-  }
-}
-
-@keyframes hero-orbit-spin-one {
-  from {
-    transform: rotate(-18deg);
-  }
-
-  to {
-    transform: rotate(342deg);
-  }
-}
-
-@keyframes hero-orbit-spin-two {
-  from {
-    transform: rotate(38deg);
-  }
-
-  to {
-    transform: rotate(398deg);
-  }
-}
-
-@keyframes hero-orbit-core-pulse {
-  50% {
-    opacity: 0.78;
-    transform: translate(-50%, -50%) scale(1.12);
-  }
-}
-
-@keyframes hero-aurora-cyan-drift {
-  to {
-    transform: translate3d(24%, 18px, 0) scale(1.12);
-  }
-}
-
-@keyframes hero-aurora-blue-drift {
-  to {
-    transform: translate3d(-13%, 24px, 0) scale(0.92);
-  }
-}
-
-@keyframes hero-aurora-purple-drift {
-  to {
-    transform: translate3d(-18%, -18px, 0) scale(1.1);
-  }
-}
-
-@keyframes hero-route-flow {
-  to {
-    stroke-dashoffset: -1370;
-  }
+  margin-bottom: 14px;
 }
 
 .filter-dock-slot {
@@ -1205,9 +865,9 @@ function resetFilters() {
   gap: 8px;
   align-items: center;
   margin: 0;
-  padding: 8px 12px 12px;
+  padding: 0;
   border: 0;
-  border-radius: 0 0 calc(var(--hub-radius) + 8px) calc(var(--hub-radius) + 8px);
+  border-radius: 12px;
   background: transparent;
   box-shadow: none;
 }
@@ -1233,30 +893,16 @@ function resetFilters() {
   }
 }
 
-h1 {
-  max-width: 680px;
-  margin: 0;
-  color: transparent;
-  background: var(--gp-gradient-readable);
-  background-clip: text;
-  font-size: clamp(28px, 3.2vw, 36px);
-  font-weight: 760;
-  letter-spacing: -0.02em;
-  line-height: 1.12;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.intro {
-  display: -webkit-box;
-  max-width: 660px;
-  margin: 8px 0 0;
+.navigation-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
   overflow: hidden;
-  color: var(--gp-home-muted);
-  font-size: clamp(12px, 1.2vw, 13px);
-  line-height: 1.55;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  white-space: nowrap;
+  border: 0;
+  clip-path: inset(50%);
 }
 
 @property --gear-home-border-angle {
@@ -1539,7 +1185,7 @@ h1 {
 .navigation-content {
   display: grid;
   grid-template-columns: 148px minmax(0, 1fr);
-  gap: 18px;
+  gap: 14px;
   align-items: start;
 }
 
@@ -1892,9 +1538,9 @@ h1 {
 
 .card-field {
   display: grid;
-  grid-auto-rows: minmax(195px, auto);
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
-  gap: 12px;
+  grid-auto-rows: minmax(160px, auto);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 16px;
 }
 
 .card-field.is-list-view {
@@ -1907,8 +1553,8 @@ h1 {
 .is-list-view .nav-card.is-wide,
 .is-list-view .nav-card.is-tall {
   display: grid;
-  grid-template-areas: "top content footer";
-  grid-template-columns: auto minmax(0, 1fr) minmax(120px, auto);
+  grid-template-areas: "top content";
+  grid-template-columns: auto minmax(0, 1fr);
   grid-column: span 1;
   grid-row: span 1;
   min-height: 88px;
@@ -1955,16 +1601,6 @@ h1 {
   text-overflow: ellipsis;
 }
 
-.is-list-view .card-footer {
-  grid-area: footer;
-  justify-content: flex-end;
-  margin-top: 0;
-}
-
-.is-list-view .tags {
-  justify-content: flex-end;
-}
-
 .is-list-view .card-aura {
   top: -88px;
   right: -42px;
@@ -1978,8 +1614,8 @@ h1 {
   box-sizing: border-box;
   min-width: 0;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 16px;
+  justify-content: flex-start;
+  padding: 18px;
   overflow: hidden;
   color: var(--vp-c-text-1);
   text-decoration: none;
@@ -2280,8 +1916,7 @@ h1 {
 
 .card-topline,
 .card-meta-row,
-.platform-stack,
-.tags {
+.platform-stack {
   display: flex;
   align-items: center;
 }
@@ -2342,24 +1977,28 @@ h1 {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  margin: 14px 0 auto;
+  margin: 12px 0 0;
 }
 
 .card-category {
+  align-self: flex-start;
   min-width: 0;
+  max-width: 100%;
+  padding: 3px 7px;
   overflow: hidden;
-  color: color-mix(in srgb, var(--item-accent) 72%, var(--vp-c-text-1));
+  color: color-mix(in srgb, var(--item-accent) 76%, var(--vp-c-text-1));
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  font-weight: 650;
+  line-height: 1.2;
   text-overflow: ellipsis;
-  text-transform: uppercase;
   white-space: nowrap;
+  border: 1px solid color-mix(in srgb, var(--item-accent) 24%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--item-accent) 10%, var(--gp-surface-bg-soft));
 }
 
 .card-content strong {
   display: -webkit-box;
-  min-height: calc(18px * 1.3 * 2);
   overflow: hidden;
   font-size: 18px;
   line-height: 1.3;
@@ -2382,13 +2021,6 @@ h1 {
 .is-tall .card-description {
   font-size: 13px;
   -webkit-line-clamp: 5;
-}
-
-.card-footer {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  margin-top: 12px;
 }
 
 .platform-stack {
@@ -2420,28 +2052,6 @@ h1 {
   margin-left: 0;
 }
 
-.tags {
-  flex-wrap: wrap;
-  gap: 5px;
-  min-width: 0;
-  max-width: 100%;
-}
-
-.tags small {
-  max-width: 100%;
-  padding: 3px 7px;
-  overflow: hidden;
-  color: color-mix(in srgb, var(--item-accent) 76%, var(--vp-c-text-1));
-  font-size: 10px;
-  font-weight: 650;
-  line-height: 1.2;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  border: 1px solid color-mix(in srgb, var(--item-accent) 24%, transparent);
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--item-accent) 10%, var(--gp-surface-bg-soft));
-}
-
 .empty-state {
   display: grid;
   min-height: 320px;
@@ -2467,58 +2077,6 @@ h1 {
   margin: 8px 0 18px;
   color: var(--gp-home-muted);
   font-size: 13px;
-}
-
-:global(html[data-theme="dark"] .navigation-hub) {
-  --nav-panel-gradient: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--gp-surface-bg-elv) 96%, transparent),
-    color-mix(in srgb, var(--gp-home-card-bg) 90%, transparent) 52%,
-    color-mix(in srgb, var(--gp-purple) 10%, var(--gp-home-card-bg))
-  );
-}
-
-:global(html[data-theme="dark"] .navigation-panel) {
-  border-color: color-mix(in srgb, var(--gp-blue) 20%, var(--gp-home-card-border));
-  background: var(--nav-panel-gradient);
-}
-
-:global(html[data-theme="dark"] .hero-aurora-cyan) {
-  opacity: 0.3;
-}
-
-:global(html[data-theme="dark"] .hero-aurora-blue) {
-  opacity: 0.26;
-}
-
-:global(html[data-theme="dark"] .hero-aurora-purple) {
-  opacity: 0.25;
-}
-
-:global(html[data-theme="dark"] .hero-routes) {
-  opacity: 0.84;
-}
-
-:global(html[data-theme="dark"] .hero-orbit) {
-  opacity: 0.62;
-}
-
-:global(html[data-theme="dark"] .hero-orbit-core) {
-  border-color: color-mix(in srgb, var(--gp-cyan) 62%, transparent);
-  box-shadow:
-    0 0 14px color-mix(in srgb, var(--gp-cyan) 58%, transparent),
-    0 0 38px color-mix(in srgb, var(--gp-blue) 38%, transparent),
-    0 0 58px color-mix(in srgb, var(--gp-purple) 18%, transparent);
-}
-
-:global(html[data-theme="dark"] .hero-visual::after) {
-  background: linear-gradient(90deg, color-mix(in srgb, var(--gp-home-card-bg) 42%, transparent), transparent 64%);
-}
-
-:global(html[data-theme="dark"] .navigation-panel) {
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--gp-cyan) 6%, transparent),
-    0 10px 28px rgb(2 8 20 / 0.30);
 }
 
 :global(html[data-theme="dark"] .active-filter-bar) {
@@ -2609,78 +2167,11 @@ h1 {
 
 @media (max-width: 680px) {
   .navigation-hub {
-    --hero-visual-height: 98px;
     padding-bottom: 48px;
-  }
-
-  .hub-hero {
-    min-height: 98px;
-    margin-bottom: 0;
-    padding: 13px 14px;
-    border-radius: 24px 24px 0 0;
-  }
-
-  .hero-aurora {
-    filter: blur(24px);
-  }
-
-  .hero-aurora-cyan {
-    top: -72px;
-    width: 68%;
-    height: 190px;
-  }
-
-  .hero-aurora-blue {
-    top: -96px;
-    left: 24%;
-    width: 72%;
-    height: 220px;
-  }
-
-  .hero-aurora-purple {
-    right: -20%;
-    bottom: -98px;
-    width: 66%;
-    height: 210px;
-  }
-
-  .hero-orbit {
-    top: 50%;
-    right: -73px;
-    bottom: auto;
-    left: auto;
-    width: 146px;
-    opacity: 0.46;
-    transform: translateY(-50%);
-  }
-
-  :global(html[data-theme="dark"] .hero-orbit) {
-    opacity: 0.46;
-  }
-
-  .hero-orbit-ring-one {
-    display: none;
-  }
-
-  .hero-orbit-ring-two,
-  .hero-orbit-core {
-    animation: none;
-  }
-
-  .hero-orbit-core {
-    top: 50%;
-    left: 50%;
-    width: 32px;
-    height: 32px;
-  }
-
-  .hero-route-highlight {
-    animation: none;
   }
 
   .navigation-panel {
     margin-bottom: 12px;
-    border-radius: 24px;
   }
 
   .filter-dock {
@@ -2688,9 +2179,9 @@ h1 {
     grid-template-columns: 1fr;
     gap: 8px;
     margin: 0;
-    padding: 8px 10px 10px;
+    padding: 0;
     border: 0;
-    border-radius: 0 0 24px 24px;
+    border-radius: 12px;
     background: transparent;
   }
 
@@ -2773,15 +2264,6 @@ h1 {
 
   .mobile-filters-open .mobile-filter-chevron {
     transform: rotate(180deg);
-  }
-
-  h1 {
-    font-size: clamp(28px, 9vw, 36px);
-  }
-
-  .intro {
-    font-size: 12px;
-    line-height: 1.45;
   }
 
   .system-filter,
@@ -2959,24 +2441,17 @@ h1 {
   .nav-card.is-tall {
     grid-column: span 1;
     grid-row: span 1;
-    min-height: 180px;
+    min-height: 160px;
   }
 
   .card-field.is-list-view .nav-card,
   .card-field.is-list-view .nav-card.is-wide,
   .card-field.is-list-view .nav-card.is-tall {
-    grid-template-areas:
-      "top content"
-      "footer footer";
+    grid-template-areas: "top content";
     grid-template-columns: auto minmax(0, 1fr);
     min-height: 0;
     gap: 9px 11px;
     padding: 11px 36px 11px 11px;
-  }
-
-  .is-list-view .card-footer,
-  .is-list-view .tags {
-    justify-content: flex-start;
   }
 
   .is-list-view .card-description {
@@ -3028,21 +2503,12 @@ h1 {
   .nav-card.rank-gold .card-aura,
   .nav-card.rank-silver .card-aura,
   .nav-card.rank-bronze .card-aura,
-  .hero-aurora,
-  .hero-route-highlight,
-  .hero-orbit-ring,
-  .hero-orbit-core,
   .command-search.focused::before,
   .mobile-filters-open .system-filter,
   .mobile-filters-open .category-rail,
   .system-filter-item.active::before,
   .active-filter-bar {
     animation: none;
-  }
-
-  .hero-aurora,
-  .hero-orbit-ring {
-    will-change: auto;
   }
 }
 </style>
