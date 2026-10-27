@@ -1,5 +1,5 @@
 <template>
-  <main class="navigation-hub" :class="{ 'mobile-filters-open': mobileFiltersOpen }">
+  <main class="navigation-hub" :class="{ 'mobile-filters-open': mobileFiltersOpen, 'is-frequent-view': isFrequentView }">
     <h1 class="navigation-title">{{ copy.title }}</h1>
     <section class="navigation-panel">
       <div
@@ -19,7 +19,7 @@
           ref="searchInput"
           v-model="query"
           type="search"
-          :placeholder="copy.searchPlaceholder"
+          :placeholder="isFrequentView ? copy.frequentSearchPlaceholder : copy.searchPlaceholder"
           :aria-label="copy.searchLabel"
           @focus="isSearchFocused = true"
           @blur="isSearchFocused = false"
@@ -34,7 +34,7 @@
         type="button"
         class="mobile-filter-toggle"
         :aria-expanded="mobileFiltersOpen"
-        aria-controls="mobile-platform-filters mobile-detail-filters"
+        :aria-controls="isFrequentView ? 'mobile-platform-filters' : 'mobile-platform-filters mobile-detail-filters'"
         @click="mobileFiltersOpen = !mobileFiltersOpen"
       >
         <span class="mobile-filter-toggle-label">
@@ -53,15 +53,15 @@
 
       <section id="mobile-platform-filters" class="system-filter" :aria-label="copy.platformLabel">
         <button
-          v-for="filter in platformFilterOptions"
+          v-for="filter in scopeFilterOptions"
           :key="filter.id"
           type="button"
           class="system-filter-item"
-          :class="{ active: activePlatform === filter.id }"
+          :class="{ active: activeScope === filter.id }"
           :aria-label="filterCountLabel(localize(filter.label), filter.count)"
-          :aria-pressed="activePlatform === filter.id"
-          :disabled="filter.count === 0 && activePlatform !== filter.id"
-          @click="activePlatform = filter.id"
+          :aria-pressed="activeScope === filter.id"
+          :disabled="filter.count === 0 && activeScope !== filter.id"
+          @click="selectScope(filter.id)"
         >
           <Icon :icon="filter.icon" class="system-filter-icon" aria-hidden="true" />
           <span>{{ localize(filter.label) }}</span>
@@ -73,7 +73,7 @@
     </section>
 
     <div class="navigation-content">
-      <aside id="mobile-detail-filters" class="category-rail" :aria-label="copy.categoryLabel">
+      <aside v-if="!isFrequentView" id="mobile-detail-filters" class="category-rail" :aria-label="copy.categoryLabel">
         <div class="filter-group">
           <div class="category-rail-title">{{ copy.categoryTitle }}</div>
           <div class="category-rail-list">
@@ -128,7 +128,7 @@
       </aside>
 
       <div class="card-area">
-        <div class="card-toolbar">
+        <div v-if="!isFrequentView" class="card-toolbar">
           <div class="view-switch" role="group" :aria-label="copy.viewLabel">
             <button
               type="button"
@@ -173,13 +173,13 @@
 
           <span class="active-filter-chips">
             <button
-              v-if="activePlatform !== 'all'"
+              v-if="activeScope !== 'all'"
               type="button"
-              :aria-label="`${copy.removeFilter} ${activePlatformLabel}`"
-              @click="activePlatform = 'all'"
+              :aria-label="`${copy.removeFilter} ${activeScopeLabel}`"
+              @click="selectScope('all')"
             >
-              <Icon :icon="platformIcon(activePlatform)" aria-hidden="true" />
-              <span>{{ activePlatformLabel }}</span>
+              <Icon :icon="activeScope === 'frequent' ? 'lucide:star' : platformIcon(activeScope)" aria-hidden="true" />
+              <span>{{ activeScopeLabel }}</span>
               <Icon icon="lucide:x" class="chip-remove" aria-hidden="true" />
             </button>
             <button
@@ -220,8 +220,56 @@
           </span>
         </section>
 
+        <div v-if="isFrequentView && filteredItems.length" class="frequent-groups">
+          <section
+            v-for="group in displayedFrequentGroups"
+            :key="group.id"
+            class="frequent-group"
+            :class="`frequent-group-${group.id}`"
+            :aria-labelledby="`frequent-heading-${group.id}`"
+          >
+            <h2 :id="`frequent-heading-${group.id}`" class="frequent-heading">
+              {{ localize(group.label) }}
+            </h2>
+            <div class="frequent-links">
+              <a
+                v-for="{ item, description } in group.items"
+                :key="item.id"
+                class="frequent-link"
+                :style="{ '--item-accent': item.accent }"
+                :href="item.url"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="card-topline">
+                  <span class="card-leading">
+                    <span class="app-icon">
+                      <img
+                        v-if="item.iconSourceUrl && !failedIconIds.has(item.id)"
+                        :src="navigationIconUrl(item)"
+                        class="is-static"
+                        alt=""
+                        width="24"
+                        height="24"
+                        loading="lazy"
+                        decoding="async"
+                        no-view
+                        @error="markIconAsFailed(item.id)"
+                      >
+                      <Icon v-else :icon="item.icon" aria-hidden="true" />
+                    </span>
+                    <strong class="card-title">{{ item.name }}</strong>
+                  </span>
+                  <Icon icon="lucide:arrow-up-right" class="open-icon" aria-hidden="true" />
+                </span>
+                <span class="frequent-description">{{ localize(description) }}</span>
+              </a>
+            </div>
+          </section>
+        </div>
+
         <section
-          v-if="filteredItems.length"
+          v-else-if="filteredItems.length"
           class="card-field"
           :class="{ 'is-list-view': activeView === 'list' }"
         >
@@ -240,6 +288,14 @@
           >
             <span class="card-aura" aria-hidden="true" />
             <span v-if="cardRank(item) > 0" class="rank-sheen" aria-hidden="true" />
+            <span
+              v-if="cardRank(item) > 0"
+              class="ranking-badge"
+              role="img"
+              :aria-label="rankLabel(cardRank(item))"
+            >
+              {{ rankMark(cardRank(item)) }} <small>#{{ cardRank(item) }}</small>
+            </span>
             <span class="card-topline">
               <span class="card-leading">
                 <span class="app-icon">
@@ -257,19 +313,13 @@
                   >
                   <Icon v-else :icon="item.icon" aria-hidden="true" />
                 </span>
-                <span
-                  v-if="cardRank(item) > 0"
-                  class="ranking-badge"
-                  role="img"
-                  :aria-label="rankLabel(cardRank(item))"
-                >
-                  {{ rankMark(cardRank(item)) }} <small>#{{ cardRank(item) }}</small>
-                </span>
+                <strong class="card-title">{{ item.name }}</strong>
               </span>
-              <Icon icon="lucide:arrow-up-right" class="open-icon" />
+              <Icon icon="lucide:arrow-up-right" class="open-icon" aria-hidden="true" />
             </span>
 
             <span class="card-content">
+              <span class="card-description">{{ localize(item.description) }}</span>
               <span class="card-meta-row">
                 <span class="card-category">{{ localize(categoryLabels[item.category]) }}</span>
                 <span class="platform-stack">
@@ -282,10 +332,7 @@
                   </span>
                 </span>
               </span>
-              <strong>{{ item.name }}</strong>
-              <span class="card-description">{{ localize(item.description) }}</span>
             </span>
-
           </a>
         </section>
 
@@ -310,6 +357,8 @@ import SelectMenu from "../SelectMenu.vue"
 import {
   categoryLabels,
   featureFilters,
+  navigationFrequentGroups,
+  navigationFrequentIds,
   navigationItems,
   platformFilters,
   type LocalizedText,
@@ -327,7 +376,9 @@ const content = {
     title: "导航",
     searchPlaceholder: "搜索应用、网站或分类…",
     searchLabel: "搜索导航项目",
-    platformLabel: "按平台筛选",
+    frequent: "常用",
+    frequentSearchPlaceholder: "搜索常用网站…",
+    platformLabel: "选择常用或平台",
     categoryLabel: "按分类与特性筛选",
     categoryTitle: "分类",
     featureTitle: "特性",
@@ -346,14 +397,16 @@ const content = {
     allCategories: "全部",
     clear: "清空搜索",
     emptyTitle: "这条轨道暂时没有坐标",
-    emptyText: "换一个关键词，或回到完整导航场。",
+    emptyText: "换一个关键词，或重置筛选回到默认视图。",
     reset: "重置筛选",
   },
   en: {
     title: "Navigation",
     searchPlaceholder: "Search apps, websites, or categories…",
     searchLabel: "Search navigation items",
-    platformLabel: "Filter by platform",
+    frequent: "Frequent",
+    frequentSearchPlaceholder: "Search frequent websites…",
+    platformLabel: "Choose frequent or a platform",
     categoryLabel: "Filter by category and features",
     categoryTitle: "Category",
     featureTitle: "Features",
@@ -372,7 +425,7 @@ const content = {
     allCategories: "All",
     clear: "Clear search",
     emptyTitle: "No destinations on this orbit",
-    emptyText: "Try another keyword or return to the complete field.",
+    emptyText: "Try another keyword or reset filters to return to the default view.",
     reset: "Reset filters",
   },
 }
@@ -385,10 +438,18 @@ const sortOptions = computed(() => [
 ])
 type NavigationSort = "recommended" | "nameAsc" | "nameDesc"
 type NavigationView = "grid" | "list"
+// Frequent is a curated view, not an item platform.
+type NavigationScope = NavigationPlatform | "all" | "frequent"
+
+const frequentItems = navigationFrequentIds
+  .map(id => navigationItems.find(item => item.id === id && item.platforms.includes("web")))
+  .filter((item): item is NavigationItem => Boolean(item))
+const frequentItemIds = new Set<string>(frequentItems.map(item => item.id))
 
 const navigationViewStorageKey = "gearpress-navigation-view"
-const defaultPlatform: NavigationPlatform = "web"
-const activePlatform = ref<NavigationPlatform | "all">(defaultPlatform)
+const defaultScope: NavigationScope = "frequent"
+const activeScope = ref<NavigationScope>(defaultScope)
+const isFrequentView = computed(() => activeScope.value === "frequent")
 const activeCategory = ref<NavigationCategory | "all">("all")
 const activeFeatures = ref<NavigationFeature[]>([])
 const activeSort = ref<NavigationSort>("recommended")
@@ -500,34 +561,36 @@ function itemMatchesQuery(item: NavigationItem, searchQuery: string) {
 }
 
 interface NavigationFilterState {
-  platform: NavigationPlatform | "all"
+  scope: NavigationScope
   category: NavigationCategory | "all"
   features: readonly NavigationFeature[]
   searchQuery: string
 }
 
 function itemMatchesFilters(item: NavigationItem, filters: NavigationFilterState) {
-  const matchesPlatform = filters.platform === "all" || item.platforms.includes(filters.platform)
+  const matchesScope = filters.scope === "frequent"
+    ? frequentItemIds.has(item.id)
+    : filters.scope === "all" || item.platforms.includes(filters.scope)
   const matchesCategory = filters.category === "all" || item.category === filters.category
 
-  return matchesPlatform
+  return matchesScope
     && matchesCategory
     && matchesFeatures(item, filters.features)
     && itemMatchesQuery(item, filters.searchQuery)
 }
 
-function platformCount(platform: NavigationPlatform | "all") {
+function scopeCount(scope: NavigationScope) {
   return navigationItems.filter(item => itemMatchesFilters(item, {
-    platform,
-    category: activeCategory.value,
-    features: activeFeatures.value,
+    scope,
+    category: scope === "frequent" ? "all" : activeCategory.value,
+    features: scope === "frequent" ? [] : activeFeatures.value,
     searchQuery: query.value,
   })).length
 }
 
 function categoryCount(category: NavigationCategory | "all") {
   return navigationItems.filter(item => itemMatchesFilters(item, {
-    platform: activePlatform.value,
+    scope: activeScope.value,
     category,
     features: activeFeatures.value,
     searchQuery: query.value,
@@ -538,7 +601,7 @@ function featureCount(feature: NavigationFeature) {
   const otherFeatures = activeFeatures.value.filter(item => item !== feature)
 
   return navigationItems.filter(item => itemMatchesFilters(item, {
-    platform: activePlatform.value,
+    scope: activeScope.value,
     category: activeCategory.value,
     features: [...otherFeatures, feature],
     searchQuery: query.value,
@@ -559,9 +622,23 @@ function removeFeature(feature: NavigationFeature) {
   activeFeatures.value = activeFeatures.value.filter(item => item !== feature)
 }
 
-const platformFilterOptions = computed(() => {
-  return platformFilters.map(filter => ({ ...filter, count: platformCount(filter.id) }))
-})
+function selectScope(scope: NavigationScope) {
+  activeScope.value = scope
+  if (scope === "frequent") {
+    activeCategory.value = "all"
+    activeFeatures.value = []
+  }
+}
+
+const scopeFilterOptions = computed(() => [
+  {
+    id: "frequent" as const,
+    label: { zh: content.zh.frequent, en: content.en.frequent },
+    icon: "lucide:star",
+    count: scopeCount("frequent"),
+  },
+  ...platformFilters.map(filter => ({ ...filter, count: scopeCount(filter.id) })),
+])
 
 const allCategoryCount = computed(() => categoryCount("all"))
 
@@ -583,15 +660,26 @@ const activeFeatureFilters = computed(() => {
 
 const filteredItems = computed(() => {
   return navigationItems.filter(item => itemMatchesFilters(item, {
-    platform: activePlatform.value,
+    scope: activeScope.value,
     category: activeCategory.value,
     features: activeFeatures.value,
     searchQuery: query.value,
   }))
 })
 
+const displayedFrequentGroups = computed(() => {
+  const visibleIds = new Set(filteredItems.value.map(item => item.id))
+  return navigationFrequentGroups.map(group => ({
+    ...group,
+    items: group.items.flatMap(entry => {
+      const item = frequentItems.find(item => item.id === entry.id)
+      return item && visibleIds.has(item.id) ? [{ item, description: entry.description }] : []
+    }),
+  })).filter(group => group.items.length > 0)
+})
+
 const isDefaultOverview = computed(() => {
-  return activePlatform.value === defaultPlatform
+  return activeScope.value === "web"
     && activeCategory.value === "all"
     && activeFeatures.value.length === 0
     && !query.value.trim()
@@ -609,6 +697,10 @@ const nameCollator = computed(() => {
 })
 
 const displayedItems = computed(() => {
+  if (isFrequentView.value) {
+    return frequentItems.filter(item => itemMatchesQuery(item, query.value))
+  }
+
   const indexedItems = filteredItems.value.map((item, index) => ({ item, index }))
 
   if (activeSort.value === "nameAsc" || activeSort.value === "nameDesc") {
@@ -654,14 +746,14 @@ function rankLabel(rank: number) {
 }
 
 const hasActiveFilters = computed(() => {
-  return activePlatform.value !== defaultPlatform
+  return (activeScope.value !== defaultScope && activeScope.value !== "all")
     || activeCategory.value !== "all"
     || activeFeatures.value.length > 0
     || Boolean(query.value.trim())
 })
 
 const activeFilterCount = computed(() => {
-  return Number(activePlatform.value !== defaultPlatform)
+  return Number(activeScope.value !== defaultScope && activeScope.value !== "all")
     + Number(activeCategory.value !== "all")
     + activeFeatures.value.length
     + Number(Boolean(query.value.trim()))
@@ -672,8 +764,9 @@ const activeFilterCountLabel = computed(() => {
   return `${activeFilterCount.value} ${copy.value.selectedFilters.toLocaleLowerCase(locale.value)}`
 })
 
-const activePlatformLabel = computed(() => {
-  return activePlatform.value === "all" ? "" : platformName(activePlatform.value)
+const activeScopeLabel = computed(() => {
+  if (activeScope.value === "frequent") return copy.value.frequent
+  return activeScope.value === "all" ? "" : platformName(activeScope.value)
 })
 
 const activeCategoryLabel = computed(() => {
@@ -805,7 +898,7 @@ function clearSearch() {
 }
 
 function resetFilters() {
-  activePlatform.value = defaultPlatform
+  activeScope.value = defaultScope
   activeCategory.value = "all"
   activeFeatures.value = []
   activeSort.value = "recommended"
@@ -1029,8 +1122,9 @@ function resetFilters() {
 
 .system-filter {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(max-content, 1fr));
   min-width: 0;
+  overflow-x: auto;
   gap: 3px;
   margin: 0;
   padding: 0;
@@ -1187,6 +1281,158 @@ function resetFilters() {
   grid-template-columns: 148px minmax(0, 1fr);
   gap: 14px;
   align-items: start;
+}
+
+.is-frequent-view .navigation-content {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.frequent-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.frequent-group {
+  --group-accent: var(--gp-cyan);
+
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid color-mix(in srgb, var(--group-accent) 18%, var(--gp-home-card-border));
+  border-radius: var(--hub-radius);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--group-accent) 7%, var(--gp-home-card-bg)), var(--gp-home-card-bg));
+}
+
+.frequent-group-communication {
+  --group-accent: var(--gp-blue);
+}
+
+.frequent-group-media {
+  --group-accent: var(--gp-purple);
+}
+
+.frequent-group > .frequent-heading {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  margin: 0 0 14px;
+  padding: 0;
+  color: var(--vp-c-text-1);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  border: 0;
+}
+
+.frequent-heading::before {
+  width: 4px;
+  height: 15px;
+  flex: none;
+  border-radius: 999px;
+  background: var(--group-accent);
+  content: "";
+}
+
+.frequent-links {
+  display: grid;
+  grid-auto-rows: 1fr;
+  gap: 8px;
+}
+
+.frequent-link {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  color: var(--vp-c-text-1);
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--gp-surface-bg-elv) 58%, transparent);
+  transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.frequent-link:hover,
+.frequent-link:focus-visible {
+  color: var(--vp-c-text-1);
+  border-color: color-mix(in srgb, var(--item-accent) 30%, var(--gp-home-card-border));
+  background: color-mix(in srgb, var(--item-accent) 7%, var(--gp-surface-bg-elv));
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--item-accent) 7%, transparent);
+}
+
+.frequent-link:focus-visible {
+  outline: 2px solid var(--gp-cyan);
+  outline-offset: 3px;
+}
+
+.frequent-link .card-title {
+  font-size: 16px;
+}
+
+.frequent-link .open-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.frequent-link:hover .open-icon,
+.frequent-link:focus-visible .open-icon {
+  color: var(--item-accent);
+}
+
+.frequent-description {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--gp-home-muted);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+@media (max-width: 959px) {
+  .frequent-groups {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .frequent-group {
+    padding: 14px;
+  }
+
+  .frequent-group > .frequent-heading {
+    margin-bottom: 10px;
+  }
+
+  .frequent-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .frequent-link {
+    padding: 10px;
+  }
+
+  .frequent-link .card-leading {
+    gap: 8px;
+  }
+
+  .frequent-link .app-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    border-radius: 10px;
+  }
+
+  .frequent-link .open-icon {
+    display: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .frequent-links {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .card-area {
@@ -1554,7 +1800,7 @@ function resetFilters() {
 .is-list-view .nav-card.is-tall {
   display: grid;
   grid-template-areas: "top content";
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
   grid-column: span 1;
   grid-row: span 1;
   min-height: 88px;
@@ -1582,20 +1828,11 @@ function resetFilters() {
 
 .is-list-view .card-meta-row {
   justify-content: flex-start;
-  margin-bottom: 3px;
-}
-
-.is-list-view .card-content strong {
-  display: block;
-  min-height: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  padding-top: 6px;
 }
 
 .is-list-view .card-description {
   display: block;
-  margin-top: 3px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1627,7 +1864,7 @@ function resetFilters() {
   transition: background 240ms ease, border-color 240ms ease, box-shadow 240ms ease, transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.nav-card > :not(.card-aura):not(.rank-sheen):not(.ranking-badge) {
+.nav-card > :where(:not(.card-aura):not(.rank-sheen):not(.ranking-badge)) {
   position: relative;
   z-index: 1;
 }
@@ -1825,11 +2062,15 @@ function resetFilters() {
 .card-leading {
   display: flex;
   min-width: 0;
-  gap: 8px;
-  align-items: flex-end;
+  gap: 10px;
+  align-items: center;
 }
 
 .ranking-badge {
+  position: absolute;
+  z-index: 2;
+  top: -10px;
+  right: 18px;
   display: inline-flex;
   flex: none;
   gap: 4px;
@@ -1926,14 +2167,20 @@ function resetFilters() {
   justify-content: space-between;
 }
 
+.card-topline {
+  gap: 10px;
+}
+
 .card-meta-row {
   min-width: 0;
   gap: 8px;
-  margin-bottom: 6px;
+  margin-top: auto;
+  padding-top: 12px;
 }
 
 .app-icon {
   display: grid;
+  flex: none;
   width: 38px;
   height: 38px;
   place-items: center;
@@ -1961,6 +2208,7 @@ function resetFilters() {
 }
 
 .open-icon {
+  flex: none;
   width: 18px;
   height: 18px;
   color: var(--vp-c-text-3);
@@ -1976,6 +2224,7 @@ function resetFilters() {
 .card-content {
   display: flex;
   min-width: 0;
+  flex: 1;
   flex-direction: column;
   margin: 12px 0 0;
 }
@@ -1997,9 +2246,11 @@ function resetFilters() {
   background: color-mix(in srgb, var(--item-accent) 10%, var(--gp-surface-bg-soft));
 }
 
-.card-content strong {
+.card-title {
   display: -webkit-box;
+  min-width: 0;
   overflow: hidden;
+  overflow-wrap: anywhere;
   font-size: 18px;
   line-height: 1.3;
   text-overflow: ellipsis;
@@ -2009,7 +2260,6 @@ function resetFilters() {
 
 .card-description {
   display: -webkit-box;
-  margin-top: 8px;
   overflow: hidden;
   color: var(--gp-home-muted);
   font-size: 12px;
@@ -2447,8 +2697,8 @@ function resetFilters() {
   .card-field.is-list-view .nav-card,
   .card-field.is-list-view .nav-card.is-wide,
   .card-field.is-list-view .nav-card.is-tall {
-    grid-template-areas: "top content";
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "top" "content";
+    grid-template-columns: minmax(0, 1fr);
     min-height: 0;
     gap: 9px 11px;
     padding: 11px 36px 11px 11px;
@@ -2477,6 +2727,7 @@ function resetFilters() {
   .active-filter-bar,
   .active-filter-chips button,
   .view-switch button,
+  .frequent-link,
   .nav-card,
   .nav-card::after,
   .card-aura,

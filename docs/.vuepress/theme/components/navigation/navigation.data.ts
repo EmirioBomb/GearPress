@@ -57,7 +57,7 @@ export interface NavigationFeatureFilter {
 
 export const platformFilters: NavigationFilter[] = [
   { id: "all", label: { zh: "全部", en: "All" }, icon: "lucide:orbit" },
-  { id: "web", label: { zh: "常用网站", en: "Web" }, icon: "lucide:globe-2" },
+  { id: "web", label: { zh: "网站", en: "Web" }, icon: "lucide:globe-2" },
   { id: "windows", label: { zh: "Windows", en: "Windows" }, icon: "ri:windows-fill" },
   { id: "macos", label: { zh: "macOS", en: "macOS" }, icon: "wpf:macos" },
   { id: "linux", label: { zh: "Linux", en: "Linux" }, icon: "mdi:linux" },
@@ -82,6 +82,42 @@ export const categoryLabels: Record<NavigationCategory, LocalizedText> = {
   network: { zh: "网络", en: "Network" },
   gaming: { zh: "游戏", en: "Gaming" },
 }
+
+interface NavigationFrequentGroup {
+  id: NavigationCategory
+  label: LocalizedText
+  items: { id: string, description: LocalizedText }[]
+}
+
+/** Curated website shortcuts; descriptions are compact versions of the catalog copy. */
+export const navigationFrequentGroups: NavigationFrequentGroup[] = [
+  {
+    id: "ai",
+    label: { zh: "AI 助手", en: "AI Assistants" },
+    items: [
+      { id: "chatgpt", description: { zh: "问答、写作与创作", en: "Answers, writing, and creation" } },
+      { id: "hvoyai", description: { zh: "模型 API 测试与对比", en: "Model API testing and comparison" } },
+    ],
+  },
+  {
+    id: "communication",
+    label: { zh: "社区交流", en: "Community" },
+    items: [
+      { id: "linux-do", description: { zh: "Linux 与开源技术交流", en: "Linux and open-source discussions" } },
+      { id: "x", description: { zh: "分享动态，关注讨论", en: "Share posts and follow discussions" } },
+    ],
+  },
+  {
+    id: "media",
+    label: { zh: "视频影音", en: "Video & Media" },
+    items: [
+      { id: "youtube", description: { zh: "探索视频与创作者", en: "Discover videos and creators" } },
+      { id: "bilibili", description: { zh: "视频、弹幕与兴趣社区", en: "Videos, live comments, and community" } },
+    ],
+  },
+]
+
+export const navigationFrequentIds = navigationFrequentGroups.flatMap(group => group.items.map(item => item.id))
 
 export const navigationItems: NavigationItem[] = [
   {
