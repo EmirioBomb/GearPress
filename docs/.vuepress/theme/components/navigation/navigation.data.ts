@@ -87,8 +87,24 @@ export const categoryLabels: Record<NavigationCategory, LocalizedText> = {
 
 /** Optional starter selection; favorites remain empty until the user adds or imports items. */
 export const navigationRecommendedFavoriteIds = [
-  "chatgpt", "hvoyai", "linux-do", "x", "youtube", "bilibili",
+  "chatgpt", "hvoyai", "linux-do", "x", "youtube", "bilibili", "steamdb",
+  "vpsknow", "discoverhub", "hugging-face", "github", "steamtools", "baidu-tieba",
+  "fast", "speedtest", "scamalytics", "namesilo", "cloudflare", "gugavpn", "viu",
 ]
+
+/** Curated favorite layout; saved browser orders take precedence over these defaults. */
+export const navigationRecommendedFavoriteOrder: { groups: NavigationCategory[]; items: string[] } = {
+  groups: [
+    "productivity", "ai", "design", "utilities", "knowledge", "communication",
+    "community", "media", "network", "development", "gaming",
+  ],
+  // Only the selected favorites are needed; other catalog entries are appended at runtime.
+  items: [
+    "chatgpt", "github", "hvoyai", "hugging-face", "cloudflare", "namesilo",
+    "gugavpn", "vpsknow", "fast", "speedtest", "steamtools", "linux-do", "x",
+    "youtube", "bilibili", "baidu-tieba", "discoverhub", "steamdb", "scamalytics", "viu",
+  ],
+}
 
 export const navigationItems: NavigationItem[] = [
   {

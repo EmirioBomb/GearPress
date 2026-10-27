@@ -44,14 +44,16 @@ export function useFavoriteOrdering(options: {
   root: Ref<HTMLElement | undefined>
   categoryOrder: readonly NavigationCategory[]
   items: readonly NavigationItem[]
+  defaultOrder?: { groups: readonly NavigationCategory[]; items: readonly string[] }
   getGroups: () => FavoriteGroup[]
   label: (kind: ReorderKind, id: string) => string
   announcement: (label: string, position: number, total: number) => string
   onFinish: () => void
 }) {
   const storageKey = "gearpress-navigation-favorite-order-v1"
-  const defaultItems = options.items.map(item => item.id)
-  const groupOrder = ref<string[]>([...options.categoryOrder])
+  const defaultGroups = normalizeFavoriteOrder(options.defaultOrder?.groups, options.categoryOrder)
+  const defaultItems = normalizeFavoriteOrder(options.defaultOrder?.items, options.items.map(item => item.id))
+  const groupOrder = ref<string[]>([...defaultGroups])
   const itemOrder = ref<string[]>([...defaultItems])
   const orderStorageUnavailable = ref(false)
   const isReorderingFavorites = ref(false)
@@ -65,7 +67,7 @@ export function useFavoriteOrdering(options: {
       if (!raw) return
       const value: unknown = JSON.parse(raw)
       if (typeof value !== "object" || value === null || !("version" in value) || value.version !== 1) return
-      groupOrder.value = normalizeFavoriteOrder("groups" in value ? value.groups : undefined, options.categoryOrder)
+      groupOrder.value = normalizeFavoriteOrder("groups" in value ? value.groups : undefined, defaultGroups)
       itemOrder.value = normalizeFavoriteOrder("items" in value ? value.items : undefined, defaultItems)
     }
     catch {

@@ -4,6 +4,47 @@ import {
   moveFavoriteOrder,
   normalizeFavoriteOrder,
 } from "../docs/.vuepress/theme/components/navigation/useFavoriteOrdering.ts"
+import {
+  categoryLabels,
+  navigationItems,
+  navigationRecommendedFavoriteIds,
+  navigationRecommendedFavoriteOrder,
+} from "../docs/.vuepress/theme/components/navigation/navigation.data.ts"
+
+test("recommended favorites contain 20 unique, valid catalog entries", () => {
+  const ids = navigationRecommendedFavoriteIds
+  assert.equal(ids.length, 20)
+  assert.equal(new Set(ids).size, ids.length)
+  assert.ok(ids.every(id => navigationItems.some(item => item.id === id)))
+  assert.deepEqual([...navigationRecommendedFavoriteOrder.items].sort(), [...ids].sort())
+  assert.deepEqual([...navigationRecommendedFavoriteOrder.groups].sort(), Object.keys(categoryLabels).sort())
+})
+
+test("recommended favorites reproduce the supplied visible group and card order", () => {
+  const groups = navigationRecommendedFavoriteOrder.groups.flatMap(group => {
+    const items = navigationRecommendedFavoriteOrder.items.filter(id =>
+      navigationItems.find(item => item.id === id)?.category === group,
+    )
+    return items.length ? [{ group, items }] : []
+  })
+  assert.deepEqual(groups, [
+    { group: "ai", items: ["chatgpt", "hvoyai", "hugging-face"] },
+    { group: "community", items: ["linux-do", "x", "baidu-tieba", "discoverhub"] },
+    { group: "media", items: ["youtube", "bilibili", "viu"] },
+    { group: "network", items: ["cloudflare", "namesilo", "gugavpn", "vpsknow", "fast", "speedtest", "scamalytics"] },
+    { group: "development", items: ["github"] },
+    { group: "gaming", items: ["steamtools", "steamdb"] },
+  ])
+})
+
+test("curated defaults append unselected catalog items and preserve saved user order", () => {
+  const defaults = normalizeFavoriteOrder(navigationRecommendedFavoriteOrder.items, navigationItems.map(item => item.id))
+  assert.equal(defaults.length, navigationItems.length)
+  assert.deepEqual(defaults.slice(0, 20), navigationRecommendedFavoriteOrder.items)
+  const saved = ["viu", "youtube", "chatgpt"]
+  assert.deepEqual(normalizeFavoriteOrder(saved, defaults).slice(0, saved.length), saved)
+  assert.deepEqual(normalizeFavoriteOrder(["gaming", "ai"], navigationRecommendedFavoriteOrder.groups).slice(0, 2), ["gaming", "ai"])
+})
 
 test("saved order drops invalid and duplicate IDs and appends new entries", () => {
   assert.deepEqual(normalizeFavoriteOrder(["c", "deleted", "c", 3, "a"], ["a", "b", "c", "new"]), ["c", "a", "b", "new"])

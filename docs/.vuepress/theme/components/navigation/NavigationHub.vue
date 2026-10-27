@@ -221,48 +221,43 @@
         </section>
 
         <div v-if="isFavoritesView" class="favorites-toolbar">
+          <div class="favorites-actions">
+            <button
+              v-if="favorites.length === 0"
+              type="button"
+              class="favorites-action"
+              @click="importRecommendedFavorites"
+            >
+              <Icon icon="lucide:download" aria-hidden="true" />
+              {{ copy.importFavorites }}
+            </button>
+            <button
+              v-if="favoritesLoaded && favorites.length > 0"
+              ref="favoriteSortButton"
+              type="button"
+              class="favorites-action secondary"
+              :aria-pressed="isReorderingFavorites"
+              :aria-describedby="isReorderingFavorites ? 'favorites-reorder-help' : undefined"
+              @click="toggleFavoriteReordering"
+            >
+              <Icon :icon="isReorderingFavorites ? 'lucide:check' : 'lucide:grip-vertical'" aria-hidden="true" />
+              {{ isReorderingFavorites ? copy.finishReordering : copy.reorderFavorites }}
+            </button>
+            <button
+              v-if="favoritesLoaded && favorites.length > 0"
+              type="button"
+              class="favorites-action danger"
+              @click="clearAllFavorites"
+            >
+              <Icon icon="lucide:trash-2" aria-hidden="true" />
+              {{ copy.clearFavorites }}
+            </button>
+          </div>
           <p v-if="storageUnavailable || orderStorageUnavailable" class="favorites-note storage-error" role="status">{{ copy.storageError }}</p>
           <p v-else class="favorites-note favorites-storage-note">
             <Icon icon="lucide:info" aria-hidden="true" />
-            <span>{{ copy.favoritesNote }} {{ copy.favoritesStorageDetails }}</span>
+            <span>{{ copy.favoritesNote }}</span>
           </p>
-          <button
-            v-if="favorites.length === 0"
-            type="button"
-            class="favorites-action"
-            @click="importRecommendedFavorites"
-          >
-            <Icon icon="lucide:download" aria-hidden="true" />
-            {{ copy.importFavorites }}
-          </button>
-          <button
-            type="button"
-            class="favorites-action secondary"
-            @click="selectScope('all')"
-          >
-            {{ copy.browseCatalog }}
-          </button>
-          <button
-            v-if="favoritesLoaded && favorites.length > 0"
-            ref="favoriteSortButton"
-            type="button"
-            class="favorites-action secondary"
-            :aria-pressed="isReorderingFavorites"
-            :aria-describedby="isReorderingFavorites ? 'favorites-reorder-help' : undefined"
-            @click="toggleFavoriteReordering"
-          >
-            <Icon :icon="isReorderingFavorites ? 'lucide:check' : 'lucide:grip-vertical'" aria-hidden="true" />
-            {{ isReorderingFavorites ? copy.finishReordering : copy.reorderFavorites }}
-          </button>
-          <button
-            v-if="favoritesLoaded && favorites.length > 0"
-            type="button"
-            class="favorites-action danger"
-            @click="clearAllFavorites"
-          >
-            <Icon icon="lucide:trash-2" aria-hidden="true" />
-            {{ copy.clearFavorites }}
-          </button>
         </div>
 
         <p v-if="isFavoritesView && isReorderingFavorites" id="favorites-reorder-help" class="favorites-reorder-help">{{ copy.reorderHelp }}</p>
@@ -483,6 +478,7 @@ import {
   categoryLabels,
   featureFilters,
   navigationRecommendedFavoriteIds,
+  navigationRecommendedFavoriteOrder,
   navigationItems,
   platformFilters,
   type LocalizedText,
@@ -505,8 +501,7 @@ const content = {
     platformLabel: "选择收藏或平台",
     addFavorite: "收藏",
     removeFavorite: "取消收藏",
-    importFavorites: "导入推荐 6 项",
-    browseCatalog: "浏览全部条目",
+    importFavorites: `导入推荐 ${navigationRecommendedFavoriteIds.length} 项`,
     clearFavorites: "清空收藏",
     reorderFavorites: "调整顺序",
     finishReordering: "完成排序",
@@ -515,8 +510,7 @@ const content = {
     reorderHelp: "拖动手柄调整顺序；卡片仅在组内移动。键盘聚焦手柄后用方向键移动，Home / End 移到首尾，Esc 退出。顺序自动保存在本浏览器。",
     favoritesEmptyTitle: "把常用的入口收藏在这里",
     favoritesEmptyText: "点击卡片上的星标，即可按分类汇总；网站和应用都可以收藏。",
-    favoritesNote: "收藏仅存于本浏览器，不跨设备同步。",
-    favoritesStorageDetails: "中英文页面共用收藏；清除站点数据会删除收藏。",
+    favoritesNote: "收藏仅保存在本浏览器，中英文共用，不跨设备同步；清除站点数据会删除收藏。",
     storageError: "浏览器存储不可用，收藏或排序更改可能仅在当前页面有效。",
     favoritesLoading: "正在读取收藏…",
     favoritesUpdated: "收藏已更新",
@@ -550,8 +544,7 @@ const content = {
     platformLabel: "Choose favorites or a platform",
     addFavorite: "Add to favorites",
     removeFavorite: "Remove from favorites",
-    importFavorites: "Import 6 recommendations",
-    browseCatalog: "Browse all items",
+    importFavorites: `Import ${navigationRecommendedFavoriteIds.length} recommendations`,
     clearFavorites: "Clear favorites",
     reorderFavorites: "Reorder",
     finishReordering: "Done reordering",
@@ -560,8 +553,7 @@ const content = {
     reorderHelp: "Drag a handle to reorder; cards stay in their category. Focus a handle and use arrow keys to move, Home / End for first / last, or Esc to finish. Order is saved in this browser.",
     favoritesEmptyTitle: "Keep your everyday destinations here",
     favoritesEmptyText: "Use a card’s star to save apps and websites, automatically grouped by category.",
-    favoritesNote: "Saved in this browser only; no device sync.",
-    favoritesStorageDetails: "Favorites are shared across languages. Clearing site data deletes them.",
+    favoritesNote: "Favorites are saved only in this browser and shared across languages, with no device sync. Clearing site data deletes them.",
     storageError: "Browser storage is unavailable. Changes to favorites or their order may only last for this page session.",
     favoritesLoading: "Loading favorites…",
     favoritesUpdated: "Favorites updated",
@@ -648,6 +640,7 @@ const {
   root: navigationHub,
   categoryOrder,
   items: navigationItems,
+  defaultOrder: navigationRecommendedFavoriteOrder,
   getGroups: () => displayedFavoritesGroups.value,
   label: (kind, id) => kind === "group"
     ? localize(categoryLabels[id as NavigationCategory])
@@ -1786,7 +1779,7 @@ function resetFilters() {
 
 .favorites-links {
   display: grid;
-  height: calc(var(--favorite-card-height) * 3 + var(--favorite-card-gap) * 2);
+  height: calc(var(--favorite-card-height) * 4 + var(--favorite-card-gap) * 3);
   grid-template-columns: minmax(0, 1fr);
   grid-auto-rows: var(--favorite-card-height);
   gap: var(--favorite-card-gap);
@@ -1869,18 +1862,29 @@ function resetFilters() {
 }
 
 .favorites-toolbar {
-  display: flex;
+  display: grid;
   min-width: 0;
-  flex-wrap: wrap;
-  gap: 4px 8px;
+  grid-template-areas: "note actions";
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 12px;
   align-items: center;
   margin-bottom: 8px;
   padding: 0;
 }
 
+.favorites-actions {
+  display: flex;
+  min-width: 0;
+  grid-area: actions;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .favorites-note {
   min-width: 0;
-  flex: 1 1 240px;
+  grid-area: note;
   margin: 0;
   color: var(--gp-home-muted);
   font-size: 11px;
@@ -3113,6 +3117,24 @@ function resetFilters() {
 }
 
 @media (max-width: 680px) {
+  .favorites-toolbar {
+    grid-template-areas:
+      "actions"
+      "note";
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .favorites-actions {
+    justify-content: flex-start;
+  }
+
+  .favorites-action {
+    min-height: 40px;
+    padding: 8px 12px;
+  }
+
   .navigation-hub {
     padding-bottom: 48px;
   }
