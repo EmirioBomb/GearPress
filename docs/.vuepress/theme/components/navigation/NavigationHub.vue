@@ -1,5 +1,5 @@
 <template>
-  <main class="navigation-hub" :class="{ 'mobile-filters-open': mobileFiltersOpen, 'is-favorites-view': isFavoritesView }">
+  <main ref="navigationHub" class="navigation-hub" :class="{ 'mobile-filters-open': mobileFiltersOpen, 'is-favorites-view': isFavoritesView }">
     <h1 class="navigation-title">{{ copy.title }}</h1>
     <section class="navigation-panel">
       <div
@@ -60,7 +60,7 @@
           :class="{ active: activeScope === filter.id }"
           :aria-label="filterCountLabel(localize(filter.label), filter.count)"
           :aria-pressed="activeScope === filter.id"
-          :disabled="filter.count === 0 && activeScope !== filter.id"
+          :disabled="filter.id !== 'favorites' && filter.count === 0 && activeScope !== filter.id"
           @click="selectScope(filter.id)"
         >
           <Icon :icon="filter.icon" class="system-filter-icon" aria-hidden="true" />
@@ -221,7 +221,11 @@
         </section>
 
         <div v-if="isFavoritesView" class="favorites-toolbar">
-          <p class="favorites-note">{{ storageUnavailable ? copy.storageError : copy.favoritesNote }}</p>
+          <p v-if="storageUnavailable || orderStorageUnavailable" class="favorites-note storage-error" role="status">{{ copy.storageError }}</p>
+          <p v-else class="favorites-note favorites-storage-note">
+            <Icon icon="lucide:info" aria-hidden="true" />
+            <span>{{ copy.favoritesNote }} {{ copy.favoritesStorageDetails }}</span>
+          </p>
           <button
             v-if="favorites.length === 0"
             type="button"
@@ -238,38 +242,91 @@
           >
             {{ copy.browseCatalog }}
           </button>
-        </div>
-
-        <div v-if="!isFavoritesView && filteredItems.length" class="catalog-bulk-toolbar">
           <button
+            v-if="favoritesLoaded && favorites.length > 0"
+            ref="favoriteSortButton"
             type="button"
-            class="favorites-action"
-            :disabled="visibleUnfavoritedItems.length === 0"
-            @click="addVisibleItemsToFavorites"
+            class="favorites-action secondary"
+            :aria-pressed="isReorderingFavorites"
+            :aria-describedby="isReorderingFavorites ? 'favorites-reorder-help' : undefined"
+            @click="toggleFavoriteReordering"
           >
-            <Icon icon="lucide:star" aria-hidden="true" />
-            {{ visibleUnfavoritedItems.length ? `${copy.favoriteResults} (${visibleUnfavoritedItems.length})` : copy.allResultsSaved }}
+            <Icon :icon="isReorderingFavorites ? 'lucide:check' : 'lucide:grip-vertical'" aria-hidden="true" />
+            {{ isReorderingFavorites ? copy.finishReordering : copy.reorderFavorites }}
+          </button>
+          <button
+            v-if="favoritesLoaded && favorites.length > 0"
+            type="button"
+            class="favorites-action danger"
+            @click="clearAllFavorites"
+          >
+            <Icon icon="lucide:trash-2" aria-hidden="true" />
+            {{ copy.clearFavorites }}
           </button>
         </div>
 
-        <div v-if="isFavoritesView && filteredItems.length" class="favorites-groups">
+        <p v-if="isFavoritesView && isReorderingFavorites" id="favorites-reorder-help" class="favorites-reorder-help">{{ copy.reorderHelp }}</p>
+        <p class="reorder-announcement" role="status" aria-live="polite" aria-atomic="true">{{ reorderAnnouncement }}</p>
+        <div
+          v-if="isFavoritesView && filteredItems.length"
+          class="favorites-groups"
+          :class="{ 'is-reordering': isReorderingFavorites }"
+          @dragover="onFavoriteNativeDragOver"
+          @drop="onFavoriteNativeDrop"
+          @dragend="stopFavoriteDrag"
+        >
           <section
             v-for="group in displayedFavoritesGroups"
             :key="group.id"
             class="favorites-group"
+            :class="[
+              `favorites-group-${group.id}`,
+              { 'is-dragging': isFavoriteDrag('group', group.id), 'is-drop-target': isFavoriteDropTarget('group', group.id) },
+            ]"
+            :data-favorite-group="group.id"
             :aria-labelledby="`favorites-heading-${group.id}`"
           >
             <h2 :id="`favorites-heading-${group.id}`" class="favorites-heading">
+              <button
+                v-if="isReorderingFavorites"
+                type="button"
+                class="favorite-drag-handle group-drag-handle"
+                :data-reorder-handle="group.id"
+                :aria-label="`${copy.reorderGroup}: ${localize(categoryLabels[group.id])}`"
+                aria-describedby="favorites-reorder-help"
+                draggable="true"
+                @dragstart="startFavoriteNativeDrag($event, 'group', group.id)"
+                @pointerdown="startFavoriteDrag($event, 'group', group.id)"
+                @keydown="onFavoriteReorderKey($event, 'group', group.id)"
+              >
+                <Icon icon="lucide:grip-vertical" aria-hidden="true" />
+              </button>
               <span>{{ localize(categoryLabels[group.id]) }}</span>
               <small>{{ group.items.length }}</small>
             </h2>
-            <div class="favorites-links">
+            <div class="favorites-links" tabindex="0" :aria-label="`${localize(categoryLabels[group.id])} — ${copy.favorites}`">
               <article
                 v-for="item in group.items"
                 :key="item.id"
                 class="favorite-card"
+                :class="{ 'is-dragging': isFavoriteDrag('item', item.id), 'is-drop-target': isFavoriteDropTarget('item', item.id) }"
+                :data-favorite-id="item.id"
                 :style="{ '--item-accent': item.accent }"
               >
+                <button
+                  v-if="isReorderingFavorites"
+                  type="button"
+                  class="favorite-drag-handle card-drag-handle"
+                  :data-reorder-handle="item.id"
+                  :aria-label="`${copy.reorderCard}: ${item.name}`"
+                  aria-describedby="favorites-reorder-help"
+                  draggable="true"
+                  @dragstart="startFavoriteNativeDrag($event, 'item', item.id, group.id)"
+                  @pointerdown="startFavoriteDrag($event, 'item', item.id, group.id)"
+                  @keydown="onFavoriteReorderKey($event, 'item', item.id, group.id)"
+                >
+                  <Icon icon="lucide:grip-vertical" aria-hidden="true" />
+                </button>
                 <a
                   class="favorites-link"
                   :href="item.url"
@@ -278,7 +335,7 @@
                 >
                   <span class="card-topline">
                     <span class="card-leading">
-                      <span class="app-icon" :class="[`brand-icon-${item.id}`, { 'brand-icon-dark-contrast': needsDarkIconSurface(item) }]">
+                      <span class="app-icon" :class="[`brand-icon-${item.id}`, { 'brand-icon-light-surface': usesLightIconSurface(item), 'brand-icon-monochrome': !item.iconSourceUrl || failedIconIds.has(item.id) }]">
                         <img
                           v-if="item.iconSourceUrl && !failedIconIds.has(item.id)"
                           :src="navigationIconUrl(item)"
@@ -289,19 +346,21 @@
                           loading="lazy"
                           decoding="async"
                           no-view
+                          @load="measureIconContrast($event, item.id)"
                           @error="markIconAsFailed(item.id)"
                         >
                         <Icon v-else :icon="item.icon" aria-hidden="true" />
                       </span>
-                      <strong class="card-title">{{ item.name }}</strong>
+                      <span class="favorites-text">
+                        <strong class="card-title">{{ item.name }}</strong>
+                        <span class="favorites-description">{{ localize(item.description) }}</span>
+                      </span>
                     </span>
-                    <Icon icon="lucide:arrow-up-right" class="open-icon" aria-hidden="true" />
                   </span>
-                  <span class="favorites-description">{{ localize(item.description) }}</span>
                 </a>
                 <button
                   type="button"
-                  class="favorite-toggle"
+                  class="favorite-toggle is-favorite"
                   :aria-label="`${copy.removeFavorite}: ${item.name}`"
                   :aria-pressed="true"
                   @click="toggleFavorite(item.id)"
@@ -330,14 +389,6 @@
           >
             <span class="card-aura" aria-hidden="true" />
             <span v-if="cardRank(item) > 0" class="rank-sheen" aria-hidden="true" />
-            <span
-              v-if="cardRank(item) > 0"
-              class="ranking-badge"
-              role="img"
-              :aria-label="rankLabel(cardRank(item))"
-            >
-              {{ rankMark(cardRank(item)) }} <small>#{{ cardRank(item) }}</small>
-            </span>
             <a
               class="nav-card-link"
               :href="item.url"
@@ -346,7 +397,7 @@
             >
               <span class="card-topline">
                 <span class="card-leading">
-                  <span class="app-icon" :class="[`brand-icon-${item.id}`, { 'brand-icon-dark-contrast': needsDarkIconSurface(item) }]">
+                  <span class="app-icon" :class="[`brand-icon-${item.id}`, { 'brand-icon-light-surface': usesLightIconSurface(item), 'brand-icon-monochrome': !item.iconSourceUrl || failedIconIds.has(item.id) }]">
                     <img
                       v-if="item.iconSourceUrl && !failedIconIds.has(item.id)"
                       :src="navigationIconUrl(item)"
@@ -357,13 +408,21 @@
                       loading="lazy"
                       decoding="async"
                       no-view
+                      @load="measureIconContrast($event, item.id)"
                       @error="markIconAsFailed(item.id)"
                     >
                     <Icon v-else :icon="item.icon" aria-hidden="true" />
                   </span>
                   <strong class="card-title">{{ item.name }}</strong>
+                  <span
+                    v-if="cardRank(item) > 0"
+                    class="ranking-badge"
+                    role="img"
+                    :aria-label="rankLabel(cardRank(item))"
+                  >
+                    {{ rankMark(cardRank(item)) }} <small>#{{ cardRank(item) }}</small>
+                  </span>
                 </span>
-                <Icon icon="lucide:arrow-up-right" class="open-icon" aria-hidden="true" />
               </span>
 
               <span class="card-content">
@@ -414,11 +473,12 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue"
-import { computed, onBeforeUnmount, onMounted, ref } from "vue"
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue"
 import { withBase } from "vuepress/client"
 import { useData } from "vuepress-theme-plume/composables"
 
 import SelectMenu from "../SelectMenu.vue"
+import { useFavoriteOrdering, type FavoriteGroup } from "./useFavoriteOrdering"
 import {
   categoryLabels,
   featureFilters,
@@ -447,12 +507,17 @@ const content = {
     removeFavorite: "取消收藏",
     importFavorites: "导入推荐 6 项",
     browseCatalog: "浏览全部条目",
-    favoriteResults: "收藏当前结果",
-    allResultsSaved: "当前结果已全部收藏",
+    clearFavorites: "清空收藏",
+    reorderFavorites: "调整顺序",
+    finishReordering: "完成排序",
+    reorderGroup: "调整分组顺序",
+    reorderCard: "调整组内卡片顺序",
+    reorderHelp: "拖动手柄调整顺序；卡片仅在组内移动。键盘聚焦手柄后用方向键移动，Home / End 移到首尾，Esc 退出。顺序自动保存在本浏览器。",
     favoritesEmptyTitle: "把常用的入口收藏在这里",
     favoritesEmptyText: "点击卡片上的星标，即可按分类汇总；网站和应用都可以收藏。",
-    favoritesNote: "收藏仅保存在当前浏览器，中英文页面共用；清除站点数据会丢失。",
-    storageError: "浏览器存储不可用，本次收藏仅在当前页面有效。",
+    favoritesNote: "收藏仅存于本浏览器，不跨设备同步。",
+    favoritesStorageDetails: "中英文页面共用收藏；清除站点数据会删除收藏。",
+    storageError: "浏览器存储不可用，收藏或排序更改可能仅在当前页面有效。",
     favoritesLoading: "正在读取收藏…",
     favoritesUpdated: "收藏已更新",
     categoryLabel: "按分类与特性筛选",
@@ -487,12 +552,17 @@ const content = {
     removeFavorite: "Remove from favorites",
     importFavorites: "Import 6 recommendations",
     browseCatalog: "Browse all items",
-    favoriteResults: "Save current results",
-    allResultsSaved: "All results saved",
+    clearFavorites: "Clear favorites",
+    reorderFavorites: "Reorder",
+    finishReordering: "Done reordering",
+    reorderGroup: "Reorder group",
+    reorderCard: "Reorder card within group",
+    reorderHelp: "Drag a handle to reorder; cards stay in their category. Focus a handle and use arrow keys to move, Home / End for first / last, or Esc to finish. Order is saved in this browser.",
     favoritesEmptyTitle: "Keep your everyday destinations here",
     favoritesEmptyText: "Use a card’s star to save apps and websites, automatically grouped by category.",
-    favoritesNote: "Favorites stay in this browser and are shared across languages. Clearing site data removes them.",
-    storageError: "Browser storage is unavailable. Favorites only last for this page session.",
+    favoritesNote: "Saved in this browser only; no device sync.",
+    favoritesStorageDetails: "Favorites are shared across languages. Clearing site data deletes them.",
+    storageError: "Browser storage is unavailable. Changes to favorites or their order may only last for this page session.",
     favoritesLoading: "Loading favorites…",
     favoritesUpdated: "Favorites updated",
     categoryLabel: "Filter by category and features",
@@ -543,6 +613,8 @@ const activeFeatures = ref<NavigationFeature[]>([])
 const activeSort = ref<NavigationSort>("recommended")
 const activeView = ref<NavigationView>("grid")
 const query = ref("")
+const navigationHub = ref<HTMLElement>()
+const favoriteSortButton = ref<HTMLButtonElement>()
 const searchInput = ref<HTMLInputElement>()
 const filterDock = ref<HTMLElement>()
 const filterDockSlot = ref<HTMLElement>()
@@ -552,6 +624,7 @@ const isFilterDockFixed = ref(false)
 const isSearchFocused = ref(false)
 const mobileFiltersOpen = ref(false)
 const failedIconIds = ref(new Set<string>())
+const darkSurfaceIconIds = ref(new Set<string>())
 const categoryOrder: NavigationCategory[] = [
   "productivity",
   "development",
@@ -565,6 +638,25 @@ const categoryOrder: NavigationCategory[] = [
   "network",
   "gaming",
 ]
+
+const {
+  groupOrder, itemOrder, orderStorageUnavailable, isReorderingFavorites, reorderAnnouncement,
+  toggleFavoriteReordering, finishFavoriteReordering, startFavoriteDrag, onFavoriteReorderKey,
+  isFavoriteDrag, isFavoriteDropTarget,
+  startFavoriteNativeDrag, onFavoriteNativeDragOver, onFavoriteNativeDrop, stopFavoriteDrag,
+} = useFavoriteOrdering({
+  root: navigationHub,
+  categoryOrder,
+  items: navigationItems,
+  getGroups: () => displayedFavoritesGroups.value,
+  label: (kind, id) => kind === "group"
+    ? localize(categoryLabels[id as NavigationCategory])
+    : navigationItems.find(item => item.id === id)?.name ?? id,
+  announcement: (label, position, total) => locale.value === "zh"
+    ? `${label}，已移至第 ${position} 位，共 ${total} 项。`
+    : `${label}, moved to position ${position} of ${total}.`,
+  onFinish: () => favoriteSortButton.value?.focus(),
+})
 
 function localize(text: LocalizedText) {
   return text[locale.value]
@@ -588,15 +680,57 @@ function navigationIconUrl(item: NavigationItem) {
   return withBase(`/navigation-icons/${item.id}.webp`)
 }
 
-function needsDarkIconSurface(item: NavigationItem) {
-  if (item.id === "x") return true
-  const hex = item.accent.slice(1)
-  const red = Number.parseInt(hex.slice(0, 2), 16) / 255
-  const green = Number.parseInt(hex.slice(2, 4), 16) / 255
-  const blue = Number.parseInt(hex.slice(4, 6), 16) / 255
-  const linearize = (channel: number) => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
-  const luminance = 0.2126 * linearize(red) + 0.7152 * linearize(green) + 0.0722 * linearize(blue)
-  return luminance < 0.2
+function usesLightIconSurface(item: NavigationItem) {
+  // Full-color SVG collections keep their embedded colors; monochrome icons inherit CSS color.
+  const isColoredSvg = /^(devicon|logos|thesvg-color):/.test(item.icon)
+  if (!item.iconSourceUrl || failedIconIds.value.has(item.id)) return isColoredSvg
+  return !darkSurfaceIconIds.value.has(item.id)
+}
+
+function relativeLuminance(channels: readonly number[]) {
+  const [red, green, blue] = channels.map(channel => {
+    const normalized = channel / 255
+    return normalized <= 0.04045 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4
+  })
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue
+}
+
+function measureIconContrast(event: Event, id: string) {
+  const image = event.target
+  if (!(image instanceof HTMLImageElement)) return
+
+  // Compare the actual local logo pixels, rather than the unrelated card accent.
+  // Local, same-origin images make this safe; retain the light surface if sampling fails.
+  try {
+    const canvas = document.createElement("canvas")
+    canvas.width = canvas.height = 32
+    const context = canvas.getContext("2d", { willReadFrequently: true })
+    if (!context) return
+    context.drawImage(image, 0, 0, 32, 32)
+    const { data } = context.getImageData(0, 0, 32, 32)
+    const score = (background: readonly number[]) => {
+      const backgroundLuminance = relativeLuminance(background)
+      let total = 0
+      for (let index = 0; index < data.length; index += 4) {
+        const alpha = data[index + 3] / 255
+        if (alpha < 0.1) continue
+        const luminance = relativeLuminance(background.map((channel, offset) =>
+          data[index + offset] * alpha + channel * (1 - alpha),
+        ))
+        const contrast = (Math.max(luminance, backgroundLuminance) + 0.05)
+          / (Math.min(luminance, backgroundLuminance) + 0.05)
+        total += Math.min(contrast, 4.5) * alpha
+      }
+      return total
+    }
+    const next = new Set(darkSurfaceIconIds.value)
+    if (score([22, 32, 50]) > score([248, 250, 252])) next.add(id)
+    else next.delete(id)
+    darkSurfaceIconIds.value = next
+  }
+  catch {
+    // Rendering the original logo remains available even if canvas sampling is blocked.
+  }
 }
 
 function markIconAsFailed(id: string) {
@@ -722,11 +856,28 @@ function removeFeature(feature: NavigationFeature) {
   activeFeatures.value = activeFeatures.value.filter(item => item !== feature)
 }
 
-function selectScope(scope: NavigationScope) {
+async function selectScope(scope: NavigationScope) {
+  if (activeScope.value === scope) return
+  if (isReorderingFavorites.value) finishFavoriteReordering()
+
   activeScope.value = scope
+  mobileFiltersOpen.value = false
   if (scope === "favorites") {
     activeCategory.value = "all"
     activeFeatures.value = []
+  }
+
+  await nextTick()
+  if (typeof window === "undefined" || !navigationHub.value || activeScope.value !== scope) return
+
+  navigationHub.value.querySelectorAll<HTMLElement>(".favorites-links").forEach(list => {
+    list.scrollTop = 0
+  })
+  const slot = filterDockSlot.value
+  if (slot) {
+    const top = slot.getBoundingClientRect().top + window.scrollY - filterDockTopOffset()
+    window.scrollTo({ top: Math.max(0, top), behavior: "instant" })
+    scheduleFilterDockUpdate()
   }
 }
 
@@ -767,13 +918,15 @@ const filteredItems = computed(() => {
   }))
 })
 
-const visibleUnfavoritedItems = computed(() => filteredItems.value.filter(item => !favoriteItemIds.value.has(item.id)))
-
-const displayedFavoritesGroups = computed(() => {
-  const visibleItems = filteredItems.value.filter(item => favoriteItemIds.value.has(item.id))
-  return categoryOrder.map(category => ({
-    id: category,
-    items: visibleItems.filter(item => item.category === category),
+const displayedFavoritesGroups = computed<FavoriteGroup[]>(() => {
+  const visibleItems = new Map(filteredItems.value.map(item => [item.id, item]))
+  const orderedItems = itemOrder.value.flatMap(id => {
+    const item = visibleItems.get(id)
+    return item && favoriteItemIds.value.has(id) ? [item] : []
+  })
+  return groupOrder.value.map(id => ({
+    id: id as NavigationCategory,
+    items: orderedItems.filter(item => item.category === id),
   })).filter(group => group.items.length > 0)
 })
 
@@ -968,15 +1121,18 @@ function toggleFavorite(id: string) {
   const nextFavorites = favoriteItemIds.value.has(id)
     ? favorites.value.filter(favoriteId => favoriteId !== id)
     : [...favorites.value, id]
+  if (!nextFavorites.length && isReorderingFavorites.value) finishFavoriteReordering()
   persistFavorites(nextFavorites)
 }
 
-function addVisibleItemsToFavorites() {
-  if (visibleUnfavoritedItems.value.length === 0) return
-  persistFavorites([...favorites.value, ...visibleUnfavoritedItems.value.map(item => item.id)])
-  activeScope.value = "favorites"
-  activeCategory.value = "all"
-  activeFeatures.value = []
+function clearAllFavorites() {
+  if (favorites.value.length === 0) return
+  const message = locale.value === "zh"
+    ? `确定清空全部 ${favorites.value.length} 项收藏吗？此操作无法撤销。`
+    : `Clear all ${favorites.value.length} favorites? This cannot be undone.`
+  if (!window.confirm(message)) return
+  if (isReorderingFavorites.value) finishFavoriteReordering()
+  persistFavorites([])
 }
 
 function importRecommendedFavorites() {
@@ -1071,7 +1227,7 @@ function resetFilters() {
 
 :global(.navigation-hub-page .vp-home-custom) {
   width: 100%;
-  padding-top: 16px;
+  padding-top: 4px;
 }
 
 :global(.navigation-hub-page .vp-home-custom > .container) {
@@ -1098,7 +1254,7 @@ function resetFilters() {
 }
 
 .navigation-panel {
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 
 .filter-dock-slot {
@@ -1444,20 +1600,105 @@ function resetFilters() {
   grid-template-columns: minmax(0, 1fr);
 }
 
+.favorites-reorder-help {
+  margin: 0 0 10px;
+  color: var(--gp-home-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.reorder-announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.favorite-drag-handle {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  box-sizing: border-box;
+  place-items: center;
+  padding: 0;
+  color: var(--vp-c-text-2);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.favorite-drag-handle > svg {
+  width: 16px;
+  height: 16px;
+}
+
+.favorite-drag-handle:hover,
+.favorite-drag-handle:focus-visible {
+  color: var(--gp-icon-highlight);
+  border-color: var(--gp-active-border);
+  background: var(--gp-surface-bg-elv);
+}
+
+.favorite-drag-handle:focus-visible {
+  outline: 2px solid var(--gp-cyan);
+  outline-offset: 1px;
+}
+
+.favorite-drag-handle:active {
+  cursor: grabbing;
+}
+
+.group-drag-handle {
+  margin: -5px -5px -5px -3px;
+}
+
+.card-drag-handle {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 1px;
+  translate: 0 -50%;
+}
+
+.is-reordering .favorites-link {
+  padding-left: 34px;
+}
+
+.favorites-group.is-dragging,
+.favorite-card.is-dragging {
+  opacity: 0.6;
+}
+
+.favorites-group.is-drop-target,
+.favorite-card.is-drop-target {
+  outline: 2px dashed var(--gp-cyan);
+  outline-offset: -2px;
+}
+
 .favorites-groups {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  gap: 12px;
+  align-items: start;
 }
 
 .favorites-group > .favorites-heading {
   display: flex;
   gap: 9px;
   align-items: center;
-  margin: 0 0 14px;
+  margin: 0 0 8px;
   padding: 0;
   color: var(--vp-c-text-1);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1.5;
   border: 0;
@@ -1474,24 +1715,58 @@ function resetFilters() {
 
 .favorites-group {
   --group-accent: var(--gp-cyan);
+  --favorite-card-height: 64px;
+  --favorite-card-gap: 6px;
 
   min-width: 0;
-  padding: 18px;
+  padding: 12px;
   border: 1px solid color-mix(in srgb, var(--group-accent) 18%, var(--gp-home-card-border));
-  border-radius: var(--hub-radius);
+  border-radius: 16px;
   background: linear-gradient(145deg, color-mix(in srgb, var(--group-accent) 7%, var(--gp-home-card-bg)), var(--gp-home-card-bg));
 }
 
+.favorites-group-productivity {
+  --group-accent: #2d9c8c;
+}
+
+.favorites-group-development {
+  --group-accent: #4285c5;
+}
+
 .favorites-group-ai {
-  --group-accent: var(--gp-cyan);
+  --group-accent: #16a6c9;
+}
+
+.favorites-group-design {
+  --group-accent: #b26ac7;
+}
+
+.favorites-group-utilities {
+  --group-accent: #dc8b32;
+}
+
+.favorites-group-knowledge {
+  --group-accent: #6276c9;
+}
+
+.favorites-group-communication {
+  --group-accent: #299caa;
 }
 
 .favorites-group-community {
-  --group-accent: var(--gp-blue);
+  --group-accent: #3b82d0;
 }
 
 .favorites-group-media {
-  --group-accent: var(--gp-purple);
+  --group-accent: #bb659c;
+}
+
+.favorites-group-network {
+  --group-accent: #41a36e;
+}
+
+.favorites-group-gaming {
+  --group-accent: #d65d69;
 }
 
 .favorites-heading small {
@@ -1511,8 +1786,20 @@ function resetFilters() {
 
 .favorites-links {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
-  gap: 8px;
+  height: calc(var(--favorite-card-height) * 3 + var(--favorite-card-gap) * 2);
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: var(--favorite-card-height);
+  gap: var(--favorite-card-gap);
+  align-content: start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--group-accent) transparent;
+}
+
+.favorites-links:focus-visible {
+  outline: 2px solid var(--gp-cyan);
+  outline-offset: 2px;
 }
 
 .favorite-card {
@@ -1524,11 +1811,10 @@ function resetFilters() {
 .favorites-link {
   display: flex;
   min-width: 0;
-  min-height: 100%;
+  height: 100%;
   box-sizing: border-box;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px 48px 12px 12px;
+  align-items: center;
+  padding: 8px 48px 8px 10px;
   color: var(--vp-c-text-1);
   text-decoration: none;
   border: 1px solid transparent;
@@ -1550,43 +1836,81 @@ function resetFilters() {
   outline-offset: 3px;
 }
 
-.favorites-link .card-title {
-  font-size: 16px;
+.favorites-link .card-topline {
+  width: 100%;
+  min-width: 0;
 }
 
-.favorites-link .open-icon {
-  width: 15px;
-  height: 15px;
+.favorites-link .card-leading {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 10px;
 }
 
-.favorites-toolbar,
-.catalog-bulk-toolbar {
+.favorites-text {
   display: flex;
   min-width: 0;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 12px;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.favorites-link .card-title {
+  font-size: 14px;
+  line-height: 1.35;
+  -webkit-line-clamp: 1;
+}
+
+.favorites-link .app-icon {
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  border-radius: 9px;
 }
 
 .favorites-toolbar {
-  padding: 10px 12px;
-  border: 1px solid var(--gp-home-card-border);
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--gp-surface-bg-elv) 76%, transparent);
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 0;
 }
 
 .favorites-note {
   min-width: 0;
-  flex: 1 1 300px;
+  flex: 1 1 240px;
   margin: 0;
   color: var(--gp-home-muted);
   font-size: 11px;
   line-height: 1.5;
 }
 
+.favorites-storage-note {
+  display: flex;
+  gap: 5px;
+  align-items: flex-start;
+}
+
+.favorites-storage-note > svg {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  margin-top: 2px;
+}
+
+.favorites-storage-note > span {
+  min-width: 0;
+}
+
+.storage-error {
+  color: var(--vp-c-text-1);
+}
+
 .favorites-action {
   display: inline-flex;
+  box-sizing: border-box;
   min-height: 34px;
   flex: none;
   gap: 6px;
@@ -1597,6 +1921,7 @@ function resetFilters() {
   font: inherit;
   font-size: 11px;
   font-weight: 700;
+  line-height: 1.4;
   border: 1px solid color-mix(in srgb, var(--gp-cyan) 35%, var(--gp-home-card-border));
   border-radius: 10px;
   background: var(--gp-gradient-active);
@@ -1607,6 +1932,22 @@ function resetFilters() {
 .favorites-action.secondary {
   border-color: var(--gp-home-card-border);
   background: var(--gp-surface-bg-elv);
+}
+
+.favorites-action.danger {
+  color: #b83c49;
+  border-color: color-mix(in srgb, #d64d5a 40%, var(--gp-home-card-border));
+  background: color-mix(in srgb, #d64d5a 9%, var(--gp-surface-bg-elv));
+}
+
+.favorites-action.danger:not(:disabled):hover,
+.favorites-action.danger:focus-visible {
+  border-color: color-mix(in srgb, #d64d5a 62%, var(--gp-home-card-border));
+  box-shadow: 0 0 12px color-mix(in srgb, #d64d5a 22%, transparent);
+}
+
+:global(html[data-theme="dark"] .favorites-action.danger) {
+  color: #ff969d;
 }
 
 .favorites-action:disabled {
@@ -1632,34 +1973,44 @@ function resetFilters() {
   color: var(--gp-icon-highlight);
 }
 
+.favorites-action.danger > svg {
+  color: inherit;
+}
+
 .favorite-toggle {
   position: absolute;
   z-index: 2;
   top: 12px;
   right: 12px;
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   box-sizing: border-box;
   place-items: center;
   padding: 0;
   color: var(--vp-c-text-3);
   border: 1px solid var(--gp-home-card-border);
-  border-radius: 10px;
+  border-radius: 11px;
   background: color-mix(in srgb, var(--gp-surface-bg-elv) 88%, transparent);
   cursor: pointer;
   transition: color 160ms ease, border-color 160ms ease, background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
 
 .favorite-toggle > svg {
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
 }
 
 .favorite-toggle.is-favorite {
-  color: var(--gp-icon-highlight);
-  border-color: color-mix(in srgb, var(--gp-cyan) 34%, var(--gp-home-card-border));
-  background: color-mix(in srgb, var(--gp-cyan) 10%, var(--gp-surface-bg-elv));
+  color: var(--gp-cyan);
+  border-color: color-mix(in srgb, var(--gp-cyan) 48%, var(--gp-home-card-border));
+  background: color-mix(in srgb, var(--gp-cyan) 18%, var(--gp-surface-bg-elv));
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--gp-cyan) 15%, transparent);
+}
+
+.favorite-toggle.is-favorite > svg,
+.favorite-toggle.is-favorite :deep(path) {
+  fill: currentColor;
 }
 
 .favorite-toggle:hover,
@@ -1675,9 +2026,20 @@ function resetFilters() {
   outline-offset: 2px;
 }
 
-.favorites-link:hover .open-icon,
-.favorites-link:focus-visible .open-icon {
-  color: var(--item-accent);
+.favorite-card .favorite-toggle {
+  top: 50%;
+  right: 4px;
+  width: 40px;
+  height: 40px;
+  translate: 0 -50%;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+.favorite-card .favorite-toggle > svg {
+  width: 16px;
+  height: 16px;
 }
 
 .favorites-description {
@@ -1685,52 +2047,64 @@ function resetFilters() {
   overflow: hidden;
   color: var(--gp-home-muted);
   font-size: 12px;
-  line-height: 1.6;
+  line-height: 1.4;
   overflow-wrap: anywhere;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
+}
+
+@media (min-width: 601px) and (max-width: 959px) {
+  .favorites-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 959px) {
   .favorites-groups {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
+    gap: 10px;
   }
 
   .favorites-group {
-    padding: 14px;
+    --favorite-card-height: 58px;
+    --favorite-card-gap: 5px;
+
+    padding: 8px;
+    border-radius: 12px;
   }
 
   .favorites-group > .favorites-heading {
-    margin-bottom: 10px;
-  }
-
-  .favorites-links {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 6px;
   }
 
   .favorites-link {
-    padding: 10px 48px 10px 10px;
+    padding: 6px 44px 6px 8px;
   }
 
   .favorites-link .card-leading {
+    grid-template-columns: 28px minmax(0, 1fr);
     gap: 8px;
   }
 
   .favorites-link .app-icon {
-    width: 32px;
-    height: 32px;
-    font-size: 20px;
-    border-radius: 10px;
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
+    border-radius: 8px;
   }
 
-  .favorites-link .open-icon {
-    display: none;
+  .favorites-link .app-icon img {
+    width: 22px;
+    height: 22px;
+  }
+
+  .favorites-action {
+    min-height: 32px;
+    padding: 4px 8px;
   }
 }
 
-@media (max-width: 380px) {
-  .favorites-links {
+@media (max-width: 600px) {
+  .favorites-groups {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -2117,13 +2491,6 @@ function resetFilters() {
   grid-area: top;
 }
 
-.is-list-view .open-icon {
-  position: absolute;
-  z-index: 2;
-  top: 14px;
-  right: 4px;
-}
-
 .is-list-view .card-content {
   grid-area: content;
   margin: 0;
@@ -2395,24 +2762,19 @@ function resetFilters() {
 }
 
 .ranking-badge {
-  position: absolute;
-  z-index: 2;
-  top: -10px;
-  right: 18px;
   display: inline-flex;
   flex: none;
-  gap: 4px;
+  gap: 3px;
   align-items: center;
-  padding: 4px 7px;
+  padding: 3px 5px;
   color: var(--rank-color);
-  font-size: 13px;
+  font-size: 11px;
   line-height: 1;
+  white-space: nowrap;
   border: 1px solid color-mix(in srgb, var(--rank-color) 38%, transparent);
-  border-radius: 8px;
+  border-radius: 999px;
   background: color-mix(in srgb, var(--rank-color) 9%, var(--gp-surface-bg-elv));
-  box-shadow: 0 0 12px color-mix(in srgb, var(--rank-color) 13%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--rank-color) 13%, transparent);
 }
 
 .ranking-badge small {
@@ -2535,33 +2897,25 @@ function resetFilters() {
   object-fit: contain;
 }
 
-:global(html[data-theme="dark"] .app-icon.brand-icon-dark-contrast) {
-  color: #1f2937;
+:global(html[data-theme="dark"] .app-icon.brand-icon-monochrome) {
+  color: color-mix(in srgb, var(--item-accent) 40%, #fff);
+}
+
+:global(html[data-theme="dark"] .app-icon:not(.brand-icon-monochrome):not(.brand-icon-light-surface)) {
+  background: #162032;
+}
+
+:global(html[data-theme="dark"] .app-icon.brand-icon-light-surface) {
   border-color: rgb(255 255 255 / 0.68);
   background: #f8fafc;
 }
 
-:global(html[data-theme="dark"] .nav-card:hover .app-icon.brand-icon-dark-contrast),
-:global(html[data-theme="dark"] .nav-card:focus-within .app-icon.brand-icon-dark-contrast),
-:global(html[data-theme="dark"] .favorites-link:hover .app-icon.brand-icon-dark-contrast),
-:global(html[data-theme="dark"] .favorites-link:focus-visible .app-icon.brand-icon-dark-contrast) {
-  color: #111827;
+:global(html[data-theme="dark"] .nav-card:hover .app-icon.brand-icon-light-surface),
+:global(html[data-theme="dark"] .nav-card:focus-within .app-icon.brand-icon-light-surface),
+:global(html[data-theme="dark"] .favorites-link:hover .app-icon.brand-icon-light-surface),
+:global(html[data-theme="dark"] .favorites-link:focus-visible .app-icon.brand-icon-light-surface) {
   border-color: #fff;
   background: #fff;
-}
-
-.open-icon {
-  flex: none;
-  width: 18px;
-  height: 18px;
-  color: var(--vp-c-text-3);
-  transition: color 180ms ease, transform 180ms ease;
-}
-
-.nav-card:hover .open-icon,
-.nav-card:focus-within .open-icon {
-  color: var(--item-accent);
-  transform: translate(2px, -2px);
 }
 
 .card-content {
@@ -2761,10 +3115,6 @@ function resetFilters() {
 @media (max-width: 680px) {
   .navigation-hub {
     padding-bottom: 48px;
-  }
-
-  .navigation-panel {
-    margin-bottom: 12px;
   }
 
   .filter-dock {
@@ -3081,8 +3431,7 @@ function resetFilters() {
   .nav-card,
   .nav-card::after,
   .card-aura,
-  .app-icon,
-  .open-icon {
+  .app-icon {
     transition: none;
   }
 
@@ -3092,8 +3441,6 @@ function resetFilters() {
   .nav-card:focus-within .card-aura,
   .nav-card:hover .app-icon,
   .nav-card:focus-within .app-icon,
-  .nav-card:hover .open-icon,
-  .nav-card:focus-within .open-icon,
   .favorite-toggle:hover,
   .favorite-toggle:focus-visible,
   .favorites-action:not(:disabled):hover,
