@@ -1,3 +1,16 @@
+## 🔖 Release v2.12.0 (2026-10-27)
+
+### ✨ Features
+
+* **navigation:** add browser-synced favorites ([c0e4d4c](https://github.com/EmirioBomb/GearPress/commit/c0e4d4c95dcb29294e015563a1f7eeb35ede2560))
+* **navigation:** add favorite reordering and expand the catalog ([734ea91](https://github.com/EmirioBomb/GearPress/commit/734ea91f26f71752567bf25383913647031ef6e3))
+* **navigation:** add grouped frequent shortcuts ([1cc8147](https://github.com/EmirioBomb/GearPress/commit/1cc814723f3e5c9639e3e08e3c503680e64fe34a))
+* **navigation:** curate starter favorites and refine layout ([704fd9f](https://github.com/EmirioBomb/GearPress/commit/704fd9f8109622b6fc6fc2deaa26fbb9d7eaad5c))
+
+### 🎨 Style
+
+* **css:** simplify navigation header and card layout ([8f4eb3d](https://github.com/EmirioBomb/GearPress/commit/8f4eb3d00d73c16c0e799c2562f1613462213bf9))
+
 ## 🔖 Release v2.11.0 (2026-10-23)
 
 ### ✨ Features
