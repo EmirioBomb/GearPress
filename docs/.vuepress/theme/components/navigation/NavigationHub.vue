@@ -1,5 +1,5 @@
 <template>
-  <main class="navigation-hub" :class="{ 'mobile-filters-open': mobileFiltersOpen, 'is-frequent-view': isFrequentView }">
+  <main class="navigation-hub" :class="{ 'mobile-filters-open': mobileFiltersOpen, 'is-favorites-view': isFavoritesView }">
     <h1 class="navigation-title">{{ copy.title }}</h1>
     <section class="navigation-panel">
       <div
@@ -19,7 +19,7 @@
           ref="searchInput"
           v-model="query"
           type="search"
-          :placeholder="isFrequentView ? copy.frequentSearchPlaceholder : copy.searchPlaceholder"
+          :placeholder="isFavoritesView ? copy.favoritesSearchPlaceholder : copy.searchPlaceholder"
           :aria-label="copy.searchLabel"
           @focus="isSearchFocused = true"
           @blur="isSearchFocused = false"
@@ -34,7 +34,7 @@
         type="button"
         class="mobile-filter-toggle"
         :aria-expanded="mobileFiltersOpen"
-        :aria-controls="isFrequentView ? 'mobile-platform-filters' : 'mobile-platform-filters mobile-detail-filters'"
+        :aria-controls="isFavoritesView ? 'mobile-platform-filters' : 'mobile-platform-filters mobile-detail-filters'"
         @click="mobileFiltersOpen = !mobileFiltersOpen"
       >
         <span class="mobile-filter-toggle-label">
@@ -73,7 +73,7 @@
     </section>
 
     <div class="navigation-content">
-      <aside v-if="!isFrequentView" id="mobile-detail-filters" class="category-rail" :aria-label="copy.categoryLabel">
+      <aside v-if="!isFavoritesView" id="mobile-detail-filters" class="category-rail" :aria-label="copy.categoryLabel">
         <div class="filter-group">
           <div class="category-rail-title">{{ copy.categoryTitle }}</div>
           <div class="category-rail-list">
@@ -128,7 +128,7 @@
       </aside>
 
       <div class="card-area">
-        <div v-if="!isFrequentView" class="card-toolbar">
+        <div v-if="!isFavoritesView" class="card-toolbar">
           <div class="view-switch" role="group" :aria-label="copy.viewLabel">
             <button
               type="button"
@@ -178,7 +178,7 @@
               :aria-label="`${copy.removeFilter} ${activeScopeLabel}`"
               @click="selectScope('all')"
             >
-              <Icon :icon="activeScope === 'frequent' ? 'lucide:star' : platformIcon(activeScope)" aria-hidden="true" />
+              <Icon :icon="activeScope === 'favorites' ? 'lucide:star' : platformIcon(activeScope)" aria-hidden="true" />
               <span>{{ activeScopeLabel }}</span>
               <Icon icon="lucide:x" class="chip-remove" aria-hidden="true" />
             </button>
@@ -220,50 +220,95 @@
           </span>
         </section>
 
-        <div v-if="isFrequentView && filteredItems.length" class="frequent-groups">
-          <section
-            v-for="group in displayedFrequentGroups"
-            :key="group.id"
-            class="frequent-group"
-            :class="`frequent-group-${group.id}`"
-            :aria-labelledby="`frequent-heading-${group.id}`"
+        <div v-if="isFavoritesView" class="favorites-toolbar">
+          <p class="favorites-note">{{ storageUnavailable ? copy.storageError : copy.favoritesNote }}</p>
+          <button
+            v-if="favorites.length === 0"
+            type="button"
+            class="favorites-action"
+            @click="importRecommendedFavorites"
           >
-            <h2 :id="`frequent-heading-${group.id}`" class="frequent-heading">
-              {{ localize(group.label) }}
+            <Icon icon="lucide:download" aria-hidden="true" />
+            {{ copy.importFavorites }}
+          </button>
+          <button
+            type="button"
+            class="favorites-action secondary"
+            @click="selectScope('all')"
+          >
+            {{ copy.browseCatalog }}
+          </button>
+        </div>
+
+        <div v-if="!isFavoritesView && filteredItems.length" class="catalog-bulk-toolbar">
+          <button
+            type="button"
+            class="favorites-action"
+            :disabled="visibleUnfavoritedItems.length === 0"
+            @click="addVisibleItemsToFavorites"
+          >
+            <Icon icon="lucide:star" aria-hidden="true" />
+            {{ visibleUnfavoritedItems.length ? `${copy.favoriteResults} (${visibleUnfavoritedItems.length})` : copy.allResultsSaved }}
+          </button>
+        </div>
+
+        <div v-if="isFavoritesView && filteredItems.length" class="favorites-groups">
+          <section
+            v-for="group in displayedFavoritesGroups"
+            :key="group.id"
+            class="favorites-group"
+            :aria-labelledby="`favorites-heading-${group.id}`"
+          >
+            <h2 :id="`favorites-heading-${group.id}`" class="favorites-heading">
+              <span>{{ localize(categoryLabels[group.id]) }}</span>
+              <small>{{ group.items.length }}</small>
             </h2>
-            <div class="frequent-links">
-              <a
-                v-for="{ item, description } in group.items"
+            <div class="favorites-links">
+              <article
+                v-for="item in group.items"
                 :key="item.id"
-                class="frequent-link"
+                class="favorite-card"
                 :style="{ '--item-accent': item.accent }"
-                :href="item.url"
-                target="_blank"
-                rel="noopener noreferrer"
               >
-                <span class="card-topline">
-                  <span class="card-leading">
-                    <span class="app-icon">
-                      <img
-                        v-if="item.iconSourceUrl && !failedIconIds.has(item.id)"
-                        :src="navigationIconUrl(item)"
-                        class="is-static"
-                        alt=""
-                        width="24"
-                        height="24"
-                        loading="lazy"
-                        decoding="async"
-                        no-view
-                        @error="markIconAsFailed(item.id)"
-                      >
-                      <Icon v-else :icon="item.icon" aria-hidden="true" />
+                <a
+                  class="favorites-link"
+                  :href="item.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span class="card-topline">
+                    <span class="card-leading">
+                      <span class="app-icon" :class="[`brand-icon-${item.id}`, { 'brand-icon-dark-contrast': needsDarkIconSurface(item) }]">
+                        <img
+                          v-if="item.iconSourceUrl && !failedIconIds.has(item.id)"
+                          :src="navigationIconUrl(item)"
+                          class="is-static"
+                          alt=""
+                          width="24"
+                          height="24"
+                          loading="lazy"
+                          decoding="async"
+                          no-view
+                          @error="markIconAsFailed(item.id)"
+                        >
+                        <Icon v-else :icon="item.icon" aria-hidden="true" />
+                      </span>
+                      <strong class="card-title">{{ item.name }}</strong>
                     </span>
-                    <strong class="card-title">{{ item.name }}</strong>
+                    <Icon icon="lucide:arrow-up-right" class="open-icon" aria-hidden="true" />
                   </span>
-                  <Icon icon="lucide:arrow-up-right" class="open-icon" aria-hidden="true" />
-                </span>
-                <span class="frequent-description">{{ localize(description) }}</span>
-              </a>
+                  <span class="favorites-description">{{ localize(item.description) }}</span>
+                </a>
+                <button
+                  type="button"
+                  class="favorite-toggle"
+                  :aria-label="`${copy.removeFavorite}: ${item.name}`"
+                  :aria-pressed="true"
+                  @click="toggleFavorite(item.id)"
+                >
+                  <Icon icon="lucide:star" aria-hidden="true" />
+                </button>
+              </article>
             </div>
           </section>
         </div>
@@ -273,7 +318,7 @@
           class="card-field"
           :class="{ 'is-list-view': activeView === 'list' }"
         >
-          <a
+          <article
             v-for="item in displayedItems"
             :key="item.id"
             class="nav-card"
@@ -282,9 +327,6 @@
               cardRankClass(item),
             ]"
             :style="{ '--item-accent': item.accent }"
-            :href="item.url"
-            target="_blank"
-            rel="noopener noreferrer"
           >
             <span class="card-aura" aria-hidden="true" />
             <span v-if="cardRank(item) > 0" class="rank-sheen" aria-hidden="true" />
@@ -296,51 +338,74 @@
             >
               {{ rankMark(cardRank(item)) }} <small>#{{ cardRank(item) }}</small>
             </span>
-            <span class="card-topline">
-              <span class="card-leading">
-                <span class="app-icon">
-                  <img
-                    v-if="item.iconSourceUrl && !failedIconIds.has(item.id)"
-                    :src="navigationIconUrl(item)"
-                    class="is-static"
-                    alt=""
-                    width="24"
-                    height="24"
-                    loading="lazy"
-                    decoding="async"
-                    no-view
-                    @error="markIconAsFailed(item.id)"
-                  >
-                  <Icon v-else :icon="item.icon" aria-hidden="true" />
+            <a
+              class="nav-card-link"
+              :href="item.url"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="card-topline">
+                <span class="card-leading">
+                  <span class="app-icon" :class="[`brand-icon-${item.id}`, { 'brand-icon-dark-contrast': needsDarkIconSurface(item) }]">
+                    <img
+                      v-if="item.iconSourceUrl && !failedIconIds.has(item.id)"
+                      :src="navigationIconUrl(item)"
+                      class="is-static"
+                      alt=""
+                      width="24"
+                      height="24"
+                      loading="lazy"
+                      decoding="async"
+                      no-view
+                      @error="markIconAsFailed(item.id)"
+                    >
+                    <Icon v-else :icon="item.icon" aria-hidden="true" />
+                  </span>
+                  <strong class="card-title">{{ item.name }}</strong>
                 </span>
-                <strong class="card-title">{{ item.name }}</strong>
+                <Icon icon="lucide:arrow-up-right" class="open-icon" aria-hidden="true" />
               </span>
-              <Icon icon="lucide:arrow-up-right" class="open-icon" aria-hidden="true" />
-            </span>
 
-            <span class="card-content">
-              <span class="card-description">{{ localize(item.description) }}</span>
-              <span class="card-meta-row">
-                <span class="card-category">{{ localize(categoryLabels[item.category]) }}</span>
-                <span class="platform-stack">
-                  <span
-                    v-for="platform in item.platforms"
-                    :key="platform"
-                    :title="platformName(platform)"
-                  >
-                    <Icon :icon="platformIcon(platform)" />
+              <span class="card-content">
+                <span class="card-description">{{ localize(item.description) }}</span>
+                <span class="card-meta-row">
+                  <span class="card-category">{{ localize(categoryLabels[item.category]) }}</span>
+                  <span class="platform-stack">
+                    <span
+                      v-for="platform in item.platforms"
+                      :key="platform"
+                      :title="platformName(platform)"
+                    >
+                      <Icon :icon="platformIcon(platform)" />
+                    </span>
                   </span>
                 </span>
               </span>
-            </span>
-          </a>
+            </a>
+            <button
+              type="button"
+              class="favorite-toggle"
+              :class="{ 'is-favorite': favoriteItemIds.has(item.id) }"
+              :aria-label="`${favoriteItemIds.has(item.id) ? copy.removeFavorite : copy.addFavorite}: ${item.name}`"
+              :aria-pressed="favoriteItemIds.has(item.id)"
+              @click="toggleFavorite(item.id)"
+            >
+              <Icon icon="lucide:star" aria-hidden="true" />
+            </button>
+          </article>
         </section>
 
         <section v-else class="empty-state">
-          <span><Icon icon="lucide:satellite" /></span>
-          <h2>{{ copy.emptyTitle }}</h2>
-          <p>{{ copy.emptyText }}</p>
-          <button type="button" @click="resetFilters">{{ copy.reset }}</button>
+          <span><Icon :icon="isFavoritesView ? 'lucide:star' : 'lucide:satellite'" aria-hidden="true" /></span>
+          <h2>{{ isEmptyFavoritesCollection ? copy.favoritesEmptyTitle : copy.emptyTitle }}</h2>
+          <p>{{ isEmptyFavoritesCollection ? copy.favoritesEmptyText : copy.emptyText }}</p>
+          <button
+            v-if="!isEmptyFavoritesCollection"
+            type="button"
+            @click="resetFilters"
+          >
+            {{ copy.reset }}
+          </button>
         </section>
       </div>
     </div>
@@ -357,8 +422,7 @@ import SelectMenu from "../SelectMenu.vue"
 import {
   categoryLabels,
   featureFilters,
-  navigationFrequentGroups,
-  navigationFrequentIds,
+  navigationRecommendedFavoriteIds,
   navigationItems,
   platformFilters,
   type LocalizedText,
@@ -376,9 +440,21 @@ const content = {
     title: "导航",
     searchPlaceholder: "搜索应用、网站或分类…",
     searchLabel: "搜索导航项目",
-    frequent: "常用",
-    frequentSearchPlaceholder: "搜索常用网站…",
-    platformLabel: "选择常用或平台",
+    favorites: "收藏",
+    favoritesSearchPlaceholder: "搜索我的收藏…",
+    platformLabel: "选择收藏或平台",
+    addFavorite: "收藏",
+    removeFavorite: "取消收藏",
+    importFavorites: "导入推荐 6 项",
+    browseCatalog: "浏览全部条目",
+    favoriteResults: "收藏当前结果",
+    allResultsSaved: "当前结果已全部收藏",
+    favoritesEmptyTitle: "把常用的入口收藏在这里",
+    favoritesEmptyText: "点击卡片上的星标，即可按分类汇总；网站和应用都可以收藏。",
+    favoritesNote: "收藏仅保存在当前浏览器，中英文页面共用；清除站点数据会丢失。",
+    storageError: "浏览器存储不可用，本次收藏仅在当前页面有效。",
+    favoritesLoading: "正在读取收藏…",
+    favoritesUpdated: "收藏已更新",
     categoryLabel: "按分类与特性筛选",
     categoryTitle: "分类",
     featureTitle: "特性",
@@ -404,9 +480,21 @@ const content = {
     title: "Navigation",
     searchPlaceholder: "Search apps, websites, or categories…",
     searchLabel: "Search navigation items",
-    frequent: "Frequent",
-    frequentSearchPlaceholder: "Search frequent websites…",
-    platformLabel: "Choose frequent or a platform",
+    favorites: "Favorites",
+    favoritesSearchPlaceholder: "Search my favorites…",
+    platformLabel: "Choose favorites or a platform",
+    addFavorite: "Add to favorites",
+    removeFavorite: "Remove from favorites",
+    importFavorites: "Import 6 recommendations",
+    browseCatalog: "Browse all items",
+    favoriteResults: "Save current results",
+    allResultsSaved: "All results saved",
+    favoritesEmptyTitle: "Keep your everyday destinations here",
+    favoritesEmptyText: "Use a card’s star to save apps and websites, automatically grouped by category.",
+    favoritesNote: "Favorites stay in this browser and are shared across languages. Clearing site data removes them.",
+    storageError: "Browser storage is unavailable. Favorites only last for this page session.",
+    favoritesLoading: "Loading favorites…",
+    favoritesUpdated: "Favorites updated",
     categoryLabel: "Filter by category and features",
     categoryTitle: "Category",
     featureTitle: "Features",
@@ -438,18 +526,18 @@ const sortOptions = computed(() => [
 ])
 type NavigationSort = "recommended" | "nameAsc" | "nameDesc"
 type NavigationView = "grid" | "list"
-// Frequent is a curated view, not an item platform.
-type NavigationScope = NavigationPlatform | "all" | "frequent"
+// Favorites is a curated view, not an item platform.
+type NavigationScope = NavigationPlatform | "all" | "favorites"
 
-const frequentItems = navigationFrequentIds
-  .map(id => navigationItems.find(item => item.id === id && item.platforms.includes("web")))
-  .filter((item): item is NavigationItem => Boolean(item))
-const frequentItemIds = new Set<string>(frequentItems.map(item => item.id))
-
+const favoritesStorageKey = "gearpress-navigation-favorites-v1"
 const navigationViewStorageKey = "gearpress-navigation-view"
-const defaultScope: NavigationScope = "frequent"
+const defaultScope: NavigationScope = "favorites"
 const activeScope = ref<NavigationScope>(defaultScope)
-const isFrequentView = computed(() => activeScope.value === "frequent")
+const favorites = ref<string[]>([])
+const favoritesLoaded = ref(false)
+const storageUnavailable = ref(false)
+const favoriteItemIds = computed(() => new Set(favorites.value))
+const isFavoritesView = computed(() => activeScope.value === "favorites")
 const activeCategory = ref<NavigationCategory | "all">("all")
 const activeFeatures = ref<NavigationFeature[]>([])
 const activeSort = ref<NavigationSort>("recommended")
@@ -472,6 +560,7 @@ const categoryOrder: NavigationCategory[] = [
   "utilities",
   "knowledge",
   "communication",
+  "community",
   "media",
   "network",
   "gaming",
@@ -497,6 +586,17 @@ function filterCountLabel(label: string, count: number) {
 
 function navigationIconUrl(item: NavigationItem) {
   return withBase(`/navigation-icons/${item.id}.webp`)
+}
+
+function needsDarkIconSurface(item: NavigationItem) {
+  if (item.id === "x") return true
+  const hex = item.accent.slice(1)
+  const red = Number.parseInt(hex.slice(0, 2), 16) / 255
+  const green = Number.parseInt(hex.slice(2, 4), 16) / 255
+  const blue = Number.parseInt(hex.slice(4, 6), 16) / 255
+  const linearize = (channel: number) => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+  const luminance = 0.2126 * linearize(red) + 0.7152 * linearize(green) + 0.0722 * linearize(blue)
+  return luminance < 0.2
 }
 
 function markIconAsFailed(id: string) {
@@ -568,8 +668,8 @@ interface NavigationFilterState {
 }
 
 function itemMatchesFilters(item: NavigationItem, filters: NavigationFilterState) {
-  const matchesScope = filters.scope === "frequent"
-    ? frequentItemIds.has(item.id)
+  const matchesScope = filters.scope === "favorites"
+    ? favoritesLoaded.value && favoriteItemIds.value.has(item.id)
     : filters.scope === "all" || item.platforms.includes(filters.scope)
   const matchesCategory = filters.category === "all" || item.category === filters.category
 
@@ -582,8 +682,8 @@ function itemMatchesFilters(item: NavigationItem, filters: NavigationFilterState
 function scopeCount(scope: NavigationScope) {
   return navigationItems.filter(item => itemMatchesFilters(item, {
     scope,
-    category: scope === "frequent" ? "all" : activeCategory.value,
-    features: scope === "frequent" ? [] : activeFeatures.value,
+    category: scope === "favorites" ? "all" : activeCategory.value,
+    features: scope === "favorites" ? [] : activeFeatures.value,
     searchQuery: query.value,
   })).length
 }
@@ -624,7 +724,7 @@ function removeFeature(feature: NavigationFeature) {
 
 function selectScope(scope: NavigationScope) {
   activeScope.value = scope
-  if (scope === "frequent") {
+  if (scope === "favorites") {
     activeCategory.value = "all"
     activeFeatures.value = []
   }
@@ -632,10 +732,10 @@ function selectScope(scope: NavigationScope) {
 
 const scopeFilterOptions = computed(() => [
   {
-    id: "frequent" as const,
-    label: { zh: content.zh.frequent, en: content.en.frequent },
+    id: "favorites" as const,
+    label: { zh: content.zh.favorites, en: content.en.favorites },
     icon: "lucide:star",
-    count: scopeCount("frequent"),
+    count: scopeCount("favorites"),
   },
   ...platformFilters.map(filter => ({ ...filter, count: scopeCount(filter.id) })),
 ])
@@ -667,14 +767,13 @@ const filteredItems = computed(() => {
   }))
 })
 
-const displayedFrequentGroups = computed(() => {
-  const visibleIds = new Set(filteredItems.value.map(item => item.id))
-  return navigationFrequentGroups.map(group => ({
-    ...group,
-    items: group.items.flatMap(entry => {
-      const item = frequentItems.find(item => item.id === entry.id)
-      return item && visibleIds.has(item.id) ? [{ item, description: entry.description }] : []
-    }),
+const visibleUnfavoritedItems = computed(() => filteredItems.value.filter(item => !favoriteItemIds.value.has(item.id)))
+
+const displayedFavoritesGroups = computed(() => {
+  const visibleItems = filteredItems.value.filter(item => favoriteItemIds.value.has(item.id))
+  return categoryOrder.map(category => ({
+    id: category,
+    items: visibleItems.filter(item => item.category === category),
   })).filter(group => group.items.length > 0)
 })
 
@@ -697,9 +796,7 @@ const nameCollator = computed(() => {
 })
 
 const displayedItems = computed(() => {
-  if (isFrequentView.value) {
-    return frequentItems.filter(item => itemMatchesQuery(item, query.value))
-  }
+  if (isFavoritesView.value) return filteredItems.value
 
   const indexedItems = filteredItems.value.map((item, index) => ({ item, index }))
 
@@ -745,6 +842,8 @@ function rankLabel(rank: number) {
   return `Rank ${rank}`
 }
 
+const isEmptyFavoritesCollection = computed(() => isFavoritesView.value && favoritesLoaded.value && favorites.value.length === 0 && !query.value.trim())
+
 const hasActiveFilters = computed(() => {
   return (activeScope.value !== defaultScope && activeScope.value !== "all")
     || activeCategory.value !== "all"
@@ -765,7 +864,7 @@ const activeFilterCountLabel = computed(() => {
 })
 
 const activeScopeLabel = computed(() => {
-  if (activeScope.value === "frequent") return copy.value.frequent
+  if (activeScope.value === "favorites") return copy.value.favorites
   return activeScope.value === "all" ? "" : platformName(activeScope.value)
 })
 
@@ -827,6 +926,63 @@ function scheduleFilterDockUpdate() {
   })
 }
 
+function persistFavorites(nextFavorites: string[]) {
+  favorites.value = [...new Set(nextFavorites)]
+  try {
+    window.localStorage.setItem(favoritesStorageKey, JSON.stringify({ version: 1, ids: favorites.value }))
+    storageUnavailable.value = false
+  }
+  catch {
+    storageUnavailable.value = true
+  }
+}
+
+function restoreFavorites() {
+  try {
+    const stored = window.localStorage.getItem(favoritesStorageKey)
+    if (stored) {
+      const parsed: unknown = JSON.parse(stored)
+      if (
+        typeof parsed === "object"
+        && parsed !== null
+        && "version" in parsed
+        && parsed.version === 1
+        && "ids" in parsed
+        && Array.isArray(parsed.ids)
+      ) {
+        const validIds = new Set(navigationItems.map(item => item.id))
+        favorites.value = [...new Set(parsed.ids.filter((id): id is string => typeof id === "string" && validIds.has(id)))]
+      }
+    }
+  }
+  catch {
+    storageUnavailable.value = true
+    favorites.value = []
+  }
+  finally {
+    favoritesLoaded.value = true
+  }
+}
+
+function toggleFavorite(id: string) {
+  const nextFavorites = favoriteItemIds.value.has(id)
+    ? favorites.value.filter(favoriteId => favoriteId !== id)
+    : [...favorites.value, id]
+  persistFavorites(nextFavorites)
+}
+
+function addVisibleItemsToFavorites() {
+  if (visibleUnfavoritedItems.value.length === 0) return
+  persistFavorites([...favorites.value, ...visibleUnfavoritedItems.value.map(item => item.id)])
+  activeScope.value = "favorites"
+  activeCategory.value = "all"
+  activeFeatures.value = []
+}
+
+function importRecommendedFavorites() {
+  persistFavorites([...favorites.value, ...navigationRecommendedFavoriteIds])
+}
+
 function setActiveView(view: NavigationView) {
   activeView.value = view
   if (typeof window === "undefined") return
@@ -850,6 +1006,7 @@ function restoreActiveView() {
 }
 
 onMounted(() => {
+  restoreFavorites()
   restoreActiveView()
   window.addEventListener("scroll", scheduleFilterDockUpdate, { passive: true })
   window.addEventListener("resize", scheduleFilterDockUpdate)
@@ -1283,35 +1440,17 @@ function resetFilters() {
   align-items: start;
 }
 
-.is-frequent-view .navigation-content {
+.is-favorites-view .navigation-content {
   grid-template-columns: minmax(0, 1fr);
 }
 
-.frequent-groups {
+.favorites-groups {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
 }
 
-.frequent-group {
-  --group-accent: var(--gp-cyan);
-
-  min-width: 0;
-  padding: 18px;
-  border: 1px solid color-mix(in srgb, var(--group-accent) 18%, var(--gp-home-card-border));
-  border-radius: var(--hub-radius);
-  background: linear-gradient(145deg, color-mix(in srgb, var(--group-accent) 7%, var(--gp-home-card-bg)), var(--gp-home-card-bg));
-}
-
-.frequent-group-communication {
-  --group-accent: var(--gp-blue);
-}
-
-.frequent-group-media {
-  --group-accent: var(--gp-purple);
-}
-
-.frequent-group > .frequent-heading {
+.favorites-group > .favorites-heading {
   display: flex;
   gap: 9px;
   align-items: center;
@@ -1324,7 +1463,7 @@ function resetFilters() {
   border: 0;
 }
 
-.frequent-heading::before {
+.favorites-heading::before {
   width: 4px;
   height: 15px;
   flex: none;
@@ -1333,18 +1472,63 @@ function resetFilters() {
   content: "";
 }
 
-.frequent-links {
+.favorites-group {
+  --group-accent: var(--gp-cyan);
+
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid color-mix(in srgb, var(--group-accent) 18%, var(--gp-home-card-border));
+  border-radius: var(--hub-radius);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--group-accent) 7%, var(--gp-home-card-bg)), var(--gp-home-card-bg));
+}
+
+.favorites-group-ai {
+  --group-accent: var(--gp-cyan);
+}
+
+.favorites-group-community {
+  --group-accent: var(--gp-blue);
+}
+
+.favorites-group-media {
+  --group-accent: var(--gp-purple);
+}
+
+.favorites-heading small {
   display: grid;
-  grid-auto-rows: 1fr;
+  min-width: 21px;
+  height: 21px;
+  box-sizing: border-box;
+  place-items: center;
+  margin-left: auto;
+  padding: 0 5px;
+  color: var(--vp-c-text-2);
+  font-size: 10px;
+  border: 1px solid var(--gp-home-card-border);
+  border-radius: 999px;
+  background: var(--gp-surface-bg-elv);
+}
+
+.favorites-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 8px;
 }
 
-.frequent-link {
+.favorite-card {
+  position: relative;
+  min-width: 0;
+  border-radius: 12px;
+}
+
+.favorites-link {
   display: flex;
   min-width: 0;
+  min-height: 100%;
+  box-sizing: border-box;
   flex-direction: column;
   gap: 8px;
-  padding: 12px;
+  padding: 12px 48px 12px 12px;
   color: var(--vp-c-text-1);
   text-decoration: none;
   border: 1px solid transparent;
@@ -1353,34 +1537,150 @@ function resetFilters() {
   transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
-.frequent-link:hover,
-.frequent-link:focus-visible {
+.favorites-link:hover,
+.favorites-link:focus-visible {
   color: var(--vp-c-text-1);
   border-color: color-mix(in srgb, var(--item-accent) 30%, var(--gp-home-card-border));
   background: color-mix(in srgb, var(--item-accent) 7%, var(--gp-surface-bg-elv));
   box-shadow: 0 4px 12px color-mix(in srgb, var(--item-accent) 7%, transparent);
 }
 
-.frequent-link:focus-visible {
+.favorites-link:focus-visible {
   outline: 2px solid var(--gp-cyan);
   outline-offset: 3px;
 }
 
-.frequent-link .card-title {
+.favorites-link .card-title {
   font-size: 16px;
 }
 
-.frequent-link .open-icon {
+.favorites-link .open-icon {
   width: 15px;
   height: 15px;
 }
 
-.frequent-link:hover .open-icon,
-.frequent-link:focus-visible .open-icon {
+.favorites-toolbar,
+.catalog-bulk-toolbar {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.favorites-toolbar {
+  padding: 10px 12px;
+  border: 1px solid var(--gp-home-card-border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--gp-surface-bg-elv) 76%, transparent);
+}
+
+.favorites-note {
+  min-width: 0;
+  flex: 1 1 300px;
+  margin: 0;
+  color: var(--gp-home-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.favorites-action {
+  display: inline-flex;
+  min-height: 34px;
+  flex: none;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  color: var(--vp-c-text-1);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid color-mix(in srgb, var(--gp-cyan) 35%, var(--gp-home-card-border));
+  border-radius: 10px;
+  background: var(--gp-gradient-active);
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.favorites-action.secondary {
+  border-color: var(--gp-home-card-border);
+  background: var(--gp-surface-bg-elv);
+}
+
+.favorites-action:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.favorites-action:not(:disabled):hover,
+.favorites-action:focus-visible {
+  border-color: var(--gp-active-border);
+  box-shadow: 0 0 12px var(--gp-active-glow);
+  transform: translateY(-1px);
+}
+
+.favorites-action:focus-visible {
+  outline: 2px solid var(--gp-cyan);
+  outline-offset: 2px;
+}
+
+.favorites-action > svg {
+  width: 14px;
+  height: 14px;
+  color: var(--gp-icon-highlight);
+}
+
+.favorite-toggle {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  box-sizing: border-box;
+  place-items: center;
+  padding: 0;
+  color: var(--vp-c-text-3);
+  border: 1px solid var(--gp-home-card-border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--gp-surface-bg-elv) 88%, transparent);
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.favorite-toggle > svg {
+  width: 17px;
+  height: 17px;
+}
+
+.favorite-toggle.is-favorite {
+  color: var(--gp-icon-highlight);
+  border-color: color-mix(in srgb, var(--gp-cyan) 34%, var(--gp-home-card-border));
+  background: color-mix(in srgb, var(--gp-cyan) 10%, var(--gp-surface-bg-elv));
+}
+
+.favorite-toggle:hover,
+.favorite-toggle:focus-visible {
+  color: var(--gp-icon-highlight);
+  border-color: var(--gp-active-border);
+  box-shadow: 0 0 12px var(--gp-active-glow);
+  transform: scale(1.05);
+}
+
+.favorite-toggle:focus-visible {
+  outline: 2px solid var(--gp-cyan);
+  outline-offset: 2px;
+}
+
+.favorites-link:hover .open-icon,
+.favorites-link:focus-visible .open-icon {
   color: var(--item-accent);
 }
 
-.frequent-description {
+.favorites-description {
   display: -webkit-box;
   overflow: hidden;
   color: var(--gp-home-muted);
@@ -1392,45 +1692,45 @@ function resetFilters() {
 }
 
 @media (max-width: 959px) {
-  .frequent-groups {
+  .favorites-groups {
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
   }
 
-  .frequent-group {
+  .favorites-group {
     padding: 14px;
   }
 
-  .frequent-group > .frequent-heading {
+  .favorites-group > .favorites-heading {
     margin-bottom: 10px;
   }
 
-  .frequent-links {
+  .favorites-links {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .frequent-link {
-    padding: 10px;
+  .favorites-link {
+    padding: 10px 48px 10px 10px;
   }
 
-  .frequent-link .card-leading {
+  .favorites-link .card-leading {
     gap: 8px;
   }
 
-  .frequent-link .app-icon {
+  .favorites-link .app-icon {
     width: 32px;
     height: 32px;
     font-size: 20px;
     border-radius: 10px;
   }
 
-  .frequent-link .open-icon {
+  .favorites-link .open-icon {
     display: none;
   }
 }
 
 @media (max-width: 380px) {
-  .frequent-links {
+  .favorites-links {
     grid-template-columns: minmax(0, 1fr);
   }
 }
@@ -1798,15 +2098,18 @@ function resetFilters() {
 .is-list-view .nav-card,
 .is-list-view .nav-card.is-wide,
 .is-list-view .nav-card.is-tall {
-  display: grid;
-  grid-template-areas: "top content";
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
   grid-column: span 1;
   grid-row: span 1;
   min-height: 88px;
+  padding: 12px 58px 12px 12px;
+}
+
+.is-list-view .nav-card-link {
+  display: grid;
+  grid-template-areas: "top content";
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
   gap: 14px;
   align-items: center;
-  padding: 12px 40px 12px 12px;
 }
 
 .is-list-view .card-topline {
@@ -1818,7 +2121,7 @@ function resetFilters() {
   position: absolute;
   z-index: 2;
   top: 14px;
-  right: 14px;
+  right: 4px;
 }
 
 .is-list-view .card-content {
@@ -1864,7 +2167,32 @@ function resetFilters() {
   transition: background 240ms ease, border-color 240ms ease, box-shadow 240ms ease, transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.nav-card > :where(:not(.card-aura):not(.rank-sheen):not(.ranking-badge)) {
+.nav-card-link {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav-card-link .card-topline {
+  padding-right: 38px;
+}
+
+.nav-card-link .card-content {
+  flex: 1;
+}
+
+.nav-card-link:focus-visible {
+  border-radius: calc(var(--hub-radius) - 2px);
+  outline: 2px solid var(--gp-cyan);
+  outline-offset: 3px;
+}
+
+.nav-card > :where(:not(.card-aura):not(.rank-sheen):not(.ranking-badge):not(.nav-card-link):not(.favorite-toggle)) {
   position: relative;
   z-index: 1;
 }
@@ -2134,7 +2462,7 @@ function resetFilters() {
 }
 
 .nav-card:hover,
-.nav-card:focus-visible {
+.nav-card:focus-within {
   color: var(--vp-c-text-1);
   border-color: color-mix(in srgb, var(--item-accent) 38%, var(--gp-home-card-border));
   background: color-mix(in srgb, var(--item-accent) 5%, var(--gp-home-card-bg));
@@ -2145,12 +2473,12 @@ function resetFilters() {
 }
 
 .nav-card:hover::after,
-.nav-card:focus-visible::after {
+.nav-card:focus-within::after {
   opacity: 1;
 }
 
 .nav-card:hover .card-aura,
-.nav-card:focus-visible .card-aura {
+.nav-card:focus-within .card-aura {
   opacity: 0.8;
   transform: scale(1.15);
 }
@@ -2194,7 +2522,7 @@ function resetFilters() {
 }
 
 .nav-card:hover .app-icon,
-.nav-card:focus-visible .app-icon {
+.nav-card:focus-within .app-icon {
   border-color: color-mix(in srgb, var(--item-accent) 50%, transparent);
   background: color-mix(in srgb, var(--item-accent) 17%, var(--gp-surface-bg-elv));
   box-shadow: 0 5px 13px color-mix(in srgb, var(--item-accent) 13%, transparent);
@@ -2207,6 +2535,21 @@ function resetFilters() {
   object-fit: contain;
 }
 
+:global(html[data-theme="dark"] .app-icon.brand-icon-dark-contrast) {
+  color: #1f2937;
+  border-color: rgb(255 255 255 / 0.68);
+  background: #f8fafc;
+}
+
+:global(html[data-theme="dark"] .nav-card:hover .app-icon.brand-icon-dark-contrast),
+:global(html[data-theme="dark"] .nav-card:focus-within .app-icon.brand-icon-dark-contrast),
+:global(html[data-theme="dark"] .favorites-link:hover .app-icon.brand-icon-dark-contrast),
+:global(html[data-theme="dark"] .favorites-link:focus-visible .app-icon.brand-icon-dark-contrast) {
+  color: #111827;
+  border-color: #fff;
+  background: #fff;
+}
+
 .open-icon {
   flex: none;
   width: 18px;
@@ -2216,7 +2559,7 @@ function resetFilters() {
 }
 
 .nav-card:hover .open-icon,
-.nav-card:focus-visible .open-icon {
+.nav-card:focus-within .open-icon {
   color: var(--item-accent);
   transform: translate(2px, -2px);
 }
@@ -2292,7 +2635,7 @@ function resetFilters() {
 }
 
 .nav-card:hover .platform-stack span,
-.nav-card:focus-visible .platform-stack span {
+.nav-card:focus-within .platform-stack span {
   color: var(--vp-c-text-1);
   border-color: color-mix(in srgb, var(--gp-blue) 32%, var(--gp-home-card-border));
   background: color-mix(in srgb, var(--gp-blue) 8%, var(--gp-surface-bg-elv));
@@ -2371,7 +2714,7 @@ function resetFilters() {
 }
 
 :global(html[data-theme="dark"] .nav-card:hover),
-:global(html[data-theme="dark"] .nav-card:focus-visible) {
+:global(html[data-theme="dark"] .nav-card:focus-within) {
   border-color: color-mix(in srgb, var(--item-accent) 36%, var(--gp-home-card-border));
   background: color-mix(in srgb, var(--item-accent) 4%, rgb(25 36 55 / 0.97));
   box-shadow:
@@ -2697,11 +3040,16 @@ function resetFilters() {
   .card-field.is-list-view .nav-card,
   .card-field.is-list-view .nav-card.is-wide,
   .card-field.is-list-view .nav-card.is-tall {
+    display: flex;
+    min-height: 0;
+    padding: 11px 58px 11px 11px;
+  }
+
+  .card-field.is-list-view .nav-card-link {
+    display: grid;
     grid-template-areas: "top" "content";
     grid-template-columns: minmax(0, 1fr);
-    min-height: 0;
     gap: 9px 11px;
-    padding: 11px 36px 11px 11px;
   }
 
   .is-list-view .card-description {
@@ -2727,7 +3075,9 @@ function resetFilters() {
   .active-filter-bar,
   .active-filter-chips button,
   .view-switch button,
-  .frequent-link,
+  .favorites-link,
+  .favorites-action,
+  .favorite-toggle,
   .nav-card,
   .nav-card::after,
   .card-aura,
@@ -2737,13 +3087,17 @@ function resetFilters() {
   }
 
   .nav-card:hover,
-  .nav-card:focus-visible,
+  .nav-card:focus-within,
   .nav-card:hover .card-aura,
-  .nav-card:focus-visible .card-aura,
+  .nav-card:focus-within .card-aura,
   .nav-card:hover .app-icon,
-  .nav-card:focus-visible .app-icon,
+  .nav-card:focus-within .app-icon,
   .nav-card:hover .open-icon,
-  .nav-card:focus-visible .open-icon {
+  .nav-card:focus-within .open-icon,
+  .favorite-toggle:hover,
+  .favorite-toggle:focus-visible,
+  .favorites-action:not(:disabled):hover,
+  .favorites-action:focus-visible {
     transform: none;
   }
 

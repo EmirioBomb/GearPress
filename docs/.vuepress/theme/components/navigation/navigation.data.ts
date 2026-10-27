@@ -12,6 +12,7 @@ export type NavigationCategory =
   | "utilities"
   | "knowledge"
   | "communication"
+  | "community"
   | "media"
   | "network"
   | "gaming"
@@ -77,47 +78,17 @@ export const categoryLabels: Record<NavigationCategory, LocalizedText> = {
   design: { zh: "设计", en: "Design" },
   utilities: { zh: "工具", en: "Utilities" },
   knowledge: { zh: "知识", en: "Knowledge" },
-  communication: { zh: "通信", en: "Communication" },
+  communication: { zh: "即时通信", en: "Messaging" },
+  community: { zh: "社区社交", en: "Community & Social" },
   media: { zh: "影音", en: "Media" },
   network: { zh: "网络", en: "Network" },
   gaming: { zh: "游戏", en: "Gaming" },
 }
 
-interface NavigationFrequentGroup {
-  id: NavigationCategory
-  label: LocalizedText
-  items: { id: string, description: LocalizedText }[]
-}
-
-/** Curated website shortcuts; descriptions are compact versions of the catalog copy. */
-export const navigationFrequentGroups: NavigationFrequentGroup[] = [
-  {
-    id: "ai",
-    label: { zh: "AI 助手", en: "AI Assistants" },
-    items: [
-      { id: "chatgpt", description: { zh: "问答、写作与创作", en: "Answers, writing, and creation" } },
-      { id: "hvoyai", description: { zh: "模型 API 测试与对比", en: "Model API testing and comparison" } },
-    ],
-  },
-  {
-    id: "communication",
-    label: { zh: "社区交流", en: "Community" },
-    items: [
-      { id: "linux-do", description: { zh: "Linux 与开源技术交流", en: "Linux and open-source discussions" } },
-      { id: "x", description: { zh: "分享动态，关注讨论", en: "Share posts and follow discussions" } },
-    ],
-  },
-  {
-    id: "media",
-    label: { zh: "视频影音", en: "Video & Media" },
-    items: [
-      { id: "youtube", description: { zh: "探索视频与创作者", en: "Discover videos and creators" } },
-      { id: "bilibili", description: { zh: "视频、弹幕与兴趣社区", en: "Videos, live comments, and community" } },
-    ],
-  },
+/** Optional starter selection; favorites remain empty until the user adds or imports items. */
+export const navigationRecommendedFavoriteIds = [
+  "chatgpt", "hvoyai", "linux-do", "x", "youtube", "bilibili",
 ]
-
-export const navigationFrequentIds = navigationFrequentGroups.flatMap(group => group.items.map(item => item.id))
 
 export const navigationItems: NavigationItem[] = [
   {
@@ -323,7 +294,7 @@ export const navigationItems: NavigationItem[] = [
     icon: "lucide:refresh-cw",
     iconSourceUrl: "https://ccswitch.io/favicon.ico",
     platforms: ["windows", "macos", "linux"],
-    category: "development",
+    category: "ai",
     tags: ["AI Coding", "Configuration"],
     openSource: true,
     localFirst: true,
@@ -337,7 +308,7 @@ export const navigationItems: NavigationItem[] = [
     icon: "lucide:blocks",
     iconSourceUrl: "https://codexpp.cc/images/codex-plus-plus.png",
     platforms: ["windows", "macos"],
-    category: "development",
+    category: "ai",
     tags: ["Codex", "Manager"],
     openSource: true,
     localFirst: true,
@@ -1001,7 +972,7 @@ export const navigationItems: NavigationItem[] = [
     url: "https://x.com/home",
     icon: "simple-icons:x",
     platforms: ["web"],
-    category: "communication",
+    category: "community",
     tags: ["Social", "Posts"],
     accent: "#8b949e",
     priority: 108,
@@ -1042,7 +1013,7 @@ export const navigationItems: NavigationItem[] = [
     url: "https://tieba.baidu.com/",
     icon: "arcticons:baidu-tieba",
     platforms: ["web"],
-    category: "communication",
+    category: "community",
     tags: ["Forum", "Community"],
     accent: "#3388ff",
     priority: 54,
@@ -1105,7 +1076,7 @@ export const navigationItems: NavigationItem[] = [
     icon: "lucide:compass",
     iconSourceUrl: "https://discoverhub.cn/image/discoverhub-logo.jpg",
     platforms: ["web"],
-    category: "knowledge",
+    category: "community",
     tags: ["Discovery", "Community"],
     accent: "#f97316",
     priority: 101,
@@ -1130,7 +1101,7 @@ export const navigationItems: NavigationItem[] = [
     icon: "lucide:file-code-2",
     iconSourceUrl: "https://firecrawl.github.io/anydoc/assets/logo.svg",
     platforms: ["web", "windows", "macos", "linux"],
-    category: "development",
+    category: "utilities",
     tags: ["Document", "Markdown"],
     openSource: true,
     accent: "#f97316",
@@ -1707,7 +1678,7 @@ export const navigationItems: NavigationItem[] = [
     icon: "mdi:forum-outline",
     iconSourceUrl: "https://linux.do/",
     platforms: ["web"],
-    category: "communication",
+    category: "community",
     tags: ["Linux", "Community"],
     accent: "#f2ae19",
     priority: 109,
@@ -1733,7 +1704,7 @@ export const navigationItems: NavigationItem[] = [
     icon: "lucide:panel-top",
     iconSourceUrl: "https://www.macbartender.com/",
     platforms: ["macos"],
-    category: "productivity",
+    category: "utilities",
     tags: ["Menu Bar", "Organization"],
     localFirst: true,
     accent: "#f97316",
