@@ -1,3 +1,9 @@
+## 🔖 Release v2.13.1 (2026-10-27)
+
+### 🐛 Bug Fixes
+
+* **config:** align site hostname with custom domain ([8602445](https://github.com/EmirioBomb/GearPress/commit/86024452735a574aa1c8b2ec45ee93b32f22256b))
+
 ## 🔖 Release v2.13.0 (2026-10-27)
 
 ### ✨ Features
