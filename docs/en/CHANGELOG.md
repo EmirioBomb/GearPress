@@ -1,3 +1,9 @@
+## 🔖 Release v2.13.0 (2026-10-27)
+
+### ✨ Features
+
+* **navigation:** replace browser confirmation with accessible dialog ([f823bcb](https://github.com/EmirioBomb/GearPress/commit/f823bcb93267962173012654d7570b4e2b28ddbf))
+
 ## 🔖 Release v2.12.0 (2026-10-27)
 
 ### ✨ Features
