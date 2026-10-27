@@ -224,6 +224,7 @@
           <div class="favorites-actions">
             <button
               v-if="favorites.length === 0"
+              ref="importFavoritesButton"
               type="button"
               class="favorites-action"
               @click="importRecommendedFavorites"
@@ -245,9 +246,10 @@
             </button>
             <button
               v-if="favoritesLoaded && favorites.length > 0"
+              ref="clearFavoritesButton"
               type="button"
               class="favorites-action danger"
-              @click="clearAllFavorites"
+              @click="requestClearAllFavorites"
             >
               <Icon icon="lucide:trash-2" aria-hidden="true" />
               {{ copy.clearFavorites }}
@@ -461,6 +463,51 @@
             {{ copy.reset }}
           </button>
         </section>
+
+        <div
+          v-if="showClearFavoritesDialog"
+          class="favorites-dialog-backdrop"
+          @click.self="closeClearFavoritesDialog"
+        >
+          <section
+            ref="clearFavoritesDialog"
+            class="favorites-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="clear-favorites-title"
+            aria-describedby="clear-favorites-description"
+            tabindex="-1"
+            @keydown="onClearFavoritesDialogKeydown"
+          >
+            <div class="favorites-dialog-icon" aria-hidden="true">
+              <Icon icon="lucide:trash-2" />
+            </div>
+            <div class="favorites-dialog-content">
+              <h2 id="clear-favorites-title">{{ copy.clearFavoritesTitle }}</h2>
+              <p id="clear-favorites-description">
+                {{ copy.clearFavoritesDescription(favorites.length) }}
+              </p>
+            </div>
+            <div class="favorites-dialog-actions">
+              <button
+                ref="cancelClearFavoritesButton"
+                type="button"
+                class="favorites-dialog-button secondary"
+                @click="closeClearFavoritesDialog"
+              >
+                {{ copy.cancel }}
+              </button>
+              <button
+                type="button"
+                class="favorites-dialog-button danger"
+                @click="confirmClearAllFavorites"
+              >
+                <Icon icon="lucide:trash-2" aria-hidden="true" />
+                {{ copy.clearFavorites }}
+              </button>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   </main>
@@ -503,6 +550,9 @@ const content = {
     removeFavorite: "取消收藏",
     importFavorites: `导入推荐 ${navigationRecommendedFavoriteIds.length} 项`,
     clearFavorites: "清空收藏",
+    clearFavoritesTitle: "清空全部收藏？",
+    clearFavoritesDescription: (count: number) => `即将删除全部 ${count} 项收藏，此操作无法撤销。`,
+    cancel: "取消",
     reorderFavorites: "调整顺序",
     finishReordering: "完成排序",
     reorderGroup: "调整分组顺序",
@@ -546,6 +596,9 @@ const content = {
     removeFavorite: "Remove from favorites",
     importFavorites: `Import ${navigationRecommendedFavoriteIds.length} recommendations`,
     clearFavorites: "Clear favorites",
+    clearFavoritesTitle: "Clear all favorites?",
+    clearFavoritesDescription: (count: number) => `This will remove all ${count} favorites. This action cannot be undone.`,
+    cancel: "Cancel",
     reorderFavorites: "Reorder",
     finishReordering: "Done reordering",
     reorderGroup: "Reorder group",
@@ -607,6 +660,11 @@ const activeView = ref<NavigationView>("grid")
 const query = ref("")
 const navigationHub = ref<HTMLElement>()
 const favoriteSortButton = ref<HTMLButtonElement>()
+const clearFavoritesButton = ref<HTMLButtonElement>()
+const importFavoritesButton = ref<HTMLButtonElement>()
+const cancelClearFavoritesButton = ref<HTMLButtonElement>()
+const clearFavoritesDialog = ref<HTMLElement>()
+const showClearFavoritesDialog = ref(false)
 const searchInput = ref<HTMLInputElement>()
 const filterDock = ref<HTMLElement>()
 const filterDockSlot = ref<HTMLElement>()
@@ -1120,12 +1178,60 @@ function toggleFavorite(id: string) {
 
 function clearAllFavorites() {
   if (favorites.value.length === 0) return
-  const message = locale.value === "zh"
-    ? `确定清空全部 ${favorites.value.length} 项收藏吗？此操作无法撤销。`
-    : `Clear all ${favorites.value.length} favorites? This cannot be undone.`
-  if (!window.confirm(message)) return
   if (isReorderingFavorites.value) finishFavoriteReordering()
   persistFavorites([])
+}
+
+async function requestClearAllFavorites() {
+  if (favorites.value.length === 0) return
+  showClearFavoritesDialog.value = true
+  await nextTick()
+  cancelClearFavoritesButton.value?.focus()
+}
+
+async function closeClearFavoritesDialog() {
+  showClearFavoritesDialog.value = false
+  await nextTick()
+  const focusTarget = clearFavoritesButton.value ?? importFavoritesButton.value
+  focusTarget?.focus()
+}
+
+function confirmClearAllFavorites() {
+  clearAllFavorites()
+  closeClearFavoritesDialog()
+}
+
+function onClearFavoritesDialogKeydown(event: KeyboardEvent) {
+  if (event.key === "Escape") {
+    event.preventDefault()
+    closeClearFavoritesDialog()
+    return
+  }
+
+  if (event.key !== "Tab") return
+  const dialog = clearFavoritesDialog.value
+  if (!dialog) return
+
+  const focusable = [...dialog.querySelectorAll<HTMLElement>(
+    'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+  )]
+  if (focusable.length === 0) {
+    event.preventDefault()
+    dialog.focus()
+    return
+  }
+
+  const first = focusable[0]
+  const last = focusable[focusable.length - 1]
+  const activeElement = document.activeElement
+  if (event.shiftKey && (activeElement === first || !dialog.contains(activeElement))) {
+    event.preventDefault()
+    last.focus()
+  }
+  else if (!event.shiftKey && (activeElement === last || !dialog.contains(activeElement))) {
+    event.preventDefault()
+    first.focus()
+  }
 }
 
 function importRecommendedFavorites() {
@@ -1981,6 +2087,133 @@ function resetFilters() {
   color: inherit;
 }
 
+.favorites-dialog-backdrop {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  box-sizing: border-box;
+  place-items: center;
+  padding: 16px;
+  background: rgb(15 23 42 / 0.62);
+  backdrop-filter: blur(3px);
+}
+
+.favorites-dialog {
+  display: grid;
+  width: min(100%, 420px);
+  box-sizing: border-box;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 20px;
+  color: var(--vp-c-text-1);
+  border: 1px solid color-mix(in srgb, var(--gp-cyan) 24%, var(--gp-home-card-border));
+  border-radius: 18px;
+  background: var(--gp-surface-bg-elv);
+  box-shadow: 0 20px 60px rgb(15 23 42 / 0.32);
+}
+
+.favorites-dialog:focus-visible {
+  outline: 2px solid var(--gp-cyan);
+  outline-offset: 3px;
+}
+
+.favorites-dialog-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  color: #d64d5a;
+  border: 1px solid color-mix(in srgb, #d64d5a 35%, var(--gp-home-card-border));
+  border-radius: 12px;
+  background: color-mix(in srgb, #d64d5a 10%, var(--gp-surface-bg-soft));
+}
+
+.favorites-dialog-icon > svg {
+  width: 20px;
+  height: 20px;
+}
+
+.favorites-dialog-content {
+  min-width: 0;
+}
+
+.favorites-dialog-content h2 {
+  margin: 0;
+  color: var(--vp-c-text-1);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.favorites-dialog-content p {
+  margin: 7px 0 0;
+  color: var(--vp-c-text-2);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.favorites-dialog-actions {
+  display: flex;
+  grid-column: 1 / -1;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 2px;
+}
+
+.favorites-dialog-button {
+  display: inline-flex;
+  min-height: 36px;
+  box-sizing: border-box;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  color: var(--vp-c-text-1);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--gp-home-card-border);
+  border-radius: 10px;
+  background: var(--gp-surface-bg-soft);
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.favorites-dialog-button.danger {
+  color: #b83c49;
+  border-color: color-mix(in srgb, #d64d5a 42%, var(--gp-home-card-border));
+  background: color-mix(in srgb, #d64d5a 10%, var(--gp-surface-bg-elv));
+}
+
+:global(html[data-theme="dark"] .favorites-dialog-button.danger) {
+  color: #ff969d;
+}
+
+.favorites-dialog-button:hover,
+.favorites-dialog-button:focus-visible {
+  border-color: var(--gp-active-border);
+  box-shadow: 0 0 12px var(--gp-active-glow);
+  transform: translateY(-1px);
+}
+
+.favorites-dialog-button.danger:hover,
+.favorites-dialog-button.danger:focus-visible {
+  border-color: color-mix(in srgb, #d64d5a 68%, var(--gp-home-card-border));
+  box-shadow: 0 0 12px color-mix(in srgb, #d64d5a 22%, transparent);
+}
+
+.favorites-dialog-button:focus-visible {
+  outline: 2px solid var(--gp-cyan);
+  outline-offset: 2px;
+}
+
+.favorites-dialog-button > svg {
+  width: 14px;
+  height: 14px;
+}
+
 .favorite-toggle {
   position: absolute;
   z-index: 2;
@@ -2110,6 +2343,25 @@ function resetFilters() {
 @media (max-width: 600px) {
   .favorites-groups {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 380px) {
+  .favorites-dialog {
+    grid-template-columns: 1fr;
+    gap: 11px;
+    padding: 16px;
+  }
+
+  .favorites-dialog-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .favorites-dialog-button {
+    width: 100%;
+    padding-right: 8px;
+    padding-left: 8px;
   }
 }
 
@@ -3449,6 +3701,7 @@ function resetFilters() {
   .view-switch button,
   .favorites-link,
   .favorites-action,
+  .favorites-dialog-button,
   .favorite-toggle,
   .nav-card,
   .nav-card::after,
