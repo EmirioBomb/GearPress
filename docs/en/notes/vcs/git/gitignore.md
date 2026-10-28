@@ -83,7 +83,7 @@ This is a README markdown file.
 * 🛠️ IDEs: `Intellij+all`、`VisualStudioCode`
 * 📦 Build: `Node`、`Maven`、`Java`
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/gitignore.io.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/gitignore.io.png" />
 
 <LinkCard title="👉 Create on gitignore.io" href="https://www.toptal.com/developers/gitignore" />
 

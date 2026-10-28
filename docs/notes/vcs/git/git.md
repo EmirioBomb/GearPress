@@ -22,7 +22,7 @@ permalink: /notes/vcs/git/git/
 
 ## 🔁 工作流程
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/git-workflow-zh.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/git-workflow-zh.png" />
 
 ## 🖥️ 常用命令
 

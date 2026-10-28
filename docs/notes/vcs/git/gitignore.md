@@ -84,7 +84,7 @@ This is a README markdown file.
 * 🛠️ 编译工具：`Intellij+all`、`VisualStudioCode`
 * 📦 构建依赖：`Node`、`Maven`、`Java`
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/gitignore.io.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/gitignore.io.png" />
 
 <LinkCard title="👉 在线创建 gitignore.io" href="https://www.toptal.com/developers/gitignore" />
 

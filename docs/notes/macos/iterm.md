@@ -21,7 +21,7 @@ permalink: /notes/macos/iterm/
 
 ### 👀 最终效果  <Badge type="tip" text="Argonaut 主题" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-preview.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-preview.png" />
 
 ### 1️⃣ 安装 Oh My Zsh
 
@@ -77,7 +77,7 @@ $ exec zsh
 $ p10k configure
 ```
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-p10k-config.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-p10k-config.png" />
 
 ### ⚙️ 配置iTerm2
 
@@ -87,23 +87,23 @@ $ p10k configure
 #### 1️⃣ 新建 Profile 并设为默认
 
 ::: details 打开菜单 `Settings > Profiles > General`，新建配置后，务必勾选 `Set as Default`，将其设为默认。
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-profile-new.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-profile-new.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-default-profile.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-default-profile.png" />
 :::
 
 #### 2️⃣ 禁用 Login Shell <Badge type="tip" text="Optional" />
 
 ::: details 打开菜单 `Settings > Profiles > General > Command`，避免每次启动 `iTerm2` 时输出如下信息：
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-login-shell-zsh.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-login-shell-zsh.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-login-shell.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-login-shell.png" />
 :::
 
 #### 3️⃣ 设置字体
 
 ::: details 打开菜单 `Settings > Profiles > Text > Font`， 请参照： [Meslo Nerd Font 字体](#meslo-nerd-font)
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-font.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-font.png" />
 :::
 
 #### 4️⃣ 设置配色
@@ -126,29 +126,29 @@ $ p10k configure
 :::
 
 ::: details 打开菜单 `Settings > Profiles > Colors > Color Preset`
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-color-preset.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-color-preset.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-color-import.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-color-import.png" />
 :::
 
 #### 5️⃣ 设置状态栏  <Badge type="tip" text="Optional" />
 
 ::: details 打开菜单 `Settings > Profiles > Sessions > Status Bar`
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-statusbar-00.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-statusbar-00.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-statusbar-01.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-statusbar-01.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-statusbar-02.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-statusbar-02.png" />
 :::
 
 #### 6️⃣ 启用 Minimal 主题
 
 ::: details 打开菜单 `Settings > Appearance > General > Theme`，将 `Regular` 更改为 `Minimal`
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-window-regular.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-window-regular.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-window-bar.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-window-bar.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-preview.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-preview.png" />
 :::
 
 #### 7️⃣ 安装 zsh-syntax-highlighting <Badge type="tip" text="Optional" />
@@ -192,7 +192,7 @@ $ exec zsh
 $  brew install fastfetch
 ```
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-fastfetch.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-fastfetch.png" />
 
 ### 🔧 Visual Studio Code 字体
 
@@ -200,4 +200,4 @@ $  brew install fastfetch
 ⚠️`注`: 字体名为 `MesloLGS NF`
 :::
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-vscode-fonts.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-vscode-fonts.png" />

@@ -21,7 +21,7 @@ It helps developers save versions, view history, and work together without confl
 
 ## 🔁 Workflow
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/git-workflow-en.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/git-workflow-en.png" />
 
 ## 🖥️ Cheat Sheet
 

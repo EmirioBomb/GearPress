@@ -4,7 +4,7 @@ tags:
     - Component
     - Spotify
     - Web Player
-cover: https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/post-cover/spotify.png
+cover: https://image.emiriobaan.top/GearPress/post-cover/spotify.png
 createTime: 2026/05/14 09:35:00
 permalink: /en/blog/spotify-embedded/
 ---
@@ -43,11 +43,11 @@ permalink: /en/blog/spotify-embedded/
 
 1. ==Entry==
 
-    <ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/spotify-player1.png" />
+    <ImageCard image="https://image.emiriobaan.top/GearPress/notes/spotify-player1.png" />
 
 2. ==Generate Code==
 
-    <ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/spotify-player2.png" />
+    <ImageCard image="https://image.emiriobaan.top/GearPress/notes/spotify-player2.png" />
 
 3. ==Copy Code==
 

@@ -1216,7 +1216,7 @@ export const navigationItems: NavigationItem[] = [
     description: { zh: "观看世界各地城市、景点和自然风景的实时摄像头。", en: "Watch live webcams from cities, landmarks, and natural locations around the world." },
     url: "https://www.skylinewebcams.com/en.html",
     icon: "lucide:camera",
-    iconSourceUrl: "https://cdn.jsdelivr.net/gh/SkylineWebcams/web@v2/favicon.ico",
+    iconSourceUrl: "https://www.skylinewebcams.com/favicon.ico",
     platforms: ["web", "mobile"],
     category: "media",
     tags: ["Webcam", "Live"],

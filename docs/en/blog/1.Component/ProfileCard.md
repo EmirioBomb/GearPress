@@ -3,7 +3,7 @@ title: Profile Card
 tags:
     - Component
     - ProfileCard
-cover: https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/profile/sticker.gif
+cover: https://image.emiriobaan.top/GearPress/profile/sticker.gif
 createTime: 2026/05/15 15:42:52
 permalink: /en/blog/profile-card/
 ---

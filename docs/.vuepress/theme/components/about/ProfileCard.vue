@@ -15,14 +15,14 @@
       ]"
     >
       <img
-        src="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/profile/sticker.gif"
+        src="https://image.emiriobaan.top/GearPress/profile/sticker.gif"
         width="100"
         class="profile-avatar is-static"
         alt="Status"
       />
 
       <img
-        src="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/profile/profile.svg"
+        src="https://image.emiriobaan.top/GearPress/profile/profile.svg"
         class="profile-message is-static"
         alt="About Me"
       />

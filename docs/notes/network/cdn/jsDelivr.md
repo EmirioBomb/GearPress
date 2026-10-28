@@ -97,7 +97,7 @@ https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@1.0.3/GearPress/notes/j
 ::: info 将==原资源地址==粘贴到下方输入框中，页面会自动转换为对应的==jsDelivr 加速链接==
 :::
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/jsdelivr-tool-github.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/jsdelivr-tool-github.png" />
 
 ::: tabs
 
@@ -158,7 +158,7 @@ https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@1.0.13/GearPress/notes/
 
 :::
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/jsdelivr-purge-github.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/jsdelivr-purge-github.png" />
 
 #### 3️⃣ 清除缓存（地址调用）
 

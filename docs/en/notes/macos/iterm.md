@@ -20,7 +20,7 @@ permalink: /en/notes/macos/iterm/
 
 ### 👀 Preview  <Badge type="tip" text="Argonaut Color Preset" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-preview.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-preview.png" />
 
 ### 1️⃣ Install Oh My Zsh
 
@@ -78,7 +78,7 @@ To run the configuration wizard again, execute:
 $ p10k configure
 ```
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-p10k-config.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-p10k-config.png" />
 
 ### ⚙️ Configure iTerm2
 
@@ -88,23 +88,23 @@ $ p10k configure
 #### 1️⃣ Create and Set a Default Profile
 
 ::: details Open `Settings > Profiles > General`. After creating a new profile, make sure to select `Set as Default`to set it as the default profile.
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-profile-new.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-profile-new.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-default-profile.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-default-profile.png" />
 :::
 
 #### 2️⃣ Disable Login Shell <Badge type="tip" text="Optional" />
 
 ::: details Open `Settings > Profiles > General > Command` , to prevent the following message from appearing on every `iTerm2` launch:
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-login-shell-zsh.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-login-shell-zsh.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-login-shell.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-login-shell.png" />
 :::
 
 #### 3️⃣ Font
 
 ::: details Open `Settings > Profiles > Text > Font`， see: [Meslo Nerd Font](#meslo-nerd-font)
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-font.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-font.png" />
 :::
 
 #### 4️⃣ Color Preset
@@ -127,29 +127,29 @@ $ p10k configure
 :::
 
 ::: details Open `Settings > Profiles > Colors > Color Preset`
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-color-preset.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-color-preset.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-color-import.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-color-import.png" />
 :::
 
 #### 5️⃣ Status Bar  <Badge type="tip" text="Optional" />
 
 ::: details Open `Settings > Profiles > Sessions > Status Bar`
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-statusbar-00.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-statusbar-00.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-statusbar-01.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-statusbar-01.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-statusbar-02.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-statusbar-02.png" />
 :::
 
 #### 6️⃣ Enable Minimal Theme
 
 ::: details Open `Settings > Appearance > General > Theme`，Change `Regular` to `Minimal`
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-window-regular.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-window-regular.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-window-bar.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-window-bar.png" />
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-preview.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-preview.png" />
 :::
 
 #### 7️⃣ Install zsh-syntax-highlighting <Badge type="tip" text="Optional" />
@@ -193,7 +193,7 @@ $ exec zsh
 $  brew install fastfetch
 ```
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-fastfetch.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-fastfetch.png" />
 
 ### 🔧 Visual Studio Code Font
 
@@ -203,4 +203,4 @@ Press `⌘ + ,` to open the `Settings` panel in iTerm2.
 ⚠️`Notice`: The Font Family is `MesloLGS NF`
 :::
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/iterm2/iterm-vscode-fonts.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/iterm2/iterm-vscode-fonts.png" />

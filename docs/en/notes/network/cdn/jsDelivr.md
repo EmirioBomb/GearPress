@@ -96,7 +96,7 @@ https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@1.0.3/GearPress/notes/j
 ::: info Paste ==Github link==, and it will be easily converted to ==jsDelivr links==
 :::
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/jsdelivr-tool-github.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/jsdelivr-tool-github.png" />
 
 ::: tabs
 
@@ -157,7 +157,7 @@ https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@1.0.13/GearPress/notes/
 
 :::
 
-<ImageCard image="https://cdn.jsdelivr.net/gh/EmirioBomb/media-collections@main/GearPress/notes/jsdelivr-purge-github.png" />
+<ImageCard image="https://image.emiriobaan.top/GearPress/notes/jsdelivr-purge-github.png" />
 
 #### 3️⃣ Purge Cache Link
 
