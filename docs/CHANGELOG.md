@@ -1,3 +1,14 @@
+## 🔖 Release v2.13.2 (2026-10-29)
+
+### 🐛 Bug Fixes
+
+* **assets:** replace jsDelivr image and icon URLs ([34a67cb](https://github.com/EmirioBomb/GearPress/commit/34a67cb3d674b4f9eb06e873fde61b08a405b168))
+* **navigation:** link Notes directly to the first page ([49b8290](https://github.com/EmirioBomb/GearPress/commit/49b829002c000ab64e00b2d10b2da7b42f17348f))
+
+### 📝 Documentation
+
+* **content:** add Cloudflare payment method guide ([a0dd489](https://github.com/EmirioBomb/GearPress/commit/a0dd4892d3bfe53b6d1100fbba27cea7f0411184))
+
 ## 🔖 Release v2.13.1 (2026-10-27)
 
 ### 🐛 Bug Fixes
