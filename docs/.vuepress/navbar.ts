@@ -11,7 +11,7 @@ export const zhNavbar = defineNavbarConfig([
   { text: '首页', icon: 'codicon:home', link: '/' },
   { text: '博客', icon: 'codicon:book', link: '/blog/' },
   { text: '导航', icon: 'lucide:compass', link: '/navigation/' },
-  { text: '随记', icon: 'codicon:notebook', link: '/notes/macos/homebrew/' },
+  { text: '随记', icon: 'codicon:notebook', link: '/notes/' },
   {
     text: '关于我',
     icon: 'lucide:user-round',
@@ -29,7 +29,7 @@ export const enNavbar = defineNavbarConfig([
   { text: 'Home', icon: 'codicon:home', link: '/en/' },
   { text: 'Blog', icon: 'codicon:book', link: '/en/blog/' },
   { text: 'Navigation', icon: 'lucide:compass', link: '/en/navigation/' },
-  { text: 'Notes', icon: 'codicon:notebook', link: '/en/notes/macos/homebrew/' },
+  { text: 'Notes', icon: 'codicon:notebook', link: '/en/notes/' },
   {
     text: 'About Me',
     icon: 'lucide:user-round',

@@ -64,11 +64,12 @@ const zhDoc = defineCollection({
       collapsed: false,
       icon: 'wpf:macos',
       prefix: 'macos',
+      link: '/notes/',
       items: [
         {
           text: 'Homebrew',
           icon: 'devicon:homebrew',
-          link: '/notes/macos/homebrew/'
+          link: '/notes/'
         },
         {
           text: 'iTerm2',
@@ -82,6 +83,7 @@ const zhDoc = defineCollection({
       collapsed: false,
       icon: 'mdi:linux',
       prefix: 'linux',
+      link: '/notes/linux/commands/',
       items: [
         {
           text: '命令速查',
@@ -95,11 +97,13 @@ const zhDoc = defineCollection({
       collapsed: false,
       icon: 'mdi:network-outline',
       prefix: 'network',
+      link: '/notes/network/cdn/js-delivr/',
       items: [
         {
           text: 'CDN 服务',
           icon: 'mdi:cloud-outline',
           prefix: 'cdn',
+          link: '/notes/network/cdn/js-delivr/',
           items: [
             'jsDelivr',
           ]
@@ -111,11 +115,13 @@ const zhDoc = defineCollection({
       collapsed: false,
       icon: 'mdi:source-branch',
       prefix: 'vcs',
+      link: '/notes/vcs/git/git/',
       items: [
         {
           text: 'Git',
           icon: 'mdi:git',
           prefix: 'git',
+          link: '/notes/vcs/git/git/',
           items: [
             'git',
             'gitignore',
@@ -165,7 +171,7 @@ const enDoc = defineCollection({
   // `dir` 所指向的目录中的所有 markdown 文件，其 permalink 需要以 `linkPrefix` 配置作为前缀
   // 如果 前缀不一致，则无法生成侧边栏。
   // 所以请确保  markdown 文件的 permalink 都以 `/en/` + `linkPrefix` 开头
-  linkPrefix: '/notes/',
+  linkPrefix: 'notes/',
   // 文档标题，它将用于在页面的面包屑导航中显示
   title: 'Notes',
   // 手动配置侧边栏结构
@@ -175,11 +181,12 @@ const enDoc = defineCollection({
       collapsed: false,
       icon: 'wpf:macos',
       prefix: 'macos',
+      link: '/en/notes/',
       items: [
         {
           text: 'Homebrew',
           icon: 'devicon:homebrew',
-          link: '/en/notes/macos/homebrew/'
+          link: '/en/notes/'
         },
         {
           text: 'iTerm2',
@@ -193,6 +200,7 @@ const enDoc = defineCollection({
       collapsed: false,
       icon: 'mdi:linux',
       prefix: 'linux',
+      link: '/en/notes/linux/commands/',
       items: [
         {
           text: 'Command Reference',
@@ -206,11 +214,13 @@ const enDoc = defineCollection({
       collapsed: false,
       icon: 'mdi:network-outline',
       prefix: 'network',
+      link: '/en/notes/network/cdn/js-delivr/',
       items: [
         {
           text: 'CDN',
           icon: 'mdi:cloud-outline',
           prefix: 'cdn',
+          link: '/en/notes/network/cdn/js-delivr/',
           items: [
             'jsDelivr',
           ]
@@ -222,11 +232,13 @@ const enDoc = defineCollection({
       collapsed: false,
       icon: 'mdi:source-branch',
       prefix: 'vcs',
+      link: '/en/notes/vcs/git/git/',
       items: [
         {
           text: 'Git',
           icon: 'mdi:git',
           prefix: 'git',
+          link: '/en/notes/vcs/git/git/',
           items: [
             'git',
             'gitignore',

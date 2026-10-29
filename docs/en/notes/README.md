@@ -1,7 +1,7 @@
 ---
 title: Homebrew
 createTime: 2026/05/29 17:03:07
-permalink: /en/notes/macos/homebrew/
+permalink: /en/notes/
 ---
 
 
