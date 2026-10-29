@@ -45,10 +45,10 @@ Consistent profile style with improved visual presence
 
 2. ==How to register==
 
-    ::: note Update `.vuepress/theme/client.ts`
+    ::: note Update `docs/.vuepress/client.ts`
     :::
 
-   ```ts :collapsed-lines title=".vuepress/theme/client.ts"
+   ```ts :collapsed-lines title="docs/.vuepress/client.ts"
     import { defineClientConfig } from 'vuepress/client'
     import ProfileCard from './theme/components/about/ProfileCard.vue' // [!code ++] 
 
@@ -64,7 +64,7 @@ Consistent profile style with improved visual presence
     ::: note You can use this component anywhere, such as in posts or blogs.
     :::
 
-    ```ts :collapsed-lines title="docs/README.md"
+    ```vue :collapsed-lines title="docs/README.md"
     <ProfileCard />
     ```
 
@@ -73,13 +73,13 @@ Consistent profile style with improved visual presence
 
       ::: details Click to show more
 
-      ```ts title="docs/README.md"
+      ```yaml title="docs/README.md"
         ---
         home: true
         pageLayout: home
         externalLinkIcon: false
         config:
-        - type: custom  // [!code ++] 
+          - type: custom # [!code ++]
         ---
       ```
 
@@ -95,13 +95,17 @@ Consistent profile style with improved visual presence
 
 ## 📖 Props
 
+::: note
+The avatar and signature images are currently fixed in the component and cannot be replaced through props.
+:::
+
 :::: field-group
 
-::: field name="boxMode" type="string" default="banner" optional
+::: field name="boxMode" type="'profile' | 'banner'" default="banner" optional
 Controls the component’s visual style
 
-* `profile`: card style, full-width block layout with complete structural presentation
-* `banner`: banner style, inline content-only layout that does not span the full width
+* `profile`: card style with a full-width outer layout, padding, rounded corners, and a hover shadow
+* `banner`: banner style with a full-width outer layout and content-sized inner wrapper
 :::
 
 ::: field name="align" type="'left' | 'center' | 'right'" default="center" optional
@@ -121,8 +125,8 @@ Alignment
 | BoxMode | Description | Examples |
 | -- | -- | -- |
 | default | Default: `banner` | `<ProfileCard />` |
-| profile | full-width block layout | `<ProfileCard boxMode="profile" />` |
-| banner | inline content-only layout | `<ProfileCard boxMode="banner" />` |
+| profile | Full-width outer layout with padding, rounded corners, and a hover shadow | `<ProfileCard boxMode="profile" />` |
+| banner | Full-width outer layout with a content-sized inner wrapper | `<ProfileCard boxMode="banner" />` |
 | alignment | <ul><li>`left`: left-aligned</li><li>`center`: center-aligned</li><li>`right`: right-aligned</li></ul> | `<ProfileCard align="left"/>` |
 
 :::

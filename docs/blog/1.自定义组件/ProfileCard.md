@@ -45,10 +45,10 @@ permalink: /blog/profile-card/
 
 2. ==注册组件==
 
-    ::: note 修改如下文件: `.vuepress/theme/client.ts`
+    ::: note 修改如下文件: `docs/.vuepress/client.ts`
     :::
 
-   ```ts :collapsed-lines title=".vuepress/theme/client.ts"
+   ```ts :collapsed-lines title="docs/.vuepress/client.ts"
     import { defineClientConfig } from 'vuepress/client'
     import ProfileCard from './theme/components/about/ProfileCard.vue' // [!code ++] 
 
@@ -64,7 +64,7 @@ permalink: /blog/profile-card/
     ::: note 该组件可在任意位置使用，例如文章或博客中
     :::
 
-    ```ts :collapsed-lines title="docs/README.md"
+    ```vue :collapsed-lines title="docs/README.md"
     <ProfileCard />
     ```
 
@@ -73,13 +73,13 @@ permalink: /blog/profile-card/
 
       ::: details 点击展开
 
-      ```ts title="docs/README.md"
+      ```yaml title="docs/README.md"
         ---
         home: true
         pageLayout: home
         externalLinkIcon: false
         config:
-        - type: custom  // [!code ++] 
+          - type: custom # [!code ++]
         ---
       ```
 
@@ -95,13 +95,17 @@ permalink: /blog/profile-card/
 
 ## 📖 属性定义
 
+::: note
+当前头像与签名图片在组件内固定配置，暂不支持通过属性替换。
+:::
+
 :::: field-group
 
-::: field name="boxMode" type="string" default="banner" optional
+::: field name="boxMode" type="'profile' | 'banner'" default="banner" optional
 控制组件的外观样式
 
-* `profile`：卡片样式，占满父容器宽度的卡片布局，具备完整块级展示结构
-* `banner`：横幅样式，仅包裹内容的内联式布局，不占满整行
+* `profile`：卡片样式，外层使用全宽布局，并增加内边距、圆角与悬浮阴影
+* `banner`：横幅样式，外层仍占满可用宽度，内部内容按自身宽度包裹
 :::
 
 ::: field name="align" type="'left' | 'center' | 'right'" default="center" optional
@@ -121,8 +125,8 @@ permalink: /blog/profile-card/
 | 外观样式 | 说明 | 样例 |
 | -- | -- | -- |
 | 默认样式 | 默认为 `横幅样式` | `<ProfileCard />` |
-| 卡片样式 | 占满父容器宽度的卡片布局 | `<ProfileCard boxMode="profile" />` |
-| 横幅样式 | 仅包裹内容的内联式布局 | `<ProfileCard boxMode="banner" />` |
+| 卡片样式 | 外层全宽，并增加内边距、圆角与悬浮阴影 | `<ProfileCard boxMode="profile" />` |
+| 横幅样式 | 外层全宽，内部内容按自身宽度包裹 | `<ProfileCard boxMode="banner" />` |
 | 对齐方式 | <ul><li>`left`: 左对齐</li><li>`center`: 居中</li><li>`right`: 右对齐</li></ul> | `<ProfileCard align="left"/>` |
 
 :::
