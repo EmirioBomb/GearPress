@@ -1,3 +1,15 @@
+## 🔖 Release v2.13.3 (2026-10-29)
+
+### 🐛 Bug Fixes
+
+* **seo:** restore valid Notes breadcrumb links ([c8d78e7](https://github.com/EmirioBomb/GearPress/commit/c8d78e72be3222cd021144652a0085b769396521))
+
+### 📝 Documentation
+
+* **content:** correct ProfileCard usage and props ([e91fb72](https://github.com/EmirioBomb/GearPress/commit/e91fb726640f017539b021b6cd492b8523a51d75))
+* **content:** correct SectionTitle usage and behavior ([e078e31](https://github.com/EmirioBomb/GearPress/commit/e078e318b7c05159cfc9586034edccfbc9aa532a))
+* **content:** correct Spotify embed usage and previews ([2bff785](https://github.com/EmirioBomb/GearPress/commit/2bff7857636a799646ca65bcf556590eda583f28))
+
 ## 🔖 Release v2.13.2 (2026-10-29)
 
 ### 🐛 Bug Fixes
