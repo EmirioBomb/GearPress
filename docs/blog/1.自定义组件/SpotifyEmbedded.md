@@ -20,7 +20,7 @@ permalink: /blog/spotify-embedded/
 
 * 统一 Spotify Embed 的样式与布局控制
 * 支持多展示模式以适配不同页面场景
-* 原生 ==iframe== 不支持 `normal` 与 `compact` 模式的响应式自动切换。
+* 通过 `mode` 或 `height` 统一配置播放器高度。
 
 :::
 
@@ -51,7 +51,7 @@ permalink: /blog/spotify-embedded/
 
 3. ==获取代码==
 
-    ::: tip ==常规模式== 与 ==紧凑模式==，差别仅为播放器高度而已常规模式与紧凑模式仅在高度上不同，其它展示行为一致。
+    ::: tip ==常规模式== 与 ==紧凑模式== 的区别在于播放器高度。
     * 常规模式高度: 352px
     * 紧凑模式高度: 152px
     :::
@@ -91,10 +91,10 @@ permalink: /blog/spotify-embedded/
 
 2. ==注册组件==
 
-    ::: note 修改如下文件: `.vuepress/theme/client.ts`
+    ::: note 修改如下文件: `docs/.vuepress/client.ts`
     :::
 
-   ```ts :collapsed-lines title=".vuepress/theme/client.ts"
+   ```ts :collapsed-lines title="docs/.vuepress/client.ts"
     import { defineClientConfig } from 'vuepress/client'
     import SpotifyEmbedded from './theme/components/about/SpotifyEmbedded.vue' // [!code ++] 
 
@@ -110,7 +110,7 @@ permalink: /blog/spotify-embedded/
     ::: note 该组件可在任意位置使用，例如文章或博客中
     :::
 
-    ```ts :collapsed-lines title="docs/README.md"
+    ```vue :collapsed-lines title="docs/README.md"
     <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" />
     ```
 
@@ -119,13 +119,13 @@ permalink: /blog/spotify-embedded/
 
       ::: details 点击展开
 
-      ```ts title="docs/README.md"
+      ```yaml title="docs/README.md"
         ---
         home: true
         pageLayout: home
         externalLinkIcon: false
         config:
-        - type: custom  // [!code ++] 
+        - type: custom  # [!code ++]
         ---
       ```
 
@@ -135,7 +135,7 @@ permalink: /blog/spotify-embedded/
 
 4. ==组件效果==
 
-    <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height=352 />
+    <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height="352" />
 
 ::::
 
@@ -148,15 +148,15 @@ Spotify 播放列表 ID
 :::
 
 ::: field name="mode" type="'normal' | 'compact' | 'full'" default="normal" optional
-强制显示模式
+显示模式，不会随屏幕宽度自动切换
 
 * `normal`: 常规模式，默认高度 `352px`
 * `compact`: 紧凑模式，默认高度 `152px`
-* `full`: 自适应布局模式，高度 `继承` 父级容器的尺寸
+* `full`: 高度为 `100%`，填满父容器；父容器需有明确的高度
 :::
 
 ::: field name="height" type="number" optional
-组件高度，设置高度后，忽略 `mode`
+组件高度，单位为 `px`；设置后覆盖 `mode` 对应的高度
 :::
 
 ::::
@@ -168,9 +168,9 @@ Spotify 播放列表 ID
 | 模式 | 说明 | 样例 |
 | -- | -- | -- |
 | 默认 | 默认: `常规模式` | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" />` |
-| 强制常规 | 高度始终为 352px | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="normal" />` |
-| 强制紧凑 | 高度始终为 152px | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="compact" />` |
-| 自适应模式 | 高度继承父级容器的尺寸 | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" />` |
+| 强制常规 | 未设置 height 时高度为 352px | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="normal" />` |
+| 强制紧凑 | 未设置 height 时高度为 152px | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="compact" />` |
+| 自适应模式 | 填满父容器高度，父容器需有明确的高度 | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" />` |
 | 自定义高度 | 设置为指定高度 | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height="152" />` |
 
 :::
@@ -191,19 +191,23 @@ Spotify 播放列表 ID
 
 ### 4️⃣ 自适应模式
 
-::: warning 若`无父容器`，不建议使用该 `模式`，使用时需手动指定 `height: 152`
+::: warning 父容器需有明确的高度，组件不要同时设置 `height`，否则会覆盖 `full` 模式的高度。
 
 ```vue:no-line-numbers
-<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" :height=152 />
+<div style="height: 352px;">
+  <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" />
+</div>
 ```
 
 :::
 
-<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" :height=152 />
+<div style="height: 352px;">
+  <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" />
+</div>
 
 ### 5️⃣ 自定义高度
 
-<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height=152 />
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height="152" />
 
 ## 💭 启发
 
@@ -224,6 +228,6 @@ Spotify 播放列表 ID
 
 ::: info
 
-本组件对 Spotify 官方 iframe 做了轻量封装，统一了展示样式，并通过 mode 和 breakpoint 提供简单的展示与响应式切换能力，让嵌入使用更便捷一致。
+本组件对 Spotify 官方 iframe 做了轻量封装，统一了展示样式，并通过 `mode` 和 `height` 控制播放器高度，让嵌入使用更便捷一致。
 
 :::

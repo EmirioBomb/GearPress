@@ -20,7 +20,7 @@ permalink: /en/blog/spotify-embedded/
 
 * Controls player layout style
 * Supports multiple display modes to suit different page needs
-* The native ==iframe== doesn’t support responsive switching between `normal` and `compact` modes
+* Configures player height consistently through `mode` or `height`
 
 :::
 
@@ -91,10 +91,10 @@ permalink: /en/blog/spotify-embedded/
 
 2. ==How to register==
 
-    ::: note Update `.vuepress/theme/client.ts` as follows:
+    ::: note Update `docs/.vuepress/client.ts` as follows:
     :::
 
-   ```ts :collapsed-lines title=".vuepress/theme/client.ts"
+   ```ts :collapsed-lines title="docs/.vuepress/client.ts"
     import { defineClientConfig } from 'vuepress/client'
     import SpotifyEmbedded from './theme/components/about/SpotifyEmbedded.vue' // [!code ++] 
 
@@ -110,7 +110,7 @@ permalink: /en/blog/spotify-embedded/
     ::: note  You can use this component anywhere, such as in posts or blogs.
     :::
 
-    ```ts :collapsed-lines title="docs/README.md"
+    ```vue :collapsed-lines title="docs/README.md"
     <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" />
     ```
 
@@ -119,13 +119,13 @@ permalink: /en/blog/spotify-embedded/
 
       ::: details Click to show more
 
-      ```ts title="docs/README.md"
+      ```yaml title="docs/README.md"
         ---
         home: true
         pageLayout: home
         externalLinkIcon: false
         config:
-        - type: custom  // [!code ++] 
+        - type: custom  # [!code ++]
         ---
       ```
 
@@ -148,15 +148,15 @@ Spotify playlist ID
 :::
 
 ::: field name="mode" type="'normal' | 'compact' | 'full'" default="normal" optional
-Display mode (forced)
+Display mode; does not switch automatically with screen width
 
 * `normal`: standard mode, default height `352px`
 * `compact`: compact mode, default height `152px`
-* `full`: Adaptive layout mode; height inherits the parent container's size
+* `full`: Uses `100%` height to fill the parent container, which must have an explicit height
 :::
 
 ::: field name="height" type="number" optional
-Component height, overrides the `mode` when set
+Component height in `px`; overrides the height determined by `mode` when set
 :::
 
 ::::
@@ -168,10 +168,10 @@ Component height, overrides the `mode` when set
 | Mode | Description | Examples |
 | -- | -- | -- |
 | default | Default: `normal mode` | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" />` |
-| normal | Height is fixed at `352px` | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="normal" />` |
-| compact | Height is fixed at `152px` | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="compact" />` |
-| full | Height inherits the parent container's size | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" />` |
-| custom height | Set custom height | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height=152 />` |
+| normal | Height is `352px` when height is not set | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="normal" />` |
+| compact | Height is `152px` when height is not set | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="compact" />` |
+| full | Fills the parent container, which must have an explicit height | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" />` |
+| custom height | Set custom height | `<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height="152" />` |
 
 :::
 
@@ -191,19 +191,23 @@ Component height, overrides the `mode` when set
 
 ### 4️⃣ full
 
-::: warning This `mode` is not recommended without a `parent container`, requires a manual `height: 152`
+::: warning The parent container must have an explicit height. Do not also set the component's `height`, as it overrides the height determined by `full` mode.
 
 ```vue:no-line-numbers
-<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" :height=152 />
+<div style="height: 352px;">
+  <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" />
+</div>
 ```
 
 :::
 
-<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" :height=152 />
+<div style="height: 352px;">
+  <SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" mode="full" />
+</div>
 
 ### 5️⃣ custom height
 
-<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height=152 />
+<SpotifyEmbedded playlistId="50zTqYDKkup6TbU3TFpdN3" :height="152" />
 
 ## 💭 Inspiration
 
@@ -224,6 +228,6 @@ Component height, overrides the `mode` when set
 
 ::: info
 
-A lightweight wrapper around Spotify’s official iframe, standardizing the UI and providing simple mode and breakpoint controls for consistent display and responsive switching.
+A lightweight wrapper around Spotify’s official iframe, standardizing display styles and using `mode` and `height` to control player height for consistent embedding.
 
 :::
