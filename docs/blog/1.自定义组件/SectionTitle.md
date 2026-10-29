@@ -45,10 +45,10 @@ permalink: /blog/section-title/
 
 2. ==注册组件==
 
-    ::: note 修改如下文件: `.vuepress/theme/client.ts`
+    ::: note 修改如下文件: `docs/.vuepress/client.ts`
     :::
 
-   ```ts :collapsed-lines title=".vuepress/theme/client.ts"
+   ```ts :collapsed-lines title="docs/.vuepress/client.ts"
     import { defineClientConfig } from 'vuepress/client'
     import SectionTitle from './theme/components/SectionTitle.vue'  // [!code ++] 
 
@@ -64,20 +64,20 @@ permalink: /blog/section-title/
     ::: note 该组件可在任意位置使用，例如文章或博客中
     :::
 
-    ```ts :collapsed-lines title="docs/README.md"
+    ```vue :collapsed-lines title="docs/README.md"
     <SectionTitle title="常用仓库" icon="codicon:repo" />
     ```
 
     ::: warning 注意
     若是在 `首页` 使用组件时，请确保在首页的 `Frontmatter` 中配置 `type: custom`，否则组件不生效
 
-    ```ts title="docs/README.md"
+    ```md title="docs/README.md"
     ---
     home: true
     pageLayout: home
     externalLinkIcon: false
     config:
-      - type: custom  // [!code ++] 
+      - type: custom # [!code ++]
     ---
 
     <SectionTitle title="常用仓库" icon="codicon:repo" />
@@ -92,6 +92,10 @@ permalink: /blog/section-title/
 ::::
 
 ## 📖 属性定义
+
+::: note
+该组件用于视觉区块标题，根元素为 `div`，不会生成 `h2`、`h3` 等语义标题，也不会加入页面大纲。
+:::
 
 :::: field-group
 
@@ -111,10 +115,10 @@ Iconify 图标名称，例如 `mdi:home`、`codicon:repo`
 
 | 标题 | 图标 | 状态说明 | 样例 |
 | -- | -- | -- | -- |
-| ✔ | ✔ | 图标 + 标题 | `<SectionTitle title="常用仓库" icon="codicon:repo" />` |
-| ✔ | ✖ | 仅标题 | `<SectionTitle title="常用仓库" />` |
-| ✖ | ✔ | 仅图标 | `<SectionTitle icon="codicon:repo" />` |
-| ✖ | ✖ | 仅分割线 | `<SectionTitle />` |
+| ✔ | ✔ | 图标 + 标题 + 两侧分割线 | `<SectionTitle title="常用仓库" icon="codicon:repo" />` |
+| ✔ | ✖ | 标题 + 两侧分割线 | `<SectionTitle title="常用仓库" />` |
+| ✖ | ✔ | 图标 + 两侧分割线 | `<SectionTitle icon="codicon:repo" />` |
+| ✖ | ✖ | 一条完整分割线 | `<SectionTitle />` |
 
 :::
 

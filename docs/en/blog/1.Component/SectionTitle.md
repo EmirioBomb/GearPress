@@ -45,10 +45,10 @@ permalink: /en/blog/section-title/
 
 2. ==How to register==
 
-    ::: note Update `.vuepress/theme/client.ts` as follows:
+    ::: note Update `docs/.vuepress/client.ts` as follows:
     :::
 
-   ```ts :collapsed-lines title=".vuepress/theme/client.ts"
+   ```ts :collapsed-lines title="docs/.vuepress/client.ts"
     import { defineClientConfig } from 'vuepress/client'
     import SectionTitle from './theme/components/SectionTitle.vue'  // [!code ++] 
 
@@ -64,20 +64,20 @@ permalink: /en/blog/section-title/
     ::: note You can use this component anywhere, such as in posts or blogs.
     :::
 
-    ```ts :collapsed-lines title="docs/README.md"
+    ```vue :collapsed-lines title="docs/README.md"
     <SectionTitle title="Repository" icon="codicon:repo" />
     ```
 
     ::: warning
     When using this component on the `homepage`, remember to set `type: custom` in the `Frontmatter`, otherwise it won’t render properly.
 
-    ```ts title="docs/README.md"
+    ```md title="docs/README.md"
     ---
     home: true
     pageLayout: home
     externalLinkIcon: false
     config:
-      - type: custom  // [!code ++] 
+      - type: custom # [!code ++]
     ---
 
     <SectionTitle title="Repository" icon="codicon:repo" />
@@ -92,6 +92,10 @@ permalink: /en/blog/section-title/
 ::::
 
 ## 📖 Props
+
+::: note
+This is a visual section title. Its root element is a `div`, so it does not create a semantic heading such as `h2` or `h3` and is not added to the page outline.
+:::
 
 :::: field-group
 
@@ -111,10 +115,10 @@ Iconify icon name, like `mdi:home` or `codicon:repo`
 
 | title | icon | status | sample |
 | -- | -- | -- | -- |
-| ✔ | ✔ | icon + title | `<SectionTitle title="Repository" icon="codicon:repo" />` |
-| ✔ | ✖ | title only | `<SectionTitle title="Repository" />` |
-| ✖ | ✔ | icon only | `<SectionTitle icon="codicon:repo" />` |
-| ✖ | ✖ | divider | `<SectionTitle />` |
+| ✔ | ✔ | icon + title + side dividers | `<SectionTitle title="Repository" icon="codicon:repo" />` |
+| ✔ | ✖ | title + side dividers | `<SectionTitle title="Repository" />` |
+| ✖ | ✔ | icon + side dividers | `<SectionTitle icon="codicon:repo" />` |
+| ✖ | ✖ | one full-width divider | `<SectionTitle />` |
 
 :::
 
