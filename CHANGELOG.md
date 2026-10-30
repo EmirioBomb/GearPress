@@ -1,3 +1,18 @@
+## 🔖 Release v2.13.4 (2026-10-30)
+
+### 🐛 Bug Fixes
+
+* **home:** update Tales Series link ([f1e4c7b](https://github.com/EmirioBomb/GearPress/commit/f1e4c7be5e02557fd7e7235a1edd7592c33b963d))
+* **seo:** improve homepage search snippets ([ed43ef4](https://github.com/EmirioBomb/GearPress/commit/ed43ef40d4a9f8dc9b8cc0c7f5c65cdc3cbcfe59))
+
+### 📝 Documentation
+
+* **readme:** add local setup instructions ([100c830](https://github.com/EmirioBomb/GearPress/commit/100c830932695f2d411f66430b79bc93c844b02d))
+
+### 🔧 Chores
+
+* **git:** merge upstream v2.13.3 release ([1ae61ca](https://github.com/EmirioBomb/GearPress/commit/1ae61cacd227198fe5236f1d3413e72e0b592096))
+
 ## 🔖 Release v2.13.3 (2026-10-29)
 
 ### 🐛 Bug Fixes
