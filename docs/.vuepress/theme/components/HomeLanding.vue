@@ -305,10 +305,12 @@ onBeforeUnmount(() => {
     <section class="gear-home-desk" aria-label="GearPress home highlights">
       <article class="gear-home-daily-note" :class="{ 'is-loading': isQuoteLoading }" :aria-busy="isQuoteLoading">
         <div class="gear-home-daily-rule" aria-hidden="true" />
-        <p class="gear-home-eyebrow">{{ current.dailyLabel }}</p>
-        <p class="gear-home-quote" aria-live="polite">“{{ dailyQuote.text }}”</p>
-        <p class="gear-home-quote-source">{{ dailyQuote.source }}</p>
-        <span class="gear-home-quote-mark" aria-hidden="true">“</span>
+        <div data-nosnippet>
+          <p class="gear-home-eyebrow">{{ current.dailyLabel }}</p>
+          <p class="gear-home-quote" aria-live="polite">“{{ dailyQuote.text }}”</p>
+          <p class="gear-home-quote-source">{{ dailyQuote.source }}</p>
+          <span class="gear-home-quote-mark" aria-hidden="true">“</span>
+        </div>
       </article>
 
       <div class="gear-home-selected-heading">
@@ -346,7 +348,7 @@ onBeforeUnmount(() => {
         <p v-else class="gear-home-record-empty">{{ current.emptyLabel }}</p>
       </div>
 
-      <div class="gear-home-currently">
+      <div class="gear-home-currently" data-nosnippet>
         <div class="gear-home-currently-heading">
           <span class="gear-home-section-dot" aria-hidden="true" />
           <span class="gear-home-eyebrow">{{ current.currentlyLabel }}</span>

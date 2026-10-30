@@ -22,12 +22,12 @@ export default defineUserConfig({
     '/': {
       title: 'GearPress',
       lang: 'zh-CN',
-      description: '日积月累，终见其深',
+      description: 'GearPress 是一个长期维护的个人笔记与博客，记录开发过程中遇到的问题、工具使用经验，以及值得留下来的想法。',
     },
     '/en/': {
       title: 'GearPress',
       lang: 'en-US',
-      description: 'Insights & Reflections',
+      description: 'GearPress is a personal notes and blog site, covering real development problems, tools used in practice, and ideas worth keeping.',
     },
   },
 
