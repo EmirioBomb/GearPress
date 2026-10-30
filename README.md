@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://emiriobomb.github.io/GearPress/">
+  <a href="https://emiriobaan.top/">
     <img src="./docs/.vuepress/public/logo.svg" alt="GearPress 渐变 Logo" width="180">
   </a>
 </p>
@@ -31,10 +31,43 @@
 
 ## 🧭 从这里开始
 
-- 📝 **[博客](https://emiriobomb.github.io/GearPress/blog/)**：相对完整的文章、组件实践与阶段性总结。
-- 📒 **[随记](https://emiriobomb.github.io/GearPress/notes/macos/homebrew/)**：[macOS](https://emiriobomb.github.io/GearPress/notes/macos/homebrew/)、[网络服务](https://emiriobomb.github.io/GearPress/notes/network/cdn/js-delivr/)、[版本控制](https://emiriobomb.github.io/GearPress/notes/vcs/git/git/)，记录配置步骤、排查过程与使用经验。
-- 🧭 **[导航](https://emiriobomb.github.io/GearPress/navigation/)**：经过筛选并持续整理的网站、应用与开发资源。
-- 👤 **[关于我](https://emiriobomb.github.io/GearPress/notes/about-me/)**：个人技术方向、常用工具，以及游戏和其他偏好。
+- 📝 **[博客](https://emiriobaan.top/blog/)**：相对完整的文章、组件实践与阶段性总结。
+- 🧭 **[导航](https://emiriobaan.top/navigation/)**：经过筛选并持续整理的网站、应用与开发资源。
+- 📒 **[随记](https://emiriobaan.top/notes/)**：记录配置步骤、排查过程与使用经验。
+- 👤 **[关于我](https://emiriobaan.top/notes/about-me/)**：个人技术方向、常用工具，以及游戏和其他偏好。
+
+## 💻 本地运行
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">运行环境</th>
+      <th scope="col">包管理器</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://nodejs.org/">Node.js 24 LTS</a></td>
+      <td>pnpm 8.10.0</td>
+    </tr>
+  </tbody>
+</table>
+
+### 安装与启动
+
+<details open>
+<summary><strong>pnpm</strong></summary>
+
+```bash
+npm install --global pnpm@8.10.0
+
+git clone https://github.com/EmirioBomb/GearPress.git
+cd GearPress
+pnpm install --frozen-lockfile
+pnpm docs:dev
+```
+
+</details>
 
 ## 💬 阅读与反馈
 
