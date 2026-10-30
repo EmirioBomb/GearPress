@@ -55,7 +55,7 @@ const content: Record<'zh' | 'en', LocaleContent> = {
     emptyLabel: '暂无可展示文章',
     statuses: [
       { label: '研究中', value: 'AI Agent', icon: 'lucide:flask-conical' },
-      { label: '游玩中', value: '传说系列', icon: 'lucide:gamepad-2', href: 'https://tales-ch.jp/' },
+      { label: '游玩中', value: '传说系列', icon: 'lucide:gamepad-2', href: 'https://bond.tales-ch.jp/' },
       { label: '开发中', value: 'GearPress', icon: 'lucide:code-2' },
       { label: '听着', value: 'Spotify', icon: 'lucide:headphones', href: 'https://open.spotify.com/playlist/50zTqYDKkup6TbU3TFpdN3' },
     ],
@@ -77,7 +77,7 @@ const content: Record<'zh' | 'en', LocaleContent> = {
     emptyLabel: 'No articles available',
     statuses: [
       { label: 'Researching', value: 'AI agents', icon: 'lucide:flask-conical' },
-      { label: 'Playing', value: 'Tales Series', icon: 'lucide:gamepad-2', href: 'https://tales-ch.jp/' },
+      { label: 'Playing', value: 'Tales Series', icon: 'lucide:gamepad-2', href: 'https://bond.tales-ch.jp/' },
       { label: 'Building', value: 'GearPress', icon: 'lucide:code-2' },
       { label: 'Listening', value: 'Spotify', icon: 'lucide:headphones', href: 'https://open.spotify.com/playlist/50zTqYDKkup6TbU3TFpdN3' },
     ],
