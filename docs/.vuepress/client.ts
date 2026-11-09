@@ -87,6 +87,7 @@ import AboutMe from './theme/components/about/AboutMe.vue'
 import HeroEffectSwitch from './theme/components/HeroEffectSwitch.vue'
 import HomeLanding from './theme/components/HomeLanding.vue'
 import NavigationHub from './theme/components/navigation/NavigationHub.vue'
+import AiGallery from './theme/components/gallery/AiGallery.vue'
 
 import './theme/styles/index.css'
 
@@ -113,5 +114,6 @@ export default defineClientConfig({
     app.component('AboutMe', AboutMe)
     app.component('HomeLanding', HomeLanding)
     app.component('NavigationHub', NavigationHub)
+    app.component('AiGallery', AiGallery)
   },
 })

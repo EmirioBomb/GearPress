@@ -10,6 +10,7 @@ import { version } from '../../package.json'
 export const zhNavbar = defineNavbarConfig([
   { text: '首页', icon: 'codicon:home', link: '/' },
   { text: '博客', icon: 'codicon:book', link: '/blog/' },
+  { text: 'AI 画廊', icon: 'lucide:images', link: '/gallery/' },
   { text: '导航', icon: 'lucide:compass', link: '/navigation/' },
   { text: '随记', icon: 'codicon:notebook', link: '/notes/' },
   {
@@ -28,6 +29,7 @@ export const zhNavbar = defineNavbarConfig([
 export const enNavbar = defineNavbarConfig([
   { text: 'Home', icon: 'codicon:home', link: '/en/' },
   { text: 'Blog', icon: 'codicon:book', link: '/en/blog/' },
+  { text: 'AI Gallery', icon: 'lucide:images', link: '/en/gallery/' },
   { text: 'Navigation', icon: 'lucide:compass', link: '/en/navigation/' },
   { text: 'Notes', icon: 'codicon:notebook', link: '/en/notes/' },
   {
