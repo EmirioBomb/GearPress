@@ -1,0 +1,3 @@
+Sitemap: https://emiriobaan.top/sitemap.xml
+User-agent:*
+Disallow:
