@@ -22,7 +22,7 @@ const copy = computed(() => english.value ? {
   more: 'Load more',
 } : {
   title: 'AI 画廊',
-  empty: '暂无作品', loading: '正在加载作品', error: '画廊暂时无法加载',
+  empty: '暂无作品', loading: '正在加载', error: '画廊暂时无法加载',
   unavailable: '图片暂时无法显示', open: '查看', close: '关闭',
   previous: '上一张', next: '下一张', original: '打开原图',
   fallback: 'AI 生成作品',
@@ -237,9 +237,12 @@ onBeforeUnmount(() => {
 
 <template>
   <main class="ai-gallery" :aria-label="copy.title">
-    <div v-if="!items.length && (loading || error || !hasMore)" class="gallery-status" role="status">
-      <Icon :icon="error ? galleryIcons.unavailable : galleryIcons.images" aria-hidden="true" />
-      <span>{{ loading ? copy.loading : error ? copy.error : copy.empty }}</span>
+    <div v-if="!items.length && (loading || error || !hasMore)" class="gallery-status" role="status" :aria-label="loading ? copy.loading : undefined">
+      <span v-if="loading" class="gallery-loading"><span class="gallery-spinner" aria-hidden="true" /></span>
+      <template v-else>
+        <Icon :icon="error ? galleryIcons.unavailable : galleryIcons.images" aria-hidden="true" />
+        <span>{{ error ? copy.error : copy.empty }}</span>
+      </template>
       <button v-if="error" class="gallery-retry" type="button" :disabled="retrySeconds > 0" @click="loadMore">{{ retryLabel }}</button>
     </div>
     <div ref="masonry" class="gallery-masonry">
@@ -257,7 +260,7 @@ onBeforeUnmount(() => {
             {{ copy.unavailable }}
           </span>
           <template v-else>
-            <span v-if="!loaded.has(item.src)" class="gallery-image-status" role="status">{{ copy.loading }}</span>
+            <span v-if="!loaded.has(item.src)" class="gallery-placeholder" role="status" :aria-label="copy.loading" />
             <!-- Plume's PhotoSwipe must not open a second viewer for gallery images. -->
             <img
               no-view
@@ -279,7 +282,7 @@ onBeforeUnmount(() => {
     </div>
 
     <div v-if="hasMore" ref="sentinel" class="gallery-pagination" :aria-busy="loading">
-      <span v-if="loading && items.length" role="status">{{ copy.loading }}</span>
+      <span v-if="loading && items.length" class="gallery-loading" role="status" :aria-label="copy.loading"><span class="gallery-spinner" aria-hidden="true" /></span>
       <template v-else-if="!loading && (items.length || !error)">
         <span v-if="error" role="status">{{ copy.error }}</span>
         <button class="gallery-retry" type="button" :disabled="retrySeconds > 0" @click="loadMore">{{ error ? retryLabel : copy.more }}</button>
@@ -304,7 +307,8 @@ onBeforeUnmount(() => {
         <div class="gallery-view-stage">
           <button type="button" class="gallery-tool gallery-step" :disabled="selectedIndex === 0 || navigating" :aria-label="copy.previous" :title="copy.previous" @click="move(-1)"><Icon :icon="galleryIcons.previous" aria-hidden="true" /></button>
           <div class="gallery-view-image" :aria-busy="!originalLoaded && !originalFailed">
-            <span v-if="originalFailed || !originalLoaded" class="gallery-image-status" role="status">{{ originalFailed ? copy.unavailable : copy.loading }}</span>
+            <span v-if="originalFailed" class="gallery-image-status" role="status">{{ copy.unavailable }}</span>
+            <span v-else-if="!originalLoaded" class="gallery-image-status" role="status" :aria-label="copy.loading"><span class="gallery-spinner" aria-hidden="true" /></span>
             <img
               no-view
               v-if="!originalFailed"
@@ -322,7 +326,7 @@ onBeforeUnmount(() => {
         </div>
         <footer class="gallery-view-footer">
           <span class="gallery-view-counter" aria-live="polite" aria-atomic="true">{{ selectedIndex + 1 }} / {{ items.length }}{{ hasMore ? '+' : '' }}</span>
-          <span v-if="navigating" role="status">{{ copy.loading }}</span>
+          <span v-if="navigating" class="gallery-loading" role="status" :aria-label="copy.loading"><span class="gallery-spinner" aria-hidden="true" /></span>
           <template v-else-if="error">
             <span role="status">{{ copy.error }}</span>
             <button class="gallery-retry" type="button" :disabled="retrySeconds > 0" @click="loadMore">{{ retryLabel }}</button>
@@ -378,6 +382,10 @@ onBeforeUnmount(() => {
 .gallery-image-button img.is-loaded, .gallery-view-image img.is-loaded { opacity: 1; }
 .gallery-image-status { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; padding: 20px; font-size: 14px; color: var(--vp-c-text-2); }
 .gallery-image-status svg { width: 24px; height: 24px; }
+.gallery-placeholder { position: absolute; inset: 0; border-radius: inherit; background: var(--gp-surface-bg-soft); pointer-events: none; }
+.gallery-loading { display: inline-flex; align-items: center; justify-content: center; }
+.gallery-spinner { display: inline-block; width: 20px; height: 20px; flex-shrink: 0; border: 2px solid var(--vp-c-divider); border-top-color: var(--vp-c-text-2); border-radius: 50%; animation: gallery-spin 900ms linear infinite; }
+@keyframes gallery-spin { to { transform: rotate(360deg); } }
 .gallery-enlarge { position: absolute; right: 12px; bottom: 12px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 4px; color: #fff; background: rgb(0 0 0 / 0.65); opacity: 0; transition: opacity 180ms ease; }
 .gallery-enlarge svg { width: 18px; height: 18px; }
 .gallery-image-button:hover .gallery-enlarge, .gallery-image-button:focus-visible .gallery-enlarge { opacity: 1; }
@@ -430,5 +438,6 @@ onBeforeUnmount(() => {
 @media (hover: none) { .gallery-enlarge { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
   .gallery-image-button img, .gallery-view-image img, .gallery-enlarge { transition: none; }
+  .gallery-spinner { animation: none; }
 }
 </style>
