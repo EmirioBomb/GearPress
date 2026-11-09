@@ -1,3 +1,13 @@
+## 🔖 Release v2.14.0 (2026-11-09)
+
+### ✨ Features
+
+* **gallery:** add a paginated AI image gallery ([e2d2fd1](https://github.com/EmirioBomb/GearPress/commit/e2d2fd1ebe65668ac4bc59c9aa1ec0464d1e6ae7))
+
+### 🎨 Style
+
+* **css:** simplify gallery loading indicators ([cbb2c9d](https://github.com/EmirioBomb/GearPress/commit/cbb2c9de6242dd035017505685b78ad5ac96ded9))
+
 ## 🔖 Release v2.13.4 (2026-10-30)
 
 ### 🐛 Bug Fixes
